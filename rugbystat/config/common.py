@@ -16,12 +16,12 @@ class Common(Configuration):
         'django.contrib.messages',
         'django.contrib.staticfiles',
 
-
         # Third party apps
-        'rest_framework',            # utilities for rest apis
+        'rest_framework',
         'rest_framework.authtoken',  # token authentication
         'django_rq',                 # asynchronous queuing
         'versatileimagefield',       # image manipulation
+        'django_dropbox',
 
         # Your apps
         'authentication',
@@ -42,7 +42,7 @@ class Common(Configuration):
 
     ROOT_URLCONF = 'urls'
 
-    SECRET_KEY = 'Not a secret'
+    SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'Not a secret')
     WSGI_APPLICATION = 'wsgi.application'
 
     # Email
@@ -53,12 +53,15 @@ class Common(Configuration):
     )
 
     # Postgres
-    DATABASES = values.DatabaseURLValue('postgres://localhost/rugbystat')
+    DB_USER = os.environ.get('POSTGRES_USER', 'postgres')
+    DB_PASS = os.environ.get('POSTGRES_PASS', '1111')
+    DB_URL = 'postgres://{}:{}@localhost/rugbystat'.format(DB_USER, DB_PASS)
+    DATABASES = values.DatabaseURLValue(DB_URL)
 
     # General
     APPEND_SLASH = values.BooleanValue(False)
-    TIME_ZONE = 'UTC'
-    LANGUAGE_CODE = 'en-us'
+    TIME_ZONE = 'Europe/Moscow'
+    LANGUAGE_CODE = 'ru-ru'
     # If you set this to False, Django will make some optimizations so as not
     # to load the internationalization machinery.
     USE_I18N = False
@@ -67,7 +70,7 @@ class Common(Configuration):
     LOGIN_REDIRECT_URL = '/'
 
     # Static Files
-    STATIC_ROOT = join(os.path.dirname(BASE_DIR), 'staticfiles')
+    STATIC_ROOT = join(os.path.dirname(BASE_DIR), '../static_root')
     STATICFILES_DIRS = [join(os.path.dirname(BASE_DIR), 'static'), ]
     STATIC_URL = '/static/'
     STATICFILES_FINDERS = (
@@ -76,8 +79,11 @@ class Common(Configuration):
     )
 
     # Media files
-    MEDIA_ROOT = join(os.path.dirname(BASE_DIR), 'media')
+    MEDIA_ROOT = join(os.path.dirname(BASE_DIR), '../media_root')
     MEDIA_URL = '/media/'
+
+    DROPBOX_ACCESS_TOKEN = 'aqY2g6XyAaQAAAAAAAA22jImVcWLjm052Cp8xzQjx2b5F255QK08Ql2iPUGzpQg0'
+    DEFAULT_FILE_STORAGE = 'django_dropbox.storage.DropboxStorage'
 
     TEMPLATES = [
         {
@@ -124,81 +130,15 @@ class Common(Configuration):
     ]
 
     # Logging
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'formatters': {
-            'django.server': {
-                '()': 'django.utils.log.ServerFormatter',
-                'format': '[%(server_time)s] %(message)s',
-            },
-            'verbose': {
-                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-            },
-            'simple': {
-                'format': '%(levelname)s %(message)s'
-            },
-            'rq_console': {
-                'format': '%(asctime)s %(message)s',
-                'datefmt': '%H:%M:%S',
-            },
-        },
-        'filters': {
-            'require_debug_true': {
-                '()': 'django.utils.log.RequireDebugTrue',
-            },
-        },
-        'handlers': {
-            'django.server': {
-                'level': 'INFO',
-                'class': 'logging.StreamHandler',
-                'formatter': 'django.server',
-            },
-            'console': {
-                'level': 'INFO',
-                'filters': ['require_debug_true'],
-                'class': 'logging.StreamHandler',
-                'formatter': 'simple'
-            },
-            'rq_console': {
-                'level': 'DEBUG',
-                'class': 'rq.utils.ColorizingStreamHandler',
-                'formatter': 'rq_console',
-                'exclude': ['%(asctime)s'],
-            },
-            'mail_admins': {
-                'level': 'ERROR',
-                'class': 'django.utils.log.AdminEmailHandler'
-            }
-        },
-        'loggers': {
-            'django': {
-                'handlers': ['console'],
-                'propagate': True,
-            },
-            'django.server': {
-                'handlers': ['django.server'],
-                'level': 'INFO',
-                'propagate': False,
-            },
-            'django.request': {
-                'handlers': ['mail_admins'],
-                'level': 'ERROR',
-                'propagate': False,
-            },
-            'rq.worker': {
-                'handlers': ['rq_console'],
-                'level': 'DEBUG'
-            }
-        }
-    }
+    from .logging import LOGGING
 
     # Custom user app
     AUTH_USER_MODEL = 'users.User'
 
     # Django Rest Framework
     REST_FRAMEWORK = {
-        'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+        'DEFAULT_PAGINATION_CLASS':
+            'rest_framework.pagination.PageNumberPagination',
         'PAGE_SIZE': int(os.getenv('DJANGO_PAGINATION_LIMIT', 10)),
         'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S%z',
         'DEFAULT_RENDERER_CLASSES': (
