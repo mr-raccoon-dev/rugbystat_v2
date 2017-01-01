@@ -1,0 +1,11 @@
+site_name: rugbystat
+site_description: Database of Soviet rugby results
+repo_url: https://github.com/krnr/rugbystat
+site_dir: site
+copyright: Copyright &copy; 2015, <a href="https://github.com/krnr">krnr</a>.
+
+pages:
+  - Home: 'index.md'
+  - API:
+    - Authentication: 'api/authentication.md'
+    - Users: 'api/users.md'
