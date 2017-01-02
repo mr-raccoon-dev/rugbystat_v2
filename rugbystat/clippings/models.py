@@ -14,24 +14,41 @@ class Document(TimeStampedModel):
     dropbox_path = models.URLField(max_length=127, blank=True)
     dropbox_thumb = models.URLField(max_length=127, blank=True)
 
-    def save(self, **kwargs):
-        super(Document, self).save(**kwargs)
-        if not self.dropbox_thumb:
-            self.save_thumb()
+    def __init__(self, *args, **kwargs):
+        super(Document, self).__init__(*args, **kwargs)
+        self.client = self.dropbox.storage.client
 
-    def save_share_link(self):
+    def save(self, **kwargs):
+        if not self.dropbox_path and self.dropbox:
+            self.dropbox_path = self.get_share_link(self.dropbox.name)
+        if not self.dropbox_thumb and self.dropbox:
+            self.dropbox_thumb = self.get_share_link(self.get_thumb_path())
+        super(Document, self).save(**kwargs)
+
+    def get_share_link(self, path):
+        """
+        Return content URL for given path.
+
+        >>> get_share_link('/.thumbs/1928.jpg')
+        'https://dl.dropboxusercontent.com/s/xunoyzi0jiz4h9o/1928.jpg?dl=0'
+
+        :param path:
+        :type path: str
+        :return: shared link of a created image
+        :rtype: str
+        """
         try:
-            result = self.dropbox.storage.client.share(self.dropbox.name, False)
-            self.dropbox_path = get_dropbox_content_url(result['url'])
+            result = self.client.share(path, False)
+            return get_dropbox_content_url(result['url'])
         except ApiError:
             pass
+        return None
 
-    def save_thumb(self):
-        resp, metadata = self.dropbox.storage.client.thumbnail_and_metadata(self.dropbox.name)
+    def get_thumb_path(self):
+        resp, metadata = self.client.thumbnail_and_metadata(self.dropbox.name)
         f = resp.read()
-        result = self.dropbox.storage.client.put_file('/.thumbs/{}'.format(
-            self.filename), f)
-        self.dropbox_thumb = get_dropbox_content_url(result['url'])
+        result = self.client.put_file('/.thumbs/{}'.format(self.filename), f)
+        return result['path']
 
     @cached_property
     def filename(self):
