@@ -4,7 +4,6 @@ omit = *migrations*,
        *urls*,
        *test*,
        *admin*,
-       ./rugbystat/config/*,
+       ./rugbystat/conf/*,
        ./rugbystat/manage.py,
-       ./rugbystat/wsgi.py,
        *__init__*

@@ -40,6 +40,11 @@ python rugbystat/manage.py migrate
 python rugbystat/manage.py createsuperuser
 ```
 
+Export env variables:
+* `'DJANGO_SECRET_KEY'`
+* `'POSTGRES_USER'`
+* `'POSTGRES_PASS'`
+
 Run the development server:
 ```bash
 python rugbystat/manage.py runserver
