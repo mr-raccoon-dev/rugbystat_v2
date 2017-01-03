@@ -1,7 +1,7 @@
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.utils.functional import cached_property
-from django_extensions.db.models import TimeStampedModel
+from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from dropbox.exceptions import ApiError
 from dropbox.rest import ErrorResponse
 
@@ -12,7 +12,7 @@ def get_dropbox_content_url(url):
 # TODO: tags for Document: match, player, team
 
 
-class Document(TimeStampedModel):
+class Document(TitleDescriptionModel, TimeStampedModel):
     """
     Model of all documents (photos, clips, articles)
     """
@@ -25,7 +25,8 @@ class Document(TimeStampedModel):
     dropbox_thumb = models.URLField(
         verbose_name='Прямая ссылка на превью', max_length=127, blank=True)
     year = models.PositiveIntegerField(
-        verbose_name='Год', blank=True, null=True)
+        verbose_name='Год', validators=[MaxValueValidator(2100)], 
+        blank=True, null=True)
     month = models.PositiveSmallIntegerField(
         verbose_name='Месяц', validators=[MaxValueValidator(12)],
         blank=True, null=True)
@@ -47,21 +48,29 @@ class Document(TimeStampedModel):
     def extension(self):
         return self.dropbox.name.split('.')[-1].lower()
 
+    def __str__(self):
+        return self.title
+
     def save(self, **kwargs):
         if not self.dropbox_path and self.dropbox:
-            self.dropbox_path = self.get_share_link(self.dropbox.name)
-        if self.extension in ['jpg', 'jpeg', 'png', 'tiff', 'tif', 'gif']:
-            self.is_image = True
-            if not self.dropbox_thumb and self.dropbox:
+            if self.extension in ['jpg', 'jpeg', 'png', 'tiff', 'tif', 'gif']:
+                self.is_image = True
+                self.dropbox_path = self.get_share_link(self.dropbox.name)
                 self.dropbox_thumb = self.get_share_link(self.get_thumb_path())
+            else:
+                self.dropbox_path = self.get_share_link(self.dropbox.name, 
+                                                        convert=False)
         super(Document, self).save(**kwargs)
 
-    def get_share_link(self, path):
+    def get_share_link(self, path, convert=True):
         """
         Return content URL for given path.
 
         >>> get_share_link('/.thumbs/1928.jpg')
         'https://dl.dropboxusercontent.com/s/xunoyzi0jiz4h9o/1928.jpg?dl=0'
+
+        >>> get_share_link('/1900/1928.pdf')
+        'https://www.dropbox.com/s/xunoyzi0jiz4h9o/1928.pdf?dl=0'
 
         :param path:
         :type path: str
@@ -70,7 +79,10 @@ class Document(TimeStampedModel):
         """
         try:
             result = self.client.share(path, False)
-            return get_dropbox_content_url(result['url'])
+            if convert:
+                return get_dropbox_content_url(result['url']) 
+            else:
+                return result['url']
         except ApiError:
             pass
         return None

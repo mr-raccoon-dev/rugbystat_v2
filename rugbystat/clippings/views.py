@@ -41,7 +41,7 @@ def process_user(uid):
         result = client.delta(cursor)
 
         for path, metadata in result['entries']:
-            filename = path.split('/')[-1]
+            fname = path.split('/')[-1]
             # '1933_name.jpg'
             # '1933name.jpg'
             # '1963-08-001.jpg'
@@ -50,7 +50,7 @@ def process_user(uid):
             # '89-12-20filename.jpg'
             # '91-05-06_name.jpg'
             year, month, day, name = re.findall('(\d+)-*(\d*)-*(\d*)_*(.*)',
-                                                 filename)
+                                                 fname)
             if len(day) > 2:
                 name = day + name
                 day = ''
@@ -64,8 +64,8 @@ def process_user(uid):
             if metadata is None or metadata['is_dir']:
                 continue
             # create a Document
-            Document.objects.create(dropbox=path, date=doc_date, year=year,
-                                    month=month, title=name)
+            Document.objects.create(title=name, dropbox=path, date=doc_date, 
+                                    year=year, month=month, )
 
         # Update cursor
         cursor = result['cursor']
