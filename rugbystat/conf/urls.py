@@ -8,14 +8,17 @@ from django.contrib import admin
 from django.views.generic.base import RedirectView
 from rest_framework.routers import DefaultRouter
 
+from clippings.viewsets import DocumentViewSet
 from users.viewsets import UserViewSet
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
+router.register(r'documents', DocumentViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^django-rq/', include('django_rq.urls')),
+    url(r'^dropbox-webhook/', 'clippings.views.import_from_dropbox'),
     url(r'^api/v1/', include('authentication.urls')),
     url(r'^api/v1/', include(router.urls)),
 
