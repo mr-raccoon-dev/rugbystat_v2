@@ -79,7 +79,7 @@ def process_user(uid):
 
 def import_from_dropbox(request):
     if request.method == 'GET':
-        return request.args.get('challenge')
+        return request.GET.get('challenge')
     else:
         if not validate_request(request):
             return False
