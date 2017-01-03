@@ -29,9 +29,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 VERSATILEIMAGEFIELD_SETTINGS['create_images_on_demand'] = True
 
 # Django RQ local settings
+redis_url = 'redis://localhost:6379'
 RQ_QUEUES = {
     'default': {
-        'URL': os.getenv('REDISTOGO_URL', 'redis://localhost:6379'),
+        'URL': os.getenv('REDISTOGO_URL', redis_url),
         'DB': 0,
         'DEFAULT_TIMEOUT': 500,
     },

@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator
 from django.db import models
 from django.utils.functional import cached_property
 from django_extensions.db.models import TimeStampedModel
@@ -8,8 +9,13 @@ from dropbox.rest import ErrorResponse
 def get_dropbox_content_url(url):
     return url.replace('www.dropbox', 'dl.dropboxusercontent')
 
+# TODO: tags for Document: match, player, team
+
 
 class Document(TimeStampedModel):
+    """
+    Model of all documents (photos, clips, articles)
+    """
     title = models.CharField(
         verbose_name='Заголовок', max_length=127, default='Archive')
     dropbox = models.FileField(
@@ -20,6 +26,9 @@ class Document(TimeStampedModel):
         verbose_name='Прямая ссылка на превью', max_length=127, blank=True)
     year = models.PositiveIntegerField(
         verbose_name='Год', blank=True, null=True)
+    month = models.PositiveSmallIntegerField(
+        verbose_name='Месяц', validators=[MaxValueValidator(12)],
+        blank=True, null=True)
     date = models.DateField(
         verbose_name='Дата', blank=True, null=True)
     is_image = models.BooleanField(
@@ -36,7 +45,7 @@ class Document(TimeStampedModel):
 
     @cached_property
     def extension(self):
-        return self.dropbox.name.split('.')[-1]
+        return self.dropbox.name.split('.')[-1].lower()
 
     def save(self, **kwargs):
         if not self.dropbox_path and self.dropbox:
