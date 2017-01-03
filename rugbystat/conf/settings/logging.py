@@ -48,10 +48,10 @@ LOGGING = {
         }
     },
     'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'propagate': True,
-        },
+        # 'django': {
+        #     'handlers': ['console'],
+        #     'propagate': True,
+        # },
         'django.server': {
             'handlers': ['django.server'],
             'level': 'INFO',
