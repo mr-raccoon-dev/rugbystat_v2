@@ -1,7 +1,7 @@
 import os
 from os.path import join
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -72,8 +72,8 @@ USE_L10N = True
 USE_TZ = True
 
 # Static Files
-STATIC_ROOT = join(os.path.dirname(BASE_DIR), '../static_root')
-STATICFILES_DIRS = [join(os.path.dirname(BASE_DIR), 'static'), ]
+STATIC_ROOT = os.path.join(BASE_DIR, '../static_root')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -81,7 +81,7 @@ STATICFILES_FINDERS = (
 )
 
 # Media files
-MEDIA_ROOT = join(os.path.dirname(BASE_DIR), '../media_root')
+MEDIA_ROOT = os.path.join(BASE_DIR, '../media_root')
 MEDIA_URL = '/media/'
 
 DROPBOX_ACCESS_TOKEN = 'aqY2g6XyAaQAAAAAAAA24-fpNYe81yOtQYAqeNSvQKAjP6YtW6qDrJbAuD0b11Aj'
