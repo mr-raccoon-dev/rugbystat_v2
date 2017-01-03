@@ -10,4 +10,7 @@ class DocumentSerializer(ModelSerializer):
         fields = ('title', 'dropbox', 'dropbox_path', 'dropbox_thumb',
                   'year', 'month', 'date', 'is_image', 'versions')
 
-DocumentSerializer.base_fields['versions'] = DocumentSerializer()
+    def get_fields(self):
+        fields = super(DocumentSerializer, self).get_fields()
+        fields['versions'] = DocumentSerializer(many=True)
+        return fields

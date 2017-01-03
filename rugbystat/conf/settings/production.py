@@ -72,11 +72,11 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 REDIS_PORT = 6379
 REDIS_HOST = '127.0.0.1'
 REDIS_PASSWORD = 'R@DIS'
-redis_url = 'redis://:%s@%s:%d' % (REDIS_PASSWORD, REDIS_HOST, REDIS_PORT)
+BROKER_URL = 'redis://:%s@%s:%d' % (REDIS_PASSWORD, REDIS_HOST, REDIS_PORT)
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',
-        'LOCATION': redis_url,
+        'LOCATION': BROKER_URL,
         'OPTIONS': {
             'DB': 0,
             'PASSWORD': REDIS_PASSWORD,
@@ -93,7 +93,7 @@ CACHES = {
 # Django RQ production settings
 RQ_QUEUES = {
     'default': {
-        'URL': redis_url,
+        'URL': BROKER_URL,
         'DB': 0,
         'DEFAULT_TIMEOUT': 500,
     },

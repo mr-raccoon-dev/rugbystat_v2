@@ -4,6 +4,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DEBUG = True
 SECRET_KEY = 'Not a secret'
+ALLOWED_HOSTS = ["*"]
 
 for config in TEMPLATES:
     config['OPTIONS']['debug'] = DEBUG
@@ -29,10 +30,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 VERSATILEIMAGEFIELD_SETTINGS['create_images_on_demand'] = True
 
 # Django RQ local settings
-redis_url = 'redis://localhost:6379'
+BROKER_URL = 'redis://localhost:6379'
 RQ_QUEUES = {
     'default': {
-        'URL': os.getenv('REDISTOGO_URL', redis_url),
+        'URL': os.getenv('REDISTOGO_URL', BROKER_URL),
         'DB': 0,
         'DEFAULT_TIMEOUT': 500,
     },

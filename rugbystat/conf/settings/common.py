@@ -39,7 +39,7 @@ MIDDLEWARE = (
 ROOT_URLCONF = 'conf.urls'
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'Not a secret')
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = 'conf.wsgi.application'
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

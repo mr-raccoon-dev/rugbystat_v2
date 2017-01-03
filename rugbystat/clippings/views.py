@@ -11,7 +11,7 @@ import redis
 
 from clippings.models import Document
 
-redis_client = redis.from_url(settings.redis_url)
+redis_client = redis.from_url(settings.BROKER_URL)
 
 
 def validate_request(request):
