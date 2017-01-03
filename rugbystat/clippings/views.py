@@ -6,6 +6,7 @@ from hashlib import sha256
 from datetime import date
 
 from django.conf import settings
+from django.http import HttpResponse
 from dropbox.client import DropboxClient
 import redis
 
@@ -79,7 +80,8 @@ def process_user(uid):
 
 def import_from_dropbox(request):
     if request.method == 'GET':
-        return request.GET.get('challenge')
+        challenge = request.GET.get('challenge')
+        return HttpResponse(challenge, content_type="text/plain")
     else:
         if not validate_request(request):
             return False
