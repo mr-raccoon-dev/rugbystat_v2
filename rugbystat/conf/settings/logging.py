@@ -1,4 +1,15 @@
+import os
+
 __author__ = 'krnr'
+
+LOG_FILE_PATH = os.path.join(BASE_DIR, "django.log")
+
+if not os.path.isdir(LOGS_DIR):
+    try:
+        os.makedirs(LOGS_DIR)  # race condition!
+    except OSError:
+        pass
+open(LOG_FILE_PATH, 'a').close()
 
 LOGGING = {
     'version': 1,
@@ -41,6 +52,13 @@ LOGGING = {
             'class': 'rq.utils.ColorizingStreamHandler',
             'formatter': 'rq_console',
             'exclude': ['%(asctime)s'],
+        },
+        "applogfile": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": LOG_FILE_PATH,
+            "maxBytes": 1024 * 1024 * 15,  # 15MB
+            "backupCount": 5,
         },
         'mail_admins': {
             'level': 'ERROR',
