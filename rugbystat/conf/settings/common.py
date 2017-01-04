@@ -22,6 +22,8 @@ INSTALLED_APPS = (
     # Your apps
     'authentication',
     'users',
+    'teams',
+    'matches',
     'clippings',
 )
 

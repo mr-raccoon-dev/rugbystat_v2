@@ -1,14 +1,10 @@
 import os
+from .common import BASE_DIR
 
 __author__ = 'krnr'
 
-LOG_FILE_PATH = os.path.join(BASE_DIR, "django.log")
 
-if not os.path.isdir(LOGS_DIR):
-    try:
-        os.makedirs(LOGS_DIR)  # race condition!
-    except OSError:
-        pass
+LOG_FILE_PATH = os.path.join(BASE_DIR, "django.log")
 open(LOG_FILE_PATH, 'a').close()
 
 LOGGING = {
@@ -76,8 +72,8 @@ LOGGING = {
             'propagate': False,
         },
         'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'handlers': ['applogfile'],
+            'level': 'DEBUG',
             'propagate': False,
         },
         'rq.worker': {

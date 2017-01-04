@@ -17,8 +17,7 @@ DATABASES = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-RSL = redislite.Redis(os.path.join(BASE_DIR, '../redis.db'))
-BROKER_URL = 'redis+socket://' + RSL.socket_file
+BROKER_URL = 'redis://redis-15544.c8.us-east-1-3.ec2.cloud.redislabs.com:15544'
 
 RQ_QUEUES = {
     'default': {

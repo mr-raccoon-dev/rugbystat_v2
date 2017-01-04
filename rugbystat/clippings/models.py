@@ -1,15 +1,17 @@
+# -*- coding: utf-8 -*-
+
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.utils.functional import cached_property
+from django.utils.translation import ugettext_lazy as _
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from dropbox.exceptions import ApiError
 from dropbox.rest import ErrorResponse
+from teams.models import TagObject
 
 
 def get_dropbox_content_url(url):
     return url.replace('www.dropbox', 'dl.dropboxusercontent')
-
-# TODO: tags for Document: match, player, team
 
 
 class Document(TitleDescriptionModel, TimeStampedModel):
@@ -17,24 +19,26 @@ class Document(TitleDescriptionModel, TimeStampedModel):
     Model of all documents (photos, clips, articles)
     """
     title = models.CharField(
-        verbose_name='Заголовок', max_length=127, default='Archive')
+        verbose_name=_('Заголовок'), max_length=127, default='Archive')
     dropbox = models.FileField(
-        verbose_name='Путь в Dropbox', blank=True, null=True)
+        verbose_name=_('Путь в Dropbox'), blank=True, null=True)
     dropbox_path = models.URLField(
-        verbose_name='Прямая ссылка на файл', max_length=127, blank=True)
+        verbose_name=_('Прямая ссылка на файл'), max_length=127, blank=True)
     dropbox_thumb = models.URLField(
-        verbose_name='Прямая ссылка на превью', max_length=127, blank=True)
+        verbose_name=_('Прямая ссылка на превью'), max_length=127, blank=True)
     year = models.PositiveIntegerField(
-        verbose_name='Год', validators=[MaxValueValidator(2100)], 
+        verbose_name=_('Год'), validators=[MaxValueValidator(2100)],
         blank=True, null=True)
     month = models.PositiveSmallIntegerField(
-        verbose_name='Месяц', validators=[MaxValueValidator(12)],
+        verbose_name=_('Месяц'), validators=[MaxValueValidator(12)],
         blank=True, null=True)
     date = models.DateField(
-        verbose_name='Дата', blank=True, null=True)
+        verbose_name=_('Дата'), blank=True, null=True)
     is_image = models.BooleanField(
-        verbose_name='Этот файл изображение', default=False)
-    versions = models.ManyToManyField('self', verbose_name='Версии файла')
+        verbose_name=('Этот файл изображение'), default=False)
+    versions = models.ManyToManyField('self', verbose_name=_('Версии файла'))
+    tag = models.ManyToManyField(
+        TagObject, verbose_name=_('Содержит сведения о'))
 
     def __init__(self, *args, **kwargs):
         super(Document, self).__init__(*args, **kwargs)
