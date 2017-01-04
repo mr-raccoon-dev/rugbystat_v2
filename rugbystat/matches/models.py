@@ -5,12 +5,28 @@ from teams.models import TagObject, Team, Stadium, Person
 
 
 class Tournament(TagObject):
-    pass
+    def __str__(self):
+        return self.name
 
 
 class Season(TagObject):
     tourn = models.ForeignKey(
-        Tournament, verbose_name="Турнир", related_name='seasons')
+        Tournament, verbose_name=_("Турнир"), related_name='seasons')
+    date_start = models.DateField(verbose_name=_("Дата начала"))
+    date_end = models.DateField(verbose_name=_("Дата окончания"))
+
+    def __str__(self):
+        return self.name
+
+    def save(self, **kwargs):
+        if not self.pk:
+            if self.date_start.year == self.date_end.year:
+                lap = self.date_start.year
+            else:
+                lap = "{}/{}".format(
+                    self.date_start.year, str(self.date_end.year)[-2:])
+            self.name = "{} {}".format(self.tourn, lap)
+        super(Season, self).save(**kwargs)
 
 
 class Match(TagObject):
@@ -34,3 +50,20 @@ class Match(TagObject):
     ref = models.ForeignKey(
         Person, verbose_name=_("Судья"), related_name='matches_reffed',
         blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, **kwargs):
+        if not self.pk:
+            home_score = self.home_score or '??'
+            away_score = self.away_score or '??'
+
+            if home_score == 1:
+                home_score = "+"
+            if away_score == 1:
+                away_score = "+"
+
+            self.name = "{} - {} - {}:{}".format(
+                self.home, self.away, home_score, away_score, )
+        super(Match, self).save(**kwargs)

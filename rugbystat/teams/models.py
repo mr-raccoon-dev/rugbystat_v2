@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class TagObject(models.Model):
     name = models.CharField(max_length=127, verbose_name=_('Базовое название'))
-    story = models.TextField(verbose_name=_('История'))
+    story = models.TextField(verbose_name=_('История'), blank=True, )
 
     def __str__(self):
         return "Model: {0}".format(repr(self.target))
@@ -27,11 +27,24 @@ class TagObject(models.Model):
 
 
 class City(models.Model):
-    pass
+    name = models.CharField(max_length=127, verbose_name=_('Базовое название'))
+    short_name = models.CharField(
+        max_length=4, verbose_name=_('Короткое название'), blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_short_name(self):
+        return self.short_name or self.name
 
 
 class Stadium(models.Model):
     city = models.ForeignKey(City, verbose_name=_('Город'))
+    name = models.CharField(max_length=127, verbose_name=_('Базовое название'))
+    # TODO add historic names
+
+    def __str__(self):
+        return self.name
 
 
 class Team(TagObject):
@@ -56,11 +69,12 @@ class Team(TagObject):
         'self', verbose_name=_('Команда-родитель'), blank=True, null=True)
     
     def __str__(self):
-        return self.name
+        return self.short_name or self.name
     
     def save(self, **kwargs):
         if not self.short_name:
-            self.short_name = "{} {}".format(self.name, self.city.short_name)
+            self.short_name = "{} {}".format(self.name,
+                                             self.city.get_short_name())
         super(Team, self).save(**kwargs)
 
 
