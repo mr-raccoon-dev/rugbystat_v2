@@ -14,12 +14,51 @@ def get_dropbox_content_url(url):
     return url.replace('www.dropbox', 'dl.dropboxusercontent')
 
 
+class Source(models.Model):
+    PHOTO = 'photo'
+    NEWSPAPER = 'newspaper'
+    MAGAZINE = 'magazine'
+    PROTOCOL = 'protocol'
+    PROGRAM = 'program'
+    BOOK = 'book'
+    TYPE_CHOICES = (
+        (PHOTO, 'photo'),
+        (NEWSPAPER, 'newspaper'),
+        (MAGAZINE, 'magazine'),
+        (PROTOCOL, 'protocol'),
+        (PROGRAM, 'program'),
+        (BOOK, 'book'),
+    )
+    title = models.CharField(
+        verbose_name=_('Название'), max_length=127, default='N/A')
+    type = models.CharField(
+        verbose_name=_('Тип'), max_length=127,
+        choices=TYPE_CHOICES, default=PHOTO)
+
+    def __str__(self):
+        return self.title
+
+
+class SourceObject(models.Model):
+    source = models.ForeignKey(Source, related_name='objects')
+    edition = models.CharField(
+        verbose_name=_('Название'), max_length=127, blank=True)
+
+    def __str__(self):
+        if self.edition:
+            return "{}, {}".format(self.source, self.edition)
+        return self.source
+
+
 class Document(TitleDescriptionModel, TimeStampedModel):
     """
     Model of all documents (photos, clips, articles)
     """
     title = models.CharField(
         verbose_name=_('Заголовок'), max_length=127, default='Archive')
+    source = models.ForeignKey(
+        SourceObject, verbose_name=_('Источник'), related_name='scans',
+        blank=True, null=True)
     dropbox = models.FileField(
         verbose_name=_('Путь в Dropbox'), blank=True, null=True)
     dropbox_path = models.URLField(
