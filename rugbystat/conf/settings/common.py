@@ -87,7 +87,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, '../media_root')
 MEDIA_URL = '/media/'
 
 DROPBOX_ACCESS_TOKEN = 'aqY2g6XyAaQAAAAAAAA24-fpNYe81yOtQYAqeNSvQKAjP6YtW6qDrJbAuD0b11Aj'
-DEFAULT_FILE_STORAGE = 'django_dropbox.storage.DropboxStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
 
 TEMPLATES = [
     {

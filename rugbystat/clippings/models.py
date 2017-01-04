@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from django.core.validators import MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils.deconstruct import deconstructible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from dropbox.exceptions import ApiError
 from dropbox.rest import ErrorResponse
+
+from storages.backends.dropbox import DropBoxStorage
 from teams.models import TagObject
 
 
@@ -43,11 +47,22 @@ class SourceObject(models.Model):
     source = models.ForeignKey(Source, related_name='objects')
     edition = models.CharField(
         verbose_name=_('Название'), max_length=127, blank=True)
+    year = models.PositiveSmallIntegerField(
+        verbose_name=_('Год'), blank=True, null=True,
+        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
+    )
+    date = models.DateField(verbose_name=_('Дата'), blank=True, null=True)
 
     def __str__(self):
         if self.edition:
             return "{}, {}".format(self.source, self.edition)
         return self.source
+
+
+@deconstructible
+class MyDropbox(DropBoxStorage):
+    def url(self, name):
+        return name
 
 
 class Document(TitleDescriptionModel, TimeStampedModel):
@@ -60,14 +75,16 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         SourceObject, verbose_name=_('Источник'), related_name='scans',
         blank=True, null=True)
     dropbox = models.FileField(
-        verbose_name=_('Путь в Dropbox'), blank=True, null=True)
+        verbose_name=_('Путь в Dropbox'), storage=MyDropbox(),
+        blank=True, null=True)
     dropbox_path = models.URLField(
         verbose_name=_('Прямая ссылка на файл'), max_length=127, blank=True)
     dropbox_thumb = models.URLField(
         verbose_name=_('Прямая ссылка на превью'), max_length=127, blank=True)
-    year = models.PositiveIntegerField(
-        verbose_name=_('Год'), validators=[MaxValueValidator(2100)],
-        blank=True, null=True)
+    year = models.PositiveSmallIntegerField(
+        verbose_name=_('Год создания'), blank=True, null=True,
+        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
+    )
     month = models.PositiveSmallIntegerField(
         verbose_name=_('Месяц'), validators=[MaxValueValidator(12)],
         blank=True, null=True)

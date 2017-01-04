@@ -38,5 +38,4 @@ RQ_QUEUES = {
 }
 
 INSTALLED_APPS += ('storages',)
-DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
 DROPBOX_OAUTH2_TOKEN = DROPBOX_ACCESS_TOKEN

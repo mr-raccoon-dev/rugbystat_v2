@@ -44,7 +44,6 @@ TEMPLATE_LOADERS = (
 # Media files
 # http://django-storages.readthedocs.org/en/latest/index.html
 INSTALLED_APPS += ('storages',)
-DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
 DROPBOX_OAUTH2_TOKEN = DROPBOX_ACCESS_TOKEN
 
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
