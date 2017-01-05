@@ -1,5 +1,6 @@
+from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer, Serializer
-from clippings.models import Document
+from clippings.models import Document, Source, SourceObject
 
 __author__ = 'krnr'
 
@@ -28,3 +29,25 @@ class DocumentSerializer(ModelSerializer):
                   'year', 'month', 'date', 'is_image',
                   'versions'
                   )
+
+
+class SourceObjectSerializer(ModelSerializer):
+    documents = DocumentSerializer(many=True)
+    source = SerializerMethodField()
+
+    class Meta:
+        model = SourceObject
+        fields = ('source', 'edition', 'year', 'date', 'documents')
+
+    def get_source(self, obj):
+        return obj.source.as_dict()
+
+
+class SourceSerializer(ModelSerializer):
+    documents = DocumentSerializer(many=True)
+    instances = SourceObjectSerializer(many=True)
+
+    class Meta:
+        model = Source
+        fields = ('title', 'type', 'instances', 'documents')
+

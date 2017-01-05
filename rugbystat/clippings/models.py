@@ -42,9 +42,18 @@ class Source(models.Model):
     def __str__(self):
         return self.title
 
+    @cached_property
+    def documents(self):
+        return Document.objects.filter(source__source_id=self.id)
+
+    def as_dict(self):
+        result = dict(self.__dict__)
+        result.pop('_state')
+        return result
+
 
 class SourceObject(models.Model):
-    source = models.ForeignKey(Source, related_name='objects')
+    source = models.ForeignKey(Source, related_name='instances')
     edition = models.CharField(
         verbose_name=_('Название'), max_length=127, blank=True)
     year = models.PositiveSmallIntegerField(
@@ -57,6 +66,10 @@ class SourceObject(models.Model):
         if self.edition:
             return "{}, {}".format(self.source, self.edition)
         return self.source
+
+    @cached_property
+    def documents(self):
+        return self.scans.all()
 
 
 @deconstructible

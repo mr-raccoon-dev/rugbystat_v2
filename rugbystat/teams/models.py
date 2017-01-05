@@ -1,6 +1,7 @@
 from django.core.validators import MinValueValidator
 from django.core.validators import MaxValueValidator
 from django.db import models
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -24,6 +25,17 @@ class TagObject(models.Model):
         if getattr(self, 'person', None) is not None:
             return self.person
         return None
+
+    @cached_property
+    def documents(self):
+        """
+        >>> person.tagobject_ptr.document_set.all()
+        <QuerySet [<Document: 1933>]>
+
+        :return:
+        :rtype:
+        """
+        return self.tagobject_ptr.document_set.all()
 
 
 class City(models.Model):
