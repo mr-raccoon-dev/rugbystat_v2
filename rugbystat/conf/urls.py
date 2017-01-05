@@ -10,12 +10,16 @@ from rest_framework.routers import DefaultRouter
 
 
 from clippings.views import import_from_dropbox
-from clippings.viewsets import DocumentViewSet, SourceViewSet, \
-    SourceObjectViewSet
+from clippings.viewsets import (DocumentViewSet,
+                                SourceViewSet,
+                                SourceObjectViewSet)
+from teams.viewsets import TeamViewSet
 from users.viewsets import UserViewSet
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
+router.register(r'teams', TeamViewSet)
+router.register(r'teams/(?P<team_id>\d+)/documents', DocumentViewSet)
 router.register(r'documents', DocumentViewSet)
 router.register(r'sources', SourceViewSet)
 router.register(r'issues', SourceObjectViewSet)

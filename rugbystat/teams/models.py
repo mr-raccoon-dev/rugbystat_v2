@@ -62,7 +62,8 @@ class Stadium(models.Model):
 class Team(TagObject):
     short_name = models.CharField(
         max_length=32, verbose_name=_('Короткое название'), blank=True)
-    city = models.ForeignKey(City, verbose_name=_('Город'))
+    city = models.ForeignKey(
+        City, verbose_name=_('Город'), related_name='teams')
     year = models.PositiveSmallIntegerField(
         verbose_name=_('Год создания'), blank=True, null=True,
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
@@ -78,7 +79,8 @@ class Team(TagObject):
         max_length=64, verbose_name=_('Префикс к году распада'),
         blank=True, null=True,)
     parent = models.ForeignKey(
-        'self', verbose_name=_('Команда-родитель'), blank=True, null=True)
+        'self', verbose_name=_('Команда-родитель'),
+        related_name='ancestors', blank=True, null=True)
     
     def __str__(self):
         return self.short_name or self.name
@@ -88,6 +90,15 @@ class Team(TagObject):
             self.short_name = "{} {}".format(self.name,
                                              self.city.get_short_name())
         super(Team, self).save(**kwargs)
+
+    @cached_property
+    def operational_years(self):
+        years = "{}{}".format(self.year_prefix or '',
+                              self.year or '')
+        if self.disband_year or self.disband_year_prefix:
+            years += " - {}{}".format(self.disband_year_prefix or '',
+                                      self.disband_year or '')
+        return years
 
 
 class Person(TagObject):

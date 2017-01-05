@@ -11,13 +11,20 @@ __author__ = 'krnr'
 
 
 class DocumentViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Document.objects.all()
+    queryset = Document.objects.prefetch_related('versions')
     serializer_class = DocumentSerializer
     filter_fields = ('year', 'date', 'is_image')
 
+    def get_queryset(self):
+        qs = self.queryset
+        team = self.kwargs.get('team_id', None)
+        if team:
+            qs = qs.filter(tag__team__pk=team)
+        return qs
+
 
 class SourceViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Source.objects.all()
+    queryset = Source.objects.prefetch_related('instances__scans')
     serializer_class = SourceSerializer
     filter_backends = (filters.SearchFilter, filters.DjangoFilterBackend)
     search_fields = ('^title', )
@@ -25,7 +32,7 @@ class SourceViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SourceObjectViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = SourceObject.objects.all()
+    queryset = SourceObject.objects.prefetch_related('scans')
     serializer_class = SourceObjectSerializer
     filter_backends = (filters.SearchFilter, filters.DjangoFilterBackend)
     filter_class = SourceObjectFilter
