@@ -25,9 +25,9 @@ class DocumentSerializer(ModelSerializer):
     # versions = RecursiveField(many=True)
     class Meta:
         model = Document
-        fields = ('title', 'description', 'dropbox_path', 'dropbox_thumb',
-                  'year', 'month', 'date', 'is_image',
-                  'versions'
+        fields = ('id', 'title', 'description', 'dropbox_path',
+                  'dropbox_thumb', 'year', 'month', 'date', 'is_image',
+                  'versions',
                   )
 
 
@@ -37,7 +37,7 @@ class SourceObjectSerializer(ModelSerializer):
 
     class Meta:
         model = SourceObject
-        fields = ('source', 'edition', 'year', 'date', 'documents')
+        fields = ('id', 'source', 'edition', 'year', 'date', 'documents')
 
     def get_source(self, obj):
         return obj.source.as_dict()

@@ -1,22 +1,36 @@
-": [
-                {
-                    "title": "1933",
-                    "description": "",
-                    "dropbox_path": "https://dl.dropboxusercontent.com/s/8fdn1e2luzaub06/1933_smena-11.pdf?dl=0",
-                    "dropbox_thumb": "",
-                    "year": 1933,
-                    "month": null,
-                    "date": null,
-                    "is_image": false,
-                    "versions": [
-                        {
-                            "title": "Archive",
-                            "dropbox_path": "https://dl.dropboxusercontent.com/s/e0luqptl44gtnfs/1935_smena-06.pdf?dl=0",
-                            "dropbox_thumb": "",
-                            "year": 1935,
-                            "month": null,
-                            "date": null,
-                            "is_image": false
-                        }
-                    ]
-                }
+# Документы
+
+`/api/v1/documents/`
+
+Базовая точка доступа ко всем сканам в системе.
+
+## Ключи
+
+- `results` - список объектов в виде словаря
+
+`/api/v1/documents/:id` - возвращает объект с указанным `id`
+
+- `title` - внутреннее название, как правило что-то вроде `ss.jpg`, всё, что
+ есть в имени файла, кроме даты
+- `description` - описание, если есть
+- `dropbox_path`: прямая ссылка на файл в Dropbox, если это изображение
+`https://dl.dropboxusercontent.com/s/8fdn1e2luzaub06/1936-06-18.jpg?dl=0` \
+ и ссылка на предпросмотр, если это pdf или другой тип
+`https://www.dropbox.com/s/8fdn1e2luzaub06/1933_smena-11.pdf?dl=0`
+- `dropbox_thumb` - прямая ссылка на файл-миниатюру в Dropbox, если есть
+- `year` - год документа, если известен, заполняется из названия файла
+- `month` - месяц документа, если известен, заполняется из названия файла
+- `date` - дата документа, если известна, заполняется из названия файла
+- `is_image` (`true/false`) - является ли файл изображением
+- `versions` - также объекты Документа, если существуют другие варианты
+сканов (с иным разрешением, исходники были другого качества и т.д.)
+
+## Фильтрация
+
+- `/api/v1/documents/?year=1977`
+- `/api/v1/documents/?date=02.11.1977`
+- `/api/v1/documents/?is_image=true`
+
+Если нужно фильтровать сканы по их содержимому, то лучше обратиться к
+соответствующей точке доступа: [Источники](issues.md), [Персоны](persons.md),
+[Турниры](tournaments.md), [Матчи](matches.md) и т.д.
