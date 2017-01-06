@@ -89,7 +89,7 @@ def import_from_dropbox(request):
         if not validate_request(request):
             return HttpResponse('False', content_type="text/plain")
 
-        req = json.loads(request.body).decode('UTF-8')
+        req = json.loads(request.body.decode('UTF-8'))
         for uid in req['delta']['users']:
             # We need to respond quickly to the webhook request, so we do the
             # actual work in a separate thread.
