@@ -27,7 +27,7 @@ def validate_request(request):
     (If not, this is a spoofed webhook.)
     """
 
-    signature = request.headers.get('X-Dropbox-Signature')
+    signature = request.META.get('HTTP_X_DROPBOX_SIGNATURE')
     return signature == hmac.new(settings.DROPBOX_ACCESS_TOKEN, request.data,
                                  sha256).hexdigest()
 
@@ -90,7 +90,7 @@ def import_from_dropbox(request):
     else:
         if not validate_request(request):
             return HttpResponse('False', content_type="text/plain")
-        for uid in json.loads(request.data)['delta']['users']:
+        for uid in json.loads(request.body)['delta']['users']:
             # We need to respond quickly to the webhook request, so we do the
             # actual work in a separate thread.
             threading.Thread(target=process_user, args=(uid,)).start()
