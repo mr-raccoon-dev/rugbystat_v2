@@ -7,15 +7,19 @@ from datetime import date
 
 from django.conf import settings
 from django.http import HttpResponse
-from dropbox.client import DropboxClient
+from django.views.decorators.csrf import csrf_exempt
+
 import redis
+from dropbox.client import DropboxClient
 
 from clippings.models import Document
+
 
 try:
     redis_client = redis.from_url(settings.BROKER_URL)
 except:
     redis_client = settings.RSL
+
 
 def validate_request(request):
     """
@@ -78,13 +82,14 @@ def process_user(uid):
         has_more = result['has_more']
 
 
+@csrf_exempt
 def import_from_dropbox(request):
     if request.method == 'GET':
         challenge = request.GET.get('challenge')
         return HttpResponse(challenge, content_type="text/plain")
     else:
         if not validate_request(request):
-            return False
+            return HttpResponse('False', content_type="text/plain")
         for uid in json.loads(request.data)['delta']['users']:
             # We need to respond quickly to the webhook request, so we do the
             # actual work in a separate thread.
@@ -92,4 +97,4 @@ def import_from_dropbox(request):
             # TODO: For more robustness, it's a good idea to add the work to a
             # queue and process the queue in a worker process.
 
-        return True
+        return HttpResponse('OK', content_type="text/plain")
