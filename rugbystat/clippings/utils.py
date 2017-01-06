@@ -20,6 +20,10 @@ __author__ = 'krnr'
 #     redis_client = settings.RSL
 
 
+import logging
+logger = logging.getLogger('django.request')
+
+
 def validate_request(request):
     """
     Validate that the request is properly signed by Dropbox.
@@ -35,8 +39,11 @@ def process_folder(metadata, dbx):
     """Call endpoint for a given folder and process any changes."""
     folder = metadata.path_lower
     # /delta cursor for the folder (None the first time)
+    logger.debug('Processing folder: ' + folder)
+
     cursor = cache.get(folder)
     # cursor = redis_client.hget('cursors', folder)
+    logger.debug('Cursor: ' + cursor)
     has_more = True
 
     while has_more:
@@ -46,6 +53,9 @@ def process_folder(metadata, dbx):
             result = dbx.files_list_folder_continue(cursor)
 
         for metadata in result.entries:
+            logger.debug('Got metadata:\n')
+            logger.debug(metadata)
+
             # Ignore enclosed folders
             if isinstance(metadata, FolderMetadata):
                 continue
@@ -54,10 +64,13 @@ def process_folder(metadata, dbx):
             if isinstance(metadata, DeletedMetadata):
                 Document.objects.filter(dropbox=metadata.path_lower).update(
                     is_deleted=True)
+                logger.debug('We found documents: ' +
+                             repr(Document.objects.filter(dropbox=metadata.path_lower)))
                 continue
 
             # Create documents from every file
-            Document.objects.create_from_meta(meta=metadata)
+            document = Document.objects.create_from_meta(meta=metadata)
+            logger.debug('Created: ' + repr(document))
 
         # Update cursor
         cursor = result.cursor
@@ -72,8 +85,12 @@ def process_user(uid):
 
     token = cache.get(uid) or settings.DROPBOX_ACCESS_TOKEN
     dbx = Dropbox(token)
+    logger.debug("Dropbox instance: " + repr(dbx))
 
     result = dbx.files_list_folder(path='')
     for metadata in result.entries:
         if isinstance(metadata, FolderMetadata) and metadata.name != '.thumbs':
+
+            logger.debug(metadata)
+            logger.debug("Passing to process_folder()")
             process_folder(metadata, dbx)
