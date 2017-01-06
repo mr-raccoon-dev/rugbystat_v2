@@ -26,3 +26,19 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 500,
     },
 }
+
+CACHE_DIR = os.path.join(BASE_DIR, '.diskcache')
+if not os.path.isdir(CACHE_DIR):
+    try:
+        os.makedirs(CACHE_DIR)  # race condition!
+    except OSError:
+        pass
+
+CACHES = {
+    'default': {
+        'BACKEND': 'diskcache.DjangoCache',
+        'LOCATION': CACHE_DIR,
+        'SHARDS': 4,
+        'DATABASE_TIMEOUT': 1.0,
+    },
+}
