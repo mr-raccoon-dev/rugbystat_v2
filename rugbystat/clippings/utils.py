@@ -43,7 +43,7 @@ def process_folder(metadata, dbx):
 
     cursor = cache.get(folder)
     # cursor = redis_client.hget('cursors', folder)
-    logger.debug('Cursor: ' + cursor)
+    logger.debug('Cursor: ' + repr(cursor))
     has_more = True
 
     while has_more:

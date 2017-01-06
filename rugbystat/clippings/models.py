@@ -97,7 +97,7 @@ class DocumentQuerySet(models.QuerySet):
             # '89-12-20filename.jpg'
             # '91-05-06_name.jpg'
             year, month, day, name = re.findall('(\d+)-*(\d*)-*(\d*)_*(.*)',
-                                                 fname)
+                                                 fname)[0]
             if len(day) > 2:
                 name = day + name
                 day = ''
@@ -109,7 +109,7 @@ class DocumentQuerySet(models.QuerySet):
 
             # create a Document
             document = self.model(title=name, dropbox=metadata.path_lower,
-                                  date=doc_date, year=year, month=month, )
+                                  date=doc_date, year=year, month=month or None, )
             document.save(force_insert=True)
         return document
 
@@ -165,6 +165,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         return self.title
 
     def save(self, **kwargs):
+
         if not self.dropbox_path and self.dropbox:
             if self.extension in ['jpg', 'jpeg', 'png', 'tiff', 'tif', 'gif']:
                 self.is_image = True
