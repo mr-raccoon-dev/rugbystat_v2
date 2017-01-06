@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import re
+from datetime import date
 
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.utils.deconstruct import deconstructible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -78,6 +80,40 @@ class MyDropbox(DropBoxStorage):
         return name
 
 
+class DocumentQuerySet(models.QuerySet):
+    def create_from_meta(self, **kwargs):
+        with transaction.atomic():
+            metadata = kwargs.get('meta', None)
+
+            if metadata is None:
+                return
+
+            fname = metadata.name
+            # '1933_name.jpg'
+            # '1933name.jpg'
+            # '1963-08-001.jpg'
+            # '1988_01dd.jpg'
+            # '91-03_dd.jpg'
+            # '89-12-20filename.jpg'
+            # '91-05-06_name.jpg'
+            year, month, day, name = re.findall('(\d+)-*(\d*)-*(\d*)_*(.*)',
+                                                 fname)
+            if len(day) > 2:
+                name = day + name
+                day = ''
+
+            if month and day:
+                doc_date = date(year, month, day)
+            else:
+                doc_date = None
+
+            # create a Document
+            document = self.model(title=name, dropbox=metadata.path_lower,
+                                  date=doc_date, year=year, month=month, )
+            document.save(force_insert=True)
+        return document
+
+
 class Document(TitleDescriptionModel, TimeStampedModel):
     """
     Model of all documents (photos, clips, articles)
@@ -104,10 +140,14 @@ class Document(TitleDescriptionModel, TimeStampedModel):
     date = models.DateField(
         verbose_name=_('Дата'), blank=True, null=True)
     is_image = models.BooleanField(
-        verbose_name=('Этот файл изображение'), default=False)
+        verbose_name=_('Этот файл изображение?'), default=False)
+    is_deleted = models.BooleanField(
+        verbose_name=_('Файл удален?'), default=False)
     versions = models.ManyToManyField('self', verbose_name=_('Версии файла'))
     tag = models.ManyToManyField(
         TagObject, verbose_name=_('Содержит сведения о'))
+
+    objects = DocumentQuerySet.as_manager()
 
     def __init__(self, *args, **kwargs):
         super(Document, self).__init__(*args, **kwargs)

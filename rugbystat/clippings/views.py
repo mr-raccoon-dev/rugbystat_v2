@@ -8,9 +8,10 @@ from datetime import date
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from dropbox.files import FolderMetadata, DeletedMetadata
 
 import redis
-from dropbox.client import DropboxClient
+from dropbox import Dropbox
 
 from clippings.models import Document
 
@@ -28,58 +29,55 @@ def validate_request(request):
     """
 
     signature = request.META.get('HTTP_X_DROPBOX_SIGNATURE')
-    return signature == hmac.new(settings.DROPBOX_ACCESS_TOKEN, request.data,
-                                 sha256).hexdigest()
+    return signature == hmac.new(settings.DROPBOX_APP_SECRET.encode('UTF-8'), 
+                                 request.body, sha256).hexdigest()
 
 
-def process_user(uid):
-    """Call /delta for the given user ID and process any changes."""
-
-    # OAuth token for the user
-    token = redis_client.hget('tokens', uid)
-
-    # /delta cursor for the user (None the first time)
-    cursor = redis_client.hget('cursors', uid)
-
-    client = DropboxClient(token)
+def process_folder(metadata, dbx):
+    """Call endpoint for a given folder and process any changes."""
+    folder = metadata.path_lower
+    # /delta cursor for the folder (None the first time)
+    cursor = redis_client.hget('cursors', folder)
     has_more = True
 
     while has_more:
-        result = client.delta(cursor)
+        if cursor is None:
+            result = dbx.files_list_folder(metadata.path_lower)
+        else:
+            result = dbx.files_list_folder_continue(cursor)
 
-        for path, metadata in result['entries']:
-            fname = path.split('/')[-1]
-            # '1933_name.jpg'
-            # '1933name.jpg'
-            # '1963-08-001.jpg'
-            # '1988_01dd.jpg'
-            # '91-03_dd.jpg'
-            # '89-12-20filename.jpg'
-            # '91-05-06_name.jpg'
-            year, month, day, name = re.findall('(\d+)-*(\d*)-*(\d*)_*(.*)',
-                                                 fname)
-            if len(day) > 2:
-                name = day + name
-                day = ''
-
-            if month and day:
-                doc_date = date(year, month, day)
-            else:
-                doc_date = None
-
-            # Ignore deleted files, folders
-            if metadata is None or metadata['is_dir']:
+        for metadata in result.entries:
+            # Ignore enclosed folders
+            if isinstance(metadata, FolderMetadata):
                 continue
-            # create a Document
-            Document.objects.create(title=name, dropbox=path, date=doc_date, 
-                                    year=year, month=month, )
+
+            # Update deleted files
+            if isinstance(metadata, DeletedMetadata):
+                Document.objects.filter(dropbox=metadata.path_lower).update(
+                    is_deleted=True)
+                continue
+
+            # Create documents from every file
+            Document.objects.create_from_meta(meta=metadata)
 
         # Update cursor
-        cursor = result['cursor']
-        redis_client.hset('cursors', uid, cursor)
+        cursor = result.cursor
+        redis_client.hset('cursors', folder, cursor)
 
         # Repeat only if there's more to do
-        has_more = result['has_more']
+        has_more = result.has_more
+
+
+def process_user(uid):
+    """Call endpoint for every folder and look for any changes."""
+
+    token = redis_client.hget('tokens', uid) or settings.DROPBOX_ACCESS_TOKEN
+    dbx = Dropbox(token)
+
+    result = dbx.files_list_folder(path='')
+    for metadata in result.entries:
+        if isinstance(metadata, FolderMetadata) and metadata.name != '.thumbs':
+            process_folder(metadata, dbx)
 
 
 @csrf_exempt
@@ -90,7 +88,9 @@ def import_from_dropbox(request):
     else:
         if not validate_request(request):
             return HttpResponse('False', content_type="text/plain")
-        for uid in json.loads(request.body)['delta']['users']:
+
+        req = json.loads(request.body).decode('UTF-8')
+        for uid in req['delta']['users']:
             # We need to respond quickly to the webhook request, so we do the
             # actual work in a separate thread.
             threading.Thread(target=process_user, args=(uid,)).start()
