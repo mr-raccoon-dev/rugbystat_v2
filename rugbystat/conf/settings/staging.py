@@ -1,7 +1,7 @@
 import redislite
 
 from .common import *
-
+from .logging import *
 
 ALLOWED_HOSTS = ['rugbystat.pythonanywhere.com']
 
