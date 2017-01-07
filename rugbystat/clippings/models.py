@@ -212,9 +212,9 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         try:
             result = self.client.metadata('/.thumbs/{}'.format(self.filename))
             if result['is_deleted']:
-                raise ErrorResponse
+                result = self.create_dropbox_thumb()
         except ErrorResponse:
-            result = self.create_dropbox_thumb()        
+            result = self.create_dropbox_thumb()
         return result
 
     def create_dropbox_thumb(self):
