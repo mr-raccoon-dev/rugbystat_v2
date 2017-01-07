@@ -116,6 +116,9 @@ class DocumentQuerySet(models.QuerySet):
             document.save(force_insert=True)
         return document
 
+    def not_deleted(self):
+        return self.filter(is_deleted=False)
+
 
 class Document(TitleDescriptionModel, TimeStampedModel):
     """
@@ -147,9 +150,10 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         verbose_name=_('Этот файл изображение?'), default=False)
     is_deleted = models.BooleanField(
         verbose_name=_('Файл удален?'), default=False)
-    versions = models.ManyToManyField('self', verbose_name=_('Версии файла'))
+    versions = models.ManyToManyField('self', verbose_name=_('Версии файла'), 
+        blank=True, )
     tag = models.ManyToManyField(
-        TagObject, verbose_name=_('Содержит сведения о'))
+        TagObject, verbose_name=_('Содержит сведения о'), blank=True, )
 
     objects = DocumentQuerySet.as_manager()
 
