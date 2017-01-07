@@ -96,8 +96,8 @@ class Team(TagObject):
         years = "{}{}".format(self.year_prefix or '',
                               self.year or '')
         if self.disband_year or self.disband_year_prefix:
-            years += " - {}{}".format(self.disband_year_prefix or '',
-                                      self.disband_year or '')
+            years += "-{}{}".format(self.disband_year_prefix or '',
+                                    self.disband_year or '')
         return years
 
 

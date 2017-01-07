@@ -4,12 +4,17 @@ from clippings.models import Source, SourceObject, Document
 
 @admin.register(Source)
 class SourceAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ('type', )
+    search_fields = ('title', )
+
 
 @admin.register(SourceObject)
 class SourceObjectAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ('source', 'year', 'date', )
+    search_fields = ('source__title', )
+
 
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ('year', 'is_image', 'is_deleted', )
+    search_fields = ('title', )

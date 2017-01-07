@@ -53,7 +53,7 @@ def process_folder(metadata, dbx):
             result = dbx.files_list_folder_continue(cursor)
 
         logger.debug('New cursor: ' + str(result.cursor))
-        logger.debug('Has {} elements' + str(len(result.entries)))
+        logger.debug('Has {} elements'.format(len(result.entries)))
         logger.debug('Has more: ' + str(result.has_more))
 
         for metadata in result.entries:
