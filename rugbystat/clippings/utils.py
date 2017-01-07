@@ -48,9 +48,12 @@ def process_folder(metadata, dbx):
 
     while has_more:
         if cursor is None:
-            result = dbx.files_list_folder(metadata.path_lower)
+            result = dbx.files_list_folder(folder)
         else:
             result = dbx.files_list_folder_continue(cursor)
+
+        logger.debug('New cursor: ' + str(result.cursor))
+        logger.debug('Has more: ' + str(result.has_more))
 
         for metadata in result.entries:
             logger.debug('Got metadata:\n')
@@ -64,13 +67,14 @@ def process_folder(metadata, dbx):
             if isinstance(metadata, DeletedMetadata):
                 Document.objects.filter(dropbox=metadata.path_lower).update(
                     is_deleted=True)
-                logger.debug('We found documents: ' +
+                logger.debug('We found deleted documents: ' +
                              repr(Document.objects.filter(dropbox=metadata.path_lower)))
                 continue
 
             # Create documents from every file
-            document = Document.objects.create_from_meta(meta=metadata)
-            logger.debug('Created: ' + repr(document))
+            if not Document.objects.filter(title=metadata.name).count():
+                document = Document.objects.create_from_meta(meta=metadata)
+                logger.debug('Created: ' + repr(document))
 
         # Update cursor
         cursor = result.cursor
@@ -90,7 +94,6 @@ def process_user(uid):
     result = dbx.files_list_folder(path='')
     for metadata in result.entries:
         if isinstance(metadata, FolderMetadata) and metadata.name != '.thumbs':
-
             logger.debug(metadata)
             logger.debug("Passing to process_folder()")
             process_folder(metadata, dbx)

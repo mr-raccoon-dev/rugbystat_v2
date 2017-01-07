@@ -102,13 +102,16 @@ class DocumentQuerySet(models.QuerySet):
                 name = day + name
                 day = ''
 
+            if len(year) < 4:
+                year = '19' + year
+
             if month and day:
                 doc_date = date(year, month, day)
             else:
                 doc_date = None
 
             # create a Document
-            document = self.model(title=name, dropbox=metadata.path_lower,
+            document = self.model(title=fname, dropbox=metadata.path_lower,
                                   date=doc_date, year=year, month=month or None, )
             document.save(force_insert=True)
         return document
