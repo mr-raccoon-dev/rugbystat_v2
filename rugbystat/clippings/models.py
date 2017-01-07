@@ -105,8 +105,11 @@ class DocumentQuerySet(models.QuerySet):
             if len(year) < 4:
                 year = '19' + year
 
-            if month and day:
-                doc_date = date(year, month, day)
+            if month and day and int(day) > 0:
+                try:
+                    doc_date = date(int(year), int(month), int(day))
+                except:
+                    doc_date = None
             else:
                 doc_date = None
 
