@@ -202,6 +202,9 @@ class Document(TitleDescriptionModel, TimeStampedModel):
                 return result['url']
         except ApiError:
             pass
+        except ErrorResponse:
+            # link exists, but file - doesn't
+            pass
         return None
 
     def get_thumb_path(self):
