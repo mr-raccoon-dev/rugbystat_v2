@@ -132,7 +132,8 @@ class Document(TitleDescriptionModel, TimeStampedModel):
     dropbox_path = models.URLField(
         verbose_name=_('Прямая ссылка на файл'), max_length=127, blank=True)
     dropbox_thumb = models.URLField(
-        verbose_name=_('Прямая ссылка на превью'), max_length=127, blank=True)
+        verbose_name=_('Прямая ссылка на превью'), max_length=127, 
+        blank=True, null=True)
     year = models.PositiveSmallIntegerField(
         verbose_name=_('Год создания'), blank=True, null=True,
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
@@ -210,8 +211,14 @@ class Document(TitleDescriptionModel, TimeStampedModel):
     def get_thumb_path(self):
         try:
             result = self.client.metadata('/.thumbs/{}'.format(self.filename))
+            if result['is_deleted']:
+                raise ErrorResponse
         except ErrorResponse:
-            resp, metadata = self.client.thumbnail_and_metadata(self.dropbox.name)
-            f = resp.read()
-            result = self.client.put_file('/.thumbs/{}'.format(self.filename), f)
+            result = self.create_dropbox_thumb()        
+        return result
+
+    def create_dropbox_thumb(self):
+        resp, metadata = self.client.thumbnail_and_metadata(self.dropbox.name)
+        f = resp.read()
+        result = self.client.put_file('/.thumbs/{}'.format(self.filename), f)
         return result['path']
