@@ -27,6 +27,7 @@ class Source(models.Model):
     PROTOCOL = 'protocol'
     PROGRAM = 'program'
     BOOK = 'book'
+    OTHER = 'other'
     TYPE_CHOICES = (
         (PHOTO, 'photo'),
         (NEWSPAPER, 'newspaper'),
@@ -34,12 +35,16 @@ class Source(models.Model):
         (PROTOCOL, 'protocol'),
         (PROGRAM, 'program'),
         (BOOK, 'book'),
+        (OTHER, 'other'),
     )
     title = models.CharField(
         verbose_name=_('Название'), max_length=127, default='N/A')
     type = models.CharField(
         verbose_name=_('Тип'), max_length=127,
         choices=TYPE_CHOICES, default=PHOTO)
+
+    class Meta:
+        ordering = ('title', 'id', )
 
     def __str__(self):
         return self.title
@@ -63,6 +68,9 @@ class SourceObject(models.Model):
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
     )
     date = models.DateField(verbose_name=_('Дата'), blank=True, null=True)
+
+    class Meta:
+        ordering = ('source', 'year', )
 
     def __str__(self):
         if self.edition:
