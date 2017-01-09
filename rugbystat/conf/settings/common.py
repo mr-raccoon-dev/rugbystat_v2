@@ -94,7 +94,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [STATICFILES_DIRS],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',

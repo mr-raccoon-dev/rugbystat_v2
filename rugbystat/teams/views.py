@@ -1,3 +1,16 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 
-# Create your views here.
+from .forms import ImportForm
+
+
+def import_teams(request):
+    if request.method == 'POST':
+        form = ImportForm(request.POST)
+        if form.is_valid():
+            return HttpResponse('OK', content_type="text/plain")
+        else:
+            return HttpResponse('False', content_type="text/plain")
+    else:
+        form = ImportForm()
+    return render(request, 'import.html', {'form': form})

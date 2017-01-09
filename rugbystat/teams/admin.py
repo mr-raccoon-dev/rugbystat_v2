@@ -4,7 +4,7 @@ from teams.models import Person, Team, Stadium, City
 
 @admin.register(City)
 class CityAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'short_name', )
 
 
 @admin.register(Stadium)

@@ -43,6 +43,9 @@ class City(models.Model):
     short_name = models.CharField(
         max_length=4, verbose_name=_('Короткое название'), blank=True)
 
+    class Meta:
+        ordering = ('name', )
+            
     def __str__(self):
         return self.name
 

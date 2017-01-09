@@ -13,6 +13,7 @@ from clippings.views import import_from_dropbox
 from clippings.viewsets import (DocumentViewSet,
                                 SourceViewSet,
                                 SourceObjectViewSet)
+from teams.views import import_teams
 from teams.viewsets import TeamViewSet
 from users.viewsets import UserViewSet
 
@@ -26,6 +27,7 @@ router.register(r'issues', SourceObjectViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^import-teams/', import_teams),
     url(r'^django-rq/', include('django_rq.urls')),
     url(r'^dropbox-webhook/', import_from_dropbox),
     url(r'^api/v1/', include('authentication.urls')),

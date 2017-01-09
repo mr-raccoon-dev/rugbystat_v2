@@ -9,7 +9,8 @@ __author__ = 'krnr'
 
 class TeamViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Team.objects.select_related(
-        'city', 'parent').prefetch_related('document_set')
+        'city', 'parent').prefetch_related('document_set').order_by(
+        'year', 'id')
     serializer_class = TeamSerializer
     filter_backends = (TeamFullTextFilter,
                        filters.SearchFilter,
