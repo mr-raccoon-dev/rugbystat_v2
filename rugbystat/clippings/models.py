@@ -73,9 +73,9 @@ class SourceObject(models.Model):
         ordering = ('source', 'year', )
 
     def __str__(self):
-        if self.edition:
-            return "{}, {}".format(self.source, self.edition)
-        return self.source
+        if self.edition and not self.source.type == Source.BOOK:
+            return "{}, {}".format(self.source.title, self.edition)
+        return self.source.title
 
     @cached_property
     def documents(self):

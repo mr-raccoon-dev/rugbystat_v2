@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block css %}
+{{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
+{% endblock css %}
+
+{% block js %}
+{{ block.super }}
+  <script type="text/javascript" src="{% static 'js/teams.js' %}"></script>
+  <script type="text/javascript">
+    var teamListUrl = "{% url 'team-list' %}";
+  </script>
+
+{% endblock js %}
+
+
+{% block content %}
+
+<div class="form-group">
+  <label class="control-label" for="focusedInput">Команды</label>
+  <input class="form-control" id="team-input" type="text" />
+  <span class="input-group-btn">
+    <button class="btn btn-default" id="search-submit-btn" type="button">Искать</button>
+  </span>
+</div>
+
+<span id="indicator" style="display:none;"><img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/></span>
+<div id="results"></div>
+
+{% include '_modal.html' %}
+
+{% endblock content %}
