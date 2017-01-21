@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from .forms import ClippingsForm
+
 
 def main_view(request):
     return render(request, 'base.html')
@@ -18,5 +20,5 @@ def persons_view(request):
 
 
 def clippings_view(request):
-    return render(request, 'base.html')
-
+    form = ClippingsForm()
+    return render(request, 'documents.html', {'form': form})

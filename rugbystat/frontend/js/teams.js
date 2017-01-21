@@ -85,15 +85,18 @@ var searchManager = {
         // });
 
     },
-
 };
 
-    
+    var timeout;
     $('#team-input').keypress(function() {
-        searchManager.get_list();
+        if(timeout) { 
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(function() {
+            searchManager.get_list();
+        }, 500);
     });
     $('#search-submit-btn').click(function() {
-        debugger;
         searchManager.get_list();
     });
 
