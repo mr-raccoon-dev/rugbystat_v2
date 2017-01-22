@@ -1,18 +1,23 @@
 $().ready(function() {
 
 window.PAGE = 1;
-console.log(window.PAGE);
+window.GETPAGE = true;
 
 var searchDocsManager = {
     get_list: function(page) {
         var q = $("#id_year").val();
 
-        $.getJSON({
-            url: documentListUrl + '?year=' + q + '&page=' + page,
-            success: function(data) {
-                searchDocsManager.process_list(data);
-            }
-        });
+        if(window.GETPAGE == true){
+            $.getJSON({
+                url: documentListUrl + '?year=' + q + '&page=' + page,
+                success: function(data) {
+                    searchDocsManager.process_list(data);
+                },
+                error: function() {
+                    window.GETPAGE = false;
+                }
+            });
+        };
     },
     process_list: function(data) {
         if(data.count > 0) {
@@ -63,6 +68,7 @@ var searchDocsManager = {
 
 $('#search-submit-btn').click(function() {
     window.PAGE = 1;
+    window.GETPAGE = true;
     $("#documents-table tbody").html('');
     searchDocsManager.get_list(window.PAGE);
 });
@@ -76,7 +82,6 @@ $().ajaxStart(function() {
 function yHandler() {
     if(document.body.scrollHeight - window.innerHeight - 50 < window.scrollY){
         window.PAGE += 1;
-        console.log(window.PAGE)
         searchDocsManager.get_list(window.PAGE);
     }
 };
