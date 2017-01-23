@@ -10,28 +10,30 @@
   {% endblock stylesheets %}
   {% block js %}
 <!--   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>  
- -->  
+ -->
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>  
    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>  
   {% endblock js %}
 </head>
 <body>
 
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default" role="navigation">
   <div class="container-fluid">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu-navbar-collapse">
         <span class="sr-only">Навигация</span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
+
       <a class="navbar-brand" href="#">Регбийный архив</a>
     </div>
 
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <div class="collapse navbar-collapse" id="menu-navbar-collapse">
       <ul class="nav navbar-nav">
-        <li><a href="{% url 'teams' %}">Команды</a></li>
+        <li><a href="{% url 'teams' %}">Команды</a> <span class="sr-only">(current)</span></li>
         <li><a href="{% url 'tournaments' %}">Турниры (пока нет)</a></li>
         <li><a href="{% url 'persons' %}">Персоны (пока нет)</a></li>
         <li><a href="{% url 'clippings' %}">Документы</a></li>
@@ -43,7 +45,7 @@
   </div>
 </nav>
 
-<div class="content">
+<div class="content container-fluid">
 {% block content %}
 {% endblock content %}
 </div>
