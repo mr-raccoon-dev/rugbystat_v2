@@ -6,7 +6,7 @@ var searchManager = {
         var q = $("#team-input").val();
 
         $.getJSON({
-            url: teamListUrl + '?search=' + q,
+            url: teamListUrl + '?limit=100&search=' + q,
             success: function(data) {
                 searchManager.process_list(data);
             }
@@ -87,23 +87,30 @@ var searchManager = {
     },
 };
 
-    var timeout;
-    $('#team-input').keypress(function() {
-        if(timeout) { 
-            clearTimeout(timeout);
-        }
-        timeout = setTimeout(function() {
-            searchManager.get_list();
-        }, 500);
-    });
-    $('#search-submit-btn').click(function() {
-        searchManager.get_list();
-    });
 
-    $().ajaxStart(function() {
-        $('#indicator').show();
-    }).ajaxStop(function() {
-        $('#indicator').hide();
-    });
+var timeout;
+
+$('#team-input').keypress(function() {
+    if(timeout) { 
+        clearTimeout(timeout);
+    }
+    timeout = setTimeout(function() {
+        searchManager.get_list();
+    }, 500);
+});
+
+$('#search-submit-btn').click(function() {
+    searchManager.get_list();
+});
+
+
+function yHandler() {
+    if(document.body.scrollHeight - window.innerHeight - 50 < window.scrollY) {
+        window.PAGE += 1;
+        searchManager.get_list(window.PAGE);
+    }
+};
+
+window.onscroll = yHandler;
 
 });

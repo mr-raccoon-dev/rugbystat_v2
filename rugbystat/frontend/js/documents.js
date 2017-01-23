@@ -1,8 +1,5 @@
 $().ready(function() {
 
-window.PAGE = 1;
-window.GETPAGE = true;
-
 var searchDocsManager = {
     get_list: function(page) {
         var q = $("#id_year").val();
@@ -73,12 +70,6 @@ $('#search-submit-btn').click(function() {
     searchDocsManager.get_list(window.PAGE);
 });
 
-$().ajaxStart(function() {
-    $('#indicator').show();
-}).ajaxStop(function() {
-    $('#indicator').hide();
-});
-
 function yHandler() {
     if(document.body.scrollHeight - window.innerHeight - 50 < window.scrollY){
         window.PAGE += 1;
@@ -87,5 +78,4 @@ function yHandler() {
 };
 
 window.onscroll = yHandler;
-
 });
