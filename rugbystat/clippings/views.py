@@ -17,9 +17,9 @@ def import_from_dropbox(request):
 
         req = json.loads(request.body.decode('UTF-8'))
         for uid in req['delta']['users']:
-            # We need to respond quickly to the webhook request, so we do the
-            # actual work in a separate thread.
-            process_user(uid)
+            # We need to respond quickly to the webhook request, 
+            # so we do the actual work in a separate thread.
+            open('{}.lock'.format(uid), 'a').close()
             # TODO: For more robustness, it's a good idea to add the work to a
             # django-rq and process the queue in a worker process.
 
