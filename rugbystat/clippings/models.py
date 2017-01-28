@@ -74,7 +74,8 @@ class SourceObject(models.Model):
 
     def __str__(self):
         if self.edition and not self.source.type == Source.BOOK:
-            return "{}, {}".format(self.source.title, self.edition)
+            return "{} {}, {}".format(
+                self.source.title, self.edition, self.year)
         return self.source.title
 
     @cached_property
@@ -138,7 +139,10 @@ class Document(TitleDescriptionModel, TimeStampedModel):
     title = models.CharField(
         verbose_name=_('Заголовок'), max_length=127, default='Archive')
     source = models.ForeignKey(
-        SourceObject, verbose_name=_('Источник'), related_name='scans',
+        Source, verbose_name=_('Источник'), related_name='scans',
+        blank=True, null=True)
+    source_issue = models.ForeignKey(
+        SourceObject, verbose_name=_('Выпуск'), related_name='scans',
         blank=True, null=True)
     dropbox = models.FileField(
         verbose_name=_('Путь в Dropbox'), storage=MyDropbox(),
@@ -150,7 +154,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         blank=True, null=True)
     year = models.PositiveSmallIntegerField(
         verbose_name=_('Год создания'), blank=True, null=True,
-        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
+        validators=(MinValueValidator(1800), MaxValueValidator(2100)),
     )
     month = models.PositiveSmallIntegerField(
         verbose_name=_('Месяц'), validators=[MaxValueValidator(12)],
@@ -225,8 +229,9 @@ class Document(TitleDescriptionModel, TimeStampedModel):
 
     def get_thumb_path(self):
         try:
-            result = self.client.metadata('/.thumbs/{}'.format(self.filename))
-            if result['is_deleted']:
+            meta = self.client.metadata('/.thumbs/{}'.format(self.filename))
+            result = meta['path']
+            if meta['is_deleted']:
                 result = self.create_dropbox_thumb()
         except ErrorResponse:
             result = self.create_dropbox_thumb()
