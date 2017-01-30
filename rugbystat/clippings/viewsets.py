@@ -13,7 +13,7 @@ __author__ = 'krnr'
 class DocumentViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Document.objects.not_deleted().prefetch_related('versions')
     serializer_class = DocumentSerializer
-    filter_fields = ('year', 'date', 'is_image')
+    filter_fields = ('year', 'date', 'is_image', 'source', 'source__type')
 
     def get_queryset(self):
         qs = self.queryset

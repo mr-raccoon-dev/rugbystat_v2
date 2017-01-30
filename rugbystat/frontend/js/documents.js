@@ -2,11 +2,27 @@ $().ready(function() {
 
 var searchDocsManager = {
     get_list: function(page) {
-        var q = $("#id_year").val();
+        var year = $("#id_year").val(),
+            source = $("#id_source").val(),
+            source_type = $("#id_source_type").val(),
+            query_params = {'page': page};
+
+        if(year != '') {
+            query_params['year'] = year;
+        };
+        if(source != '') {
+            query_params['source'] = source;
+        };
+        if(source_type != '') {
+            query_params['source__type'] = source_type;
+        };
+
+        console.log(query_params);
 
         if(window.GETPAGE == true){
             $.getJSON({
-                url: documentListUrl + '?year=' + q + '&page=' + page,
+                url: documentListUrl,
+                data: query_params,
                 success: function(data) {
                     searchDocsManager.process_list(data);
                 },

@@ -29,13 +29,13 @@ class Source(models.Model):
     BOOK = 'book'
     OTHER = 'other'
     TYPE_CHOICES = (
-        (PHOTO, 'photo'),
-        (NEWSPAPER, 'newspaper'),
-        (MAGAZINE, 'magazine'),
-        (PROTOCOL, 'protocol'),
-        (PROGRAM, 'program'),
-        (BOOK, 'book'),
-        (OTHER, 'other'),
+        (PHOTO, 'фото'),
+        (NEWSPAPER, 'газета'),
+        (MAGAZINE, 'журнал'),
+        (PROTOCOL, 'протокол'),
+        (PROGRAM, 'программка'),
+        (BOOK, 'книга'),
+        (OTHER, 'прочее'),
     )
     title = models.CharField(
         verbose_name=_('Название'), max_length=127, default='N/A')
@@ -231,7 +231,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         try:
             meta = self.client.metadata('/.thumbs/{}'.format(self.filename))
             result = meta['path']
-            if meta['is_deleted']:
+            if meta.get('is_deleted'):
                 result = self.create_dropbox_thumb()
         except ErrorResponse:
             result = self.create_dropbox_thumb()
