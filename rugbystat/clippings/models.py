@@ -172,6 +172,9 @@ class Document(TitleDescriptionModel, TimeStampedModel):
 
     objects = DocumentQuerySet.as_manager()
 
+    class Meta:
+        ordering = ('year', 'month', 'title' )
+
     def __init__(self, *args, **kwargs):
         super(Document, self).__init__(*args, **kwargs)
         self.client = self.dropbox.storage.client

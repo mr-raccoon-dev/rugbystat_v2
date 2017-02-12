@@ -28,4 +28,8 @@ class DocumentAdmin(admin.ModelAdmin):
         'is_image', 
         'is_deleted', 
     )
+    list_display = (
+        'title', 'source', 
+    )
     search_fields = ('title', )
+    filter_horizontal = ('tag', 'versions')
