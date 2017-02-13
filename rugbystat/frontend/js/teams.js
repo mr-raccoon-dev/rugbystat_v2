@@ -104,13 +104,13 @@ $('#search-submit-btn').click(function() {
 });
 
 
-function yHandler() {
-    if(document.body.scrollHeight - window.innerHeight - 50 < window.scrollY) {
-        window.PAGE += 1;
-        searchManager.get_list(window.PAGE);
-    }
-};
+// function yHandler() {
+//     if(document.body.scrollHeight - window.innerHeight - 50 < window.scrollY) {
+//         window.PAGE += 1;
+//         searchManager.get_list(window.PAGE);
+//     }
+// };
 
-window.onscroll = yHandler;
+// window.onscroll = yHandler;
 
 });
