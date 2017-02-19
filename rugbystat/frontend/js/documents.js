@@ -17,7 +17,7 @@ var searchDocsManager = {
             query_params['source__type'] = source_type;
         };
 
-        console.log(query_params);
+        // console.log(query_params);
 
         if(window.GETPAGE == true){
             $.getJSON({
@@ -58,9 +58,15 @@ var searchDocsManager = {
                     year = item.year
                 };
 
+                if (item.description == null) {
+                    var description = "";
+                } else {
+                    var description = item.description.replace(/(\r\n|\n|\r)/gm, "<br>");
+                };
+
                 $('#documents-table tbody').append('<tr class="document-row">' + 
                     '<td>' + item.title + '</td>' +
-                    '<td>' + item.description + '</td>' +
+                    '<td>' + description + '</td>' +
                     '<td>' + year + '</td>' +
                     '<td>' + link + '</td>' +
                     '</tr>');
