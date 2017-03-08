@@ -24,12 +24,44 @@ class SourceObjectAdmin(admin.ModelAdmin):
 class DocumentAdmin(admin.ModelAdmin):
     list_filter = (
         ('year', DropdownFilter),
+        ('source__title', DropdownFilter), 
         'source__type', 
         'is_image', 
         'is_deleted', 
     )
     list_display = (
-        'title', 'source', 
+        'title', 'source', 'preview'
     )
     search_fields = ('title', )
     filter_horizontal = ('tag', 'versions')
+    readonly_fields = ('preview',)
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'description', 'preview')
+            }
+        ),
+        (None, {
+            'fields': (('source', 'source_issue'), )
+            }
+        ),
+        (None, {
+            'fields': ('dropbox', 'dropbox_path', 'dropbox_thumb')
+            }
+        ),
+        (None, {
+            'fields': (('year', 'month', 'date'),)
+            }
+        ),
+        (None, {
+            'fields': ('versions', 'tag')
+            }
+        ),
+        (None, {
+            'fields': (('is_image', 'is_deleted'),)
+            }
+        ),
+    )
+
+    def preview(self, obj):
+        return '<img src="{}"/>'.format(obj.dropbox_thumb)
+    preview.allow_tags = True
