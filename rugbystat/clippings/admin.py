@@ -66,7 +66,9 @@ class DocumentAdmin(admin.ModelAdmin):
     )
 
     def preview(self, obj):
-        return '<img src="{}"/>'.format(obj.dropbox_thumb)
+        if obj.is_image:
+            return '<img src="{}"/>'.format(obj.dropbox_thumb)
+        return '-'
     preview.allow_tags = True
 
     def set_source_action(self, request, queryset):
