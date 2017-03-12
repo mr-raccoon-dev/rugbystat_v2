@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin.filters import AllValuesFieldListFilter
 
-from clippings.models import Source, SourceObject, Document
+from .forms import SourceForm
+from .models import Source, SourceObject, Document
 
 
 class DropdownFilter(AllValuesFieldListFilter):
@@ -33,8 +34,10 @@ class DocumentAdmin(admin.ModelAdmin):
         'title', 'source', 'preview'
     )
     search_fields = ('title', )
-    filter_horizontal = ('tag', 'versions')
     readonly_fields = ('preview',)
+    action_form = SourceForm
+    actions = ['set_source_action']
+    filter_horizontal = ('tag', 'versions')
     fieldsets = (
         (None, {
             'fields': ('title', 'description', 'preview')
@@ -65,3 +68,10 @@ class DocumentAdmin(admin.ModelAdmin):
     def preview(self, obj):
         return '<img src="{}"/>'.format(obj.dropbox_thumb)
     preview.allow_tags = True
+
+    def set_source_action(self, request, queryset):
+        source = request.POST['source']
+        updated = queryset.update(source=source)
+        messages.success(request, 
+                         '{0} documents were updated'.format(updated))
+    set_source_action.short_description = u'Update source'
