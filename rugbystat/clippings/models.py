@@ -39,7 +39,7 @@ class Source(models.Model):
     )
     title = models.CharField(
         verbose_name=_('Название'), max_length=127, default='N/A')
-    type = models.CharField(
+    kind = models.CharField(
         verbose_name=_('Тип'), max_length=127,
         choices=TYPE_CHOICES, default=PHOTO)
 
@@ -51,7 +51,7 @@ class Source(models.Model):
 
     @cached_property
     def documents(self):
-        return Document.objects.filter(source__source_id=self.id)
+        return self.scans.not_deleted().prefetch_related('versions')
 
     def as_dict(self):
         result = dict(self.__dict__)
@@ -73,7 +73,7 @@ class SourceObject(models.Model):
         ordering = ('source', 'year', )
 
     def __str__(self):
-        if self.edition and not self.source.type == Source.BOOK:
+        if self.edition and not self.source.kind == Source.BOOK:
             return "{} {}, {}".format(
                 self.source.title, self.edition, self.year)
         return self.source.title
@@ -144,6 +144,10 @@ class Document(TitleDescriptionModel, TimeStampedModel):
     source_issue = models.ForeignKey(
         SourceObject, verbose_name=_('Выпуск'), related_name='scans',
         blank=True, null=True)
+    kind = models.CharField(
+        verbose_name=_('Тип'), max_length=127,
+        choices=Source.TYPE_CHOICES, 
+        blank=True)
     dropbox = models.FileField(
         verbose_name=_('Путь в Dropbox'), storage=MyDropbox(),
         blank=True, null=True)
@@ -165,8 +169,8 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         verbose_name=_('Этот файл изображение?'), default=False)
     is_deleted = models.BooleanField(
         verbose_name=_('Файл удален?'), default=False)
-    versions = models.ManyToManyField('self', verbose_name=_('Версии файла'), 
-        blank=True, )
+    versions = models.ManyToManyField(
+        'self', verbose_name=_('Версии файла'), blank=True, )
     tag = models.ManyToManyField(
         TagObject, verbose_name=_('Содержит сведения о'), blank=True, )
 
@@ -191,7 +195,6 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         return self.title
 
     def save(self, **kwargs):
-
         if not self.dropbox_path and self.dropbox:
             if self.extension in ['jpg', 'jpeg', 'png', 'tiff', 'tif', 'gif']:
                 self.is_image = True
@@ -200,6 +203,10 @@ class Document(TitleDescriptionModel, TimeStampedModel):
             else:
                 self.dropbox_path = self.get_share_link(self.dropbox.name, 
                                                         convert=False)
+
+        if not self.kind and self.source:
+            self.kind = self.source.kind
+
         super(Document, self).save(**kwargs)
 
     def get_share_link(self, path, convert=True):

@@ -7,9 +7,9 @@ __author__ = 'krnr'
 
 
 class SourceObjectFilter(FilterSet):
-    type = CharFilter(name="source__type")
+    kind = CharFilter(name="source__kind")
     title = CharFilter(name="source__title")
 
     class Meta:
         model = SourceObject
-        fields = ['year', 'date', 'type', 'title']
+        fields = ['year', 'date', 'kind', 'title']

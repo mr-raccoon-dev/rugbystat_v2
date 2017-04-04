@@ -25,7 +25,7 @@ class DocumentSerializer(ModelSerializer):
     # versions = RecursiveField(many=True)
     class Meta:
         model = Document
-        fields = ('id', 'title', 'description', 'dropbox_path',
+        fields = ('id', 'title', 'description', 'dropbox_path', 'kind',
                   'dropbox_thumb', 'year', 'month', 'date', 'is_image',
                   'versions',
                   )
@@ -45,9 +45,12 @@ class SourceObjectSerializer(ModelSerializer):
 
 class SourceSerializer(ModelSerializer):
     documents = DocumentSerializer(many=True)
-    instances = SourceObjectSerializer(many=True)
+    # instances = SourceObjectSerializer(many=True)
 
     class Meta:
         model = Source
-        fields = ('title', 'type', 'instances', 'documents')
+        fields = ('title', 'kind', 
+            # 'instances', 
+            'documents'
+            )
 

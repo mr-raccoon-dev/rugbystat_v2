@@ -7,6 +7,16 @@ ALLOWED_HOSTS = ["*"]
 for config in TEMPLATES:
     config['OPTIONS']['debug'] = DEBUG
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'rugbystat$staging_db',
+        'USER': 'root',
+        'PASSWORD': '123',
+        'HOST': 'localhost',
+    }
+}
+
 # Testing
 INSTALLED_APPS += ('django_nose',)
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

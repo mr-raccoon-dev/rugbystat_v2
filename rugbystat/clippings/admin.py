@@ -11,7 +11,7 @@ class DropdownFilter(AllValuesFieldListFilter):
 
 @admin.register(Source)
 class SourceAdmin(admin.ModelAdmin):
-    list_filter = ('type', )
+    list_filter = ('kind', )
     search_fields = ('title', )
 
 
@@ -26,12 +26,12 @@ class DocumentAdmin(admin.ModelAdmin):
     list_filter = (
         ('year', DropdownFilter),
         ('source__title', DropdownFilter), 
-        'source__type', 
+        'kind', 
         'is_image', 
         'is_deleted', 
     )
     list_display = (
-        'title', 'source', 'preview'
+        'id', 'title', 'source', 'preview'
     )
     search_fields = ('title', )
     readonly_fields = ('preview',)
@@ -44,7 +44,7 @@ class DocumentAdmin(admin.ModelAdmin):
             }
         ),
         (None, {
-            'fields': (('source', 'source_issue'), )
+            'fields': (('source', 'source_issue', 'kind'), )
             }
         ),
         (None, {
