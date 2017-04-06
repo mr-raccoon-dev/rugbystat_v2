@@ -15,8 +15,8 @@
 {% else %}
 
     {% for choice in choices %}
-            <li{% if choice.selected %} class="selected"{% endif %}>
-            <a href="{{ choice.query_string|iriencode }}">{{ choice.display }}</a></li>
+        <li{% if choice.selected %} class="selected"{% endif %}>
+        <a href="{{ choice.query_string|iriencode }}">{{ choice.display }}</a></li>
     {% endfor %}
 
 {% endif %}
