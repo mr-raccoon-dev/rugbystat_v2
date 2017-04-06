@@ -35,7 +35,7 @@ class DocumentAdmin(admin.ModelAdmin):
         'is_deleted', 
     )
     list_display = (
-        'id', 'title', 'source', 'preview'
+        'id', 'title', 'source', 'kind', 'preview'
     )
     search_fields = ('title', )
     readonly_fields = ('preview',)
