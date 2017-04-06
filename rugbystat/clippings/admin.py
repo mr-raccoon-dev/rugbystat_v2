@@ -8,6 +8,10 @@ from .models import Source, SourceObject, Document
 class DropdownFilter(AllValuesFieldListFilter):
     template = 'admin/dropdown_filter.html'
 
+    def __init__(self, *args, **kwargs):
+        super(DropdownFilter, self).__init__(*args, **kwargs)
+        self.lookup_choices = [None] + list(self.lookup_choices)
+
 
 @admin.register(Source)
 class SourceAdmin(admin.ModelAdmin):
@@ -26,7 +30,7 @@ class DocumentAdmin(admin.ModelAdmin):
     list_filter = (
         ('year', DropdownFilter),
         ('source__title', DropdownFilter), 
-        'kind', 
+        ('kind', DropdownFilter), 
         'is_image', 
         'is_deleted', 
     )
