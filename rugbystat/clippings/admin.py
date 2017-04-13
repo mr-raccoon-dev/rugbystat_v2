@@ -77,7 +77,7 @@ class DocumentAdmin(admin.ModelAdmin):
 
     def set_source_action(self, request, queryset):
         source = request.POST['source']
-        updated = queryset.update(source=source)
+        updated = queryset.update(source=source, kind=source.kind)
         messages.success(request, 
                          '{0} documents were updated'.format(updated))
     set_source_action.short_description = u'Update source'
