@@ -14,7 +14,7 @@ var searchDocsManager = {
             query_params['source'] = source;
         };
         if(source_type != '') {
-            query_params['source__type'] = source_type;
+            query_params['kind'] = source_type;
         };
 
         // console.log(query_params);
