@@ -14,7 +14,7 @@ class StadiumAdmin(admin.ModelAdmin):
     list_display = ('name', 'city', )
     list_select_related = ('city', )
     list_filter = (
-        ('city', DropdownFilter),
+        ('city__name', DropdownFilter),
     )
 
 
@@ -23,7 +23,7 @@ class TeamAdmin(admin.ModelAdmin):
     list_display = ('short_name', 'city', )
     list_select_related = ('city', )
     list_filter = (
-        ('city', DropdownFilter),
+        ('city__name', DropdownFilter),
         ('year', DropdownFilter),
     )
     search_fields = ('short_name', )
