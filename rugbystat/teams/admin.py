@@ -1,5 +1,7 @@
 from django.contrib import admin
-from teams.models import Person, Team, Stadium, City
+
+from clippings.admin import DropdownFilter
+from .models import Person, Team, Stadium, City
 
 
 @admin.register(City)
@@ -11,18 +13,25 @@ class CityAdmin(admin.ModelAdmin):
 class StadiumAdmin(admin.ModelAdmin):
     list_display = ('name', 'city', )
     list_select_related = ('city', )
-    list_filter = ('city', )
+    list_filter = (
+        ('city', DropdownFilter),
+    )
 
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('short_name', 'city', )
     list_select_related = ('city', )
-    list_filter = ('city', 'year', )
+    list_filter = (
+        ('city', DropdownFilter),
+        ('year', DropdownFilter),
+    )
     search_fields = ('short_name', )
 
 
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
     search_fields = ('name', 'first_name', )
-    list_filter = ('year', )
+    list_filter = (
+        ('year', DropdownFilter),
+    )
