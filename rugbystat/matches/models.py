@@ -5,11 +5,21 @@ from teams.models import TagObject, Team, Stadium, Person
 
 
 class Tournament(TagObject):
+    """Representation of each tournament that might exist:
+
+    - Чемпионат СССР
+    - Чемпионат СССР. Первая лига
+    - Кубок СССР
+    - Первенство Украины
+    ...
+    """
+    # TODO: might have some `level` field
     def __str__(self):
         return self.name
 
 
 class Season(TagObject):
+    """Each specific drawing of a Tournament"""
     tourn = models.ForeignKey(
         Tournament, verbose_name=_("Турнир"), related_name='seasons')
     date_start = models.DateField(verbose_name=_("Дата начала"))

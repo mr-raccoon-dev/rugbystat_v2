@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from clippings.admin import DropdownFilter
-from .models import Person, Team, Stadium, City
+from .models import Person, PersonSeason, Team, Stadium, City
 
 
 @admin.register(City)
@@ -29,9 +29,29 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = ('short_name', )
 
 
+class PersonSeasonInline(admin.TabularInline):
+    model = PersonSeason
+    extra = 1
+
+
 @admin.register(Person)
 class PersonAdmin(admin.ModelAdmin):
     search_fields = ('name', 'first_name', )
     list_filter = (
         ('year', DropdownFilter),
+    )
+    inlines = [
+        PersonSeasonInline,
+    ]
+
+
+@admin.register(PersonSeason)
+class PersonSeasonAdmin(admin.ModelAdmin):
+    search_fields = ('person__name', 'person__first_name', )
+    list_display = ('__str__', 'role',)
+    list_select_related = ('person', )
+    list_filter = (
+        ('person__name', DropdownFilter),
+        ('year', DropdownFilter),
+        ('team__name', DropdownFilter),
     )

@@ -118,3 +118,52 @@ class Person(TagObject):
 
     def __str__(self):
         return "{} {}".format(self.first_name, self.name)
+
+
+class PersonSeason(models.Model):
+    """Representation of each year in a person's career"""
+    PLAYER = 'player'
+    PROP = 'prop'
+    HOOKER = 'hooker'
+    LOCK = 'lock'
+    BACKROW = 'backrow'
+    SH = 'scrum-half'
+    FH = 'fly-half'
+    CENTER = 'center'
+    WINGER = 'winger'
+    FB = 'fullback'
+    REF = 'referee'
+    COACH = 'coach'
+    
+    ROLE_CHOICES = (
+        (PLAYER, _('игрок')),
+        (PROP, _('1/3')),
+        (HOOKER, _('2')),
+        (LOCK, _('4/5')),
+        (BACKROW, _('6-8')),
+        (SH, _('9')),
+        (FH, _('10')),
+        (CENTER, _('12/13')),
+        (WINGER, _('11/14')),
+        (FB, _('15')),
+        (REF, _('судья')),
+        (COACH, _('тренер')),
+    )
+
+    person = models.ForeignKey(
+        Person, verbose_name=_('Персона'), related_name='seasons', )
+    year = models.PositiveSmallIntegerField(
+        verbose_name=_('Год'),
+        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
+    )
+    role = models.CharField(
+        verbose_name=_('Тип'), max_length=127,
+        choices=ROLE_CHOICES, default=PLAYER)
+    team = models.ForeignKey(
+        Team, verbose_name=_('Команда'), related_name='_person_seasons', 
+        blank=True, null=True
+    )
+    story = models.TextField(verbose_name=_('История'), blank=True, )
+
+    def __str__(self):
+        return "{} {}".format(self.person, self.year)
