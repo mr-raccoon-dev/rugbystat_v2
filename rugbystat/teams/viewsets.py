@@ -24,6 +24,10 @@ class TeamViewSet(viewsets.ReadOnlyModelViewSet):
 class PersonViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
+    filter_backends = (filters.SearchFilter,
+                       filters.DjangoFilterBackend,)
+    search_fields = ('^name', '^first_name',)
+    filter_fields = ('year', 'name',)
 
 
 class PersonSeasonViewSet(viewsets.ReadOnlyModelViewSet):
