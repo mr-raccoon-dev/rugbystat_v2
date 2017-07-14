@@ -40,6 +40,20 @@ class PersonAdmin(admin.ModelAdmin):
     list_filter = (
         ('year', DropdownFilter),
     )
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'first_name', 'middle_name', )
+            }
+        ),
+        (None, {
+            'fields': ('story',)
+            }
+        ),
+        (None, {
+            'fields': (('year', 'dob',), ('year_death', 'dod',), 'is_dead')
+            }
+        ),
+    )
     inlines = [
         PersonSeasonInline,
     ]

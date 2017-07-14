@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from clippings.serializers import DocumentSerializer
-from .models import Team, City
+from .models import Team, City, Person, PersonSeason
 
 __author__ = 'krnr'
 
@@ -28,3 +28,21 @@ class TeamSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'short_name', 'story', 'city',
                   'year', 'disband_year', 'operational_years',
                   'parent', 'documents')
+
+
+class PersonSeasonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PersonSeason
+        fields = ('id', '__str__', 'person', 'team', 
+                  'year', 'story', 'role')
+
+
+class PersonSerializer(serializers.ModelSerializer):
+    seasons = PersonSeasonSerializer(many=True)
+
+    class Meta:
+        model = Person
+        fields = ('id', '__str__', 'full_name', 'story',
+                  'year', 'dob', 'year_death', 'dod', 'living_years',
+                  'seasons')
+

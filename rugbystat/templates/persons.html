@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block css %}
+{{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
+{% endblock css %}
+
+{% block js %}
+{{ block.super }}
+  <script type="text/javascript" src="{% static 'js/persons.js' %}"></script>
+  <script type="text/javascript">
+    var personListUrl = "{% url 'person-list' %}";
+  </script>
+
+{% endblock js %}
+
+
+{% block content %}
+
+<div class="form-group">
+  <label class="control-label" for="focusedInput">Персоны</label>
+  <div class="input-group">
+    <input type="text" class="form-control" id="person-input" />
+    <span class="input-group-btn">
+      <button class="btn btn-default" id="search-submit-btn" type="button">Искать</button>
+    </span>
+  </div>
+</div>
+
+<span id="indicator" style="display:none;"><img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/></span>
+<div id="results"></div>
+
+{% include '_modal.html' %}
+
+{% endblock content %}

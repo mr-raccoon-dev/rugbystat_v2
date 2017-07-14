@@ -15,12 +15,13 @@ from clippings.viewsets import (DocumentViewSet,
                                 SourceObjectViewSet)
 from main import views
 from teams.views import import_teams
-from teams.viewsets import TeamViewSet
+from teams.viewsets import TeamViewSet, PersonViewSet, PersonSeasonViewSet
 from users.viewsets import UserViewSet
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'teams', TeamViewSet)
+router.register(r'persons', PersonViewSet)
 router.register(r'teams/(?P<team_id>\d+)/documents', DocumentViewSet)
 router.register(r'documents', DocumentViewSet)
 router.register(r'sources', SourceViewSet)

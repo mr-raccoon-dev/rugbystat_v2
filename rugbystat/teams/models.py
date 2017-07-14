@@ -115,9 +115,39 @@ class Person(TagObject):
     )
     dob = models.DateField(
         verbose_name=_('Дата рождения'), blank=True, null=True,)
+    year_death = models.PositiveSmallIntegerField(
+        verbose_name=_('Год смерти'), blank=True, null=True,
+        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
+    )
+    dod = models.DateField(
+        verbose_name=_('Дата смерти'), blank=True, null=True,)
+    is_dead = models.BooleanField(
+        verbose_name=_('Умер'), default=False,
+    )
 
     def __str__(self):
         return "{} {}".format(self.first_name, self.name)
+
+    @property
+    def full_name(self):
+        return " ".join(filter(bool, [self.name, self.first_name, self.middle_name]))
+
+    @property
+    def living_years(self):
+        birth = self.dob or self.year or '???'
+        death = self.dod or self.year_death or '???'
+        if self.is_dead:
+            return "{}-{}".format(birth, death)
+        return "{}".format(birth)
+
+    def save(self, **kwargs):
+        if self.dob:
+            self.year = self.dob.year
+        if self.dod:
+            self.year_death = self.dod.year
+        if self.dod or self.year_death:
+            self.is_dead = True
+        super(Person, self).save(**kwargs)
 
 
 class PersonSeason(models.Model):

@@ -16,7 +16,7 @@ def tournaments_view(request):
 
 
 def persons_view(request):
-    return render(request, 'base.html')
+    return render(request, 'persons.html')
 
 
 def clippings_view(request):
