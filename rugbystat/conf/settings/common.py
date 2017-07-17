@@ -18,6 +18,7 @@ INSTALLED_APPS = (
     'versatileimagefield',       # image manipulation
     'django_dropbox',
     'django_extensions',
+    'adminsortable2',
 
     # Your apps
     'authentication',

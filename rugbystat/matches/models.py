@@ -13,7 +13,13 @@ class Tournament(TagObject):
     - Первенство Украины
     ...
     """
-    # TODO: might have some `level` field
+    level = models.PositiveSmallIntegerField(
+        verbose_name=_('Уровень'), default=0, blank=False, null=False
+    )
+
+    class Meta:
+        ordering = ('level', )
+
     def __str__(self):
         return self.name
 

@@ -1,6 +1,7 @@
 # Django
 Django==1.10.4
 django-extensions==1.7.5
+django-admin-sortable2==0.6.13
 
 # For the persistence stores
 # psycopg2==2.6.2
