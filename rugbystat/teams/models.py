@@ -181,19 +181,28 @@ class PersonSeason(models.Model):
     )
 
     person = models.ForeignKey(
-        Person, verbose_name=_('Персона'), related_name='seasons', )
+        Person, verbose_name=_('Персона'), related_name='seasons', 
+    )
     year = models.PositiveSmallIntegerField(
         verbose_name=_('Год'),
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
     )
     role = models.CharField(
         verbose_name=_('Тип'), max_length=127,
-        choices=ROLE_CHOICES, default=PLAYER)
+        choices=ROLE_CHOICES, default=PLAYER
+    )
     team = models.ForeignKey(
         Team, verbose_name=_('Команда'), related_name='_person_seasons', 
         blank=True, null=True
     )
+    tournament = models.ForeignKey(
+        'matches.Tournament', verbose_name=_('Турнир'), 
+        related_name='_person_seasons', blank=True, null=True
+    )
     story = models.TextField(verbose_name=_('История'), blank=True, )
 
+    class Meta:
+        ordering = ('-year', )
+            
     def __str__(self):
         return "{} {}".format(self.person, self.year)
