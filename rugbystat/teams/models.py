@@ -206,3 +206,7 @@ class PersonSeason(models.Model):
             
     def __str__(self):
         return "{} {}".format(self.person, self.year)
+
+    @property
+    def role_verbose(self):
+        return dict(self.ROLE_CHOICES).get(self.role)

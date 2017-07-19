@@ -32,6 +32,7 @@ class TeamAdmin(admin.ModelAdmin):
 class PersonSeasonInline(admin.TabularInline):
     model = PersonSeason
     extra = 1
+    raw_id_fields = ('team', )
 
 
 @admin.register(Person)
@@ -69,3 +70,4 @@ class PersonSeasonAdmin(admin.ModelAdmin):
         ('year', DropdownFilter),
         ('team__name', DropdownFilter),
     )
+    raw_id_fields = ('team', )

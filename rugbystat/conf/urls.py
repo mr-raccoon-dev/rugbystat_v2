@@ -14,7 +14,7 @@ from clippings.viewsets import (DocumentViewSet,
                                 SourceViewSet,
                                 SourceObjectViewSet)
 from main import views
-from teams.views import import_teams
+from teams.views import import_teams, PersonDetailView
 from teams.viewsets import TeamViewSet, PersonViewSet, PersonSeasonViewSet
 from users.viewsets import UserViewSet
 
@@ -37,7 +37,9 @@ urlpatterns = [
 
     url(r'^teams/', views.teams_view, name='teams'),
     url(r'^tournaments/', views.tournaments_view, name='tournaments'),
-    url(r'^persons/', views.persons_view, name='persons'),
+    url(r'^persons/$', views.persons_view, name='persons'),
+    url(r'^persons/(?P<pk>\d+)/', PersonDetailView.as_view(), name='persons_detail'),
+
     url(r'^clippings/', views.clippings_view, name='clippings'),
     url(r'^$', views.main_view),
 

@@ -3,11 +3,14 @@
 {% load staticfiles %}
 
 {% block css %}
+
 {{ block.super }}
   <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
+
 {% endblock css %}
 
 {% block js %}
+
 {{ block.super }}
   <script type="text/javascript" src="{% static 'js/persons.js' %}"></script>
   <script type="text/javascript">
