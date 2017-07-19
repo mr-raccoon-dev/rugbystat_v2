@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic import DetailView
+from django.views.generic import UpdateView
 
-from .forms import ImportForm
+from .forms import ImportForm, PersonForm
 from .models import Person
 
 
@@ -18,5 +18,7 @@ def import_teams(request):
     return render(request, 'import.html', {'form': form})
 
 
-class PersonDetailView(DetailView):
+class PersonDetailView(UpdateView):
     model = Person
+    form_class = PersonForm
+    

@@ -1,8 +1,10 @@
 import re
 
 from django import forms
+from django.utils.translation import ugettext_lazy as _
+from moderation.forms import BaseModeratedObjectForm
 
-from .models import Team, City
+from .models import Team, City, Person
 
 __author__ = 'krnr'
 
@@ -61,3 +63,13 @@ class ImportForm(forms.Form):
     def clean(self):
         data = super(ImportForm, self).clean()
         parse_teams(data['input'])
+
+
+class PersonForm(BaseModeratedObjectForm):
+    """Edit Person attributes"""
+    name = forms.CharField(max_length=32, label=_('Фамилия'))
+
+    class Meta:
+        model = Person
+        fields = ('name', 'first_name', 'middle_name', 'story',
+                  'year', 'dob', 'year_death', 'dod', 'is_dead')

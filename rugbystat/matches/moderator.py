@@ -17,5 +17,5 @@ class MatchModerator(NoNotifyModerator):
     pass
 
 
-moderation.register(Season, SeasonModerator)
-moderation.register(Match, MatchModerator)
+moderation.register(Season)
+moderation.register(Match)

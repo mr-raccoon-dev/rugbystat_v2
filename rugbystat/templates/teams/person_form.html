@@ -37,7 +37,26 @@
 
 <h2>{{ object.full_name }}</h2>
 
-{{ form }}
+<form>
+<div id="nameForm">
+{{ form.name.as_hidden }}
+{{ form.first_name.as_hidden }}
+{{ form.middle_name.as_hidden }}
+</div>
+<div id="storyForm">
+{{ form.story.as_hidden }}
+</div>
+<div id="dossierForm">
+{{ form.year.as_hidden }}
+{{ form.dob.as_hidden }}
+{{ form.year_death.as_hidden }}
+{{ form.dod.as_hidden }}
+{{ form.is_dead.as_hidden }}
+</div>
+<div id="submitForm">
+    <button class="btn btn-default" id="submitPersonForm" type="button">Сохранить</button>
+</div>
+</form>
 
 <div class="dossier">
   {% if "-" in object.living_years %}

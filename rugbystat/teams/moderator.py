@@ -21,6 +21,6 @@ class PersonSeasonModerator(NoNotifyModerator):
     pass
 
 
-moderation.register(Team, TeamModerator)
-moderation.register(Person, PersonModerator)
-moderation.register(PersonSeason, PersonSeasonModerator)
+moderation.register(Team)
+moderation.register(Person)
+moderation.register(PersonSeason)
