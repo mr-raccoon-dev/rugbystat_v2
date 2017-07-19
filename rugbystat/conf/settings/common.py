@@ -10,6 +10,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # Third party apps
     'rest_framework',
@@ -19,6 +20,7 @@ INSTALLED_APPS = (
     'django_dropbox',
     'django_extensions',
     'adminsortable2',
+    'moderation',
 
     # Your apps
     'authentication',
@@ -73,6 +75,7 @@ LANGUAGE_CODE = 'ru-ru'
 USE_I18N = False
 USE_L10N = True
 USE_TZ = True
+SITE_ID = 1
 
 # Static Files
 STATIC_ROOT = os.path.join(BASE_DIR, '../static_root')

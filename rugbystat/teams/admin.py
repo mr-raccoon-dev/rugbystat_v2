@@ -1,4 +1,5 @@
 from django.contrib import admin
+from moderation.admin import ModerationAdmin
 
 from clippings.admin import DropdownFilter
 from .models import Person, PersonSeason, Team, Stadium, City
@@ -36,7 +37,7 @@ class PersonSeasonInline(admin.TabularInline):
 
 
 @admin.register(Person)
-class PersonAdmin(admin.ModelAdmin):
+class PersonAdmin(ModerationAdmin):
     search_fields = ('name', 'first_name', )
     list_filter = (
         ('year', DropdownFilter),
