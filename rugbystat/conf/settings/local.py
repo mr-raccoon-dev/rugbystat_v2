@@ -17,6 +17,12 @@ DATABASES = {
     }
 }
 
+TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
+TEMPLATES[0]['OPTIONS']['loaders'] = [
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+]
+
 # django-debug-toolbar
 # MIDDLEWARE += ('debug_toolbar.middleware.DebugToolbarMiddleware', )
 # INSTALLED_APPS += ('debug_toolbar', )
@@ -63,18 +69,11 @@ RQ_QUEUES = {
 
 INSTALLED_APPS += ('storages',)
 
-CACHE_DIR = os.path.join(BASE_DIR, '.diskcache')
-if not os.path.isdir(CACHE_DIR):
-    try:
-        os.makedirs(CACHE_DIR)  # race condition!
-    except OSError:
-        pass
-
+# CACHING
+# ------------------------------------------------------------------------------
 CACHES = {
     'default': {
-        'BACKEND': 'diskcache.DjangoCache',
-        'LOCATION': CACHE_DIR,
-        'SHARDS': 4,
-        'DATABASE_TIMEOUT': 1.0,
-    },
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': ''
+    }
 }

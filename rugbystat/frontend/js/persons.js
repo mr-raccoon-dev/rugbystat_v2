@@ -1,5 +1,11 @@
 $().ready(function() {
 
+$('div.date').datepicker({
+  locale: 'ru',
+  pickTime: false,
+  format: "dd.mm.yyyy", 
+});
+
 var searchManager = {
     get_list: function() {
         $("#results").html('');
@@ -38,5 +44,10 @@ $('#person-input').keypress(function() {
 $('#search-submit-btn').click(function() {
     searchManager.get_list();
 });
+
+$('.editable').click(function() {
+    var selector = this.id + 'Form';
+    $("#" + selector).show();
+})
 
 });

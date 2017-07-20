@@ -26,3 +26,5 @@ pip-log.txt
 
 env
 site
+
+bower_components/

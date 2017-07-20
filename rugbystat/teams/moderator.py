@@ -1,10 +1,10 @@
 from moderation import moderation
-from moderation.db import ModeratedModel
+from moderation.moderator import GenericModerator
 
 from .models import Team, Person, PersonSeason
 
 
-class NoNotifyModerator(ModeratedModel):
+class NoNotifyModerator(GenericModerator):
     notify_moderator = False
     notify_user = False
 
@@ -21,6 +21,6 @@ class PersonSeasonModerator(NoNotifyModerator):
     pass
 
 
-moderation.register(Team)
-moderation.register(Person)
-moderation.register(PersonSeason)
+moderation.register(Team, TeamModerator)
+moderation.register(Person, PersonModerator)
+moderation.register(PersonSeason, PersonSeasonModerator)

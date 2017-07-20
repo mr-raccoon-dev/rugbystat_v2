@@ -1,0 +1,21 @@
+{
+  "name": "rugbystat",
+  "homepage": "https://github.com/krnr/rugbystat_v2",
+  "authors": [
+    "krnr <serova_s@land.ru>"
+  ],
+  "description": "Soviet rugby statistics",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47"
+  }
+}
