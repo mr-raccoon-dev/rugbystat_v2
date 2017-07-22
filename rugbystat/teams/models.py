@@ -1,5 +1,5 @@
-from django.core.validators import MinValueValidator
-from django.core.validators import MaxValueValidator
+from django.core.urlresolvers import reverse
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -148,6 +148,9 @@ class Person(TagObject):
         if self.dod or self.year_death:
             self.is_dead = True
         super(Person, self).save(**kwargs)
+
+    def get_absolute_url(self):
+        return reverse('persons_detail', kwargs={'pk': self.pk})
 
 
 class PersonSeason(models.Model):

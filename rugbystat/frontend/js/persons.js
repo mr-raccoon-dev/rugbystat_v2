@@ -1,10 +1,10 @@
 $().ready(function() {
 
-$('div.date').datepicker({
-  locale: 'ru',
-  pickTime: false,
-  format: "dd.mm.yyyy", 
-});
+// $('div.date').datepicker({
+//   locale: 'ru',
+//   pickTime: false,
+//   format: "dd.mm.yyyy", 
+// });
 
 var searchManager = {
     get_list: function() {
@@ -48,6 +48,7 @@ $('#search-submit-btn').click(function() {
 $('.editable').click(function() {
     var selector = this.id + 'Form';
     $("#" + selector).show();
+    $("#submitForm").show();
 })
 
 });

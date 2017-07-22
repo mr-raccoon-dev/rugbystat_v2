@@ -43,7 +43,7 @@
 <h2 id="name" class="editable">{{ object.full_name }}</h2>
 
 
-<form role="form">
+<form role="form" method="POST" action="{% url 'persons_detail' pk=object.pk %}">
 {% csrf_token %}
 <div id="nameForm" class="form-inputs" style="display: none;">
   <div class="form-inline row">
@@ -63,8 +63,8 @@
 </div>
 <div id="storyForm" class="form-inputs" style="display: none;">
   <div class="form-group">
-    <label for="id_story">{{ form.story.label }}</label>
     {% render_field form.story class+="form-control" rows="5" %}
+    <span class="help-block">{{ form.story.label }}</span>
   </div>
 </div>
 <div id="dossierForm" class="form-inputs" style="display: none;">
@@ -98,9 +98,9 @@
 
   </div>
 </div>
-<div id="submitForm">
+<div id="submitForm" style="display: none;">
   <div class="form-group">
-    <button class="btn btn-default" id="submitPersonForm" type="button">Сохранить</button>
+    <button class="btn btn-default" id="submitPersonForm" type="submit">Сохранить</button>
 </div>
 </div>
 </form>
