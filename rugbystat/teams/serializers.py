@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
+from rest_framework.exceptions import ValidationError
 
 from clippings.serializers import DocumentSerializer
 from .models import Team, City, Person, PersonSeason
@@ -18,14 +20,14 @@ class CitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class TeamSerializer(serializers.ModelSerializer):
+class TeamSerializer(serializers.HyperlinkedModelSerializer):
     documents = DocumentSerializer(many=True)
     city = CitySerializer()
     parent = RecursiveField()
 
     class Meta:
         model = Team
-        fields = ('id', 'name', 'short_name', 'story', 'city',
+        fields = ('url', 'id', 'name', 'short_name', 'story', 'city',
                   'year', 'disband_year', 'operational_years',
                   'parent', 'documents')
 
@@ -36,13 +38,20 @@ class PersonSeasonSerializer(serializers.ModelSerializer):
         fields = ('id', '__str__', 'person', 'team', 
                   'year', 'story', 'role')
 
+    def validate(self, attrs):
+        kwargs = {field: attrs[field] 
+                  for field in ['person', 'year', 'team', 'role']}
+        if PersonSeason.objects.filter(**kwargs).exists():
+            raise ValidationError('Violates unique_together condition')
+        return attrs
 
-class PersonSerializer(serializers.ModelSerializer):
+
+class PersonSerializer(serializers.HyperlinkedModelSerializer):
     seasons = PersonSeasonSerializer(many=True)
 
     class Meta:
         model = Person
-        fields = ('id', '__str__', 'full_name', 'story',
+        fields = ('url', 'id', '__str__', 'full_name', 'story',
                   'year', 'dob', 'year_death', 'dod', 'living_years',
                   'seasons')
 

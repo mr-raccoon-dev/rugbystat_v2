@@ -1,4 +1,4 @@
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, mixins, filters
 
 from .filters import TeamFullTextFilter
 from .models import Team, Person, PersonSeason
@@ -21,7 +21,9 @@ class TeamViewSet(viewsets.ReadOnlyModelViewSet):
     page_size_query_param = 'limit'
 
 
-class PersonViewSet(viewsets.ReadOnlyModelViewSet):
+class PersonViewSet(mixins.CreateModelMixin,
+                    mixins.UpdateModelMixin,
+                    viewsets.ReadOnlyModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
     filter_backends = (filters.SearchFilter,
@@ -30,6 +32,8 @@ class PersonViewSet(viewsets.ReadOnlyModelViewSet):
     filter_fields = ('year', 'name',)
 
 
-class PersonSeasonViewSet(viewsets.ReadOnlyModelViewSet):
+class PersonSeasonViewSet(mixins.CreateModelMixin,
+                          mixins.UpdateModelMixin,
+                          viewsets.ReadOnlyModelViewSet):
     queryset = PersonSeason.objects.all()
     serializer_class = PersonSeasonSerializer

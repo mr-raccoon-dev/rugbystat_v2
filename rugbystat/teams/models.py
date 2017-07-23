@@ -206,7 +206,8 @@ class PersonSeason(models.Model):
 
     class Meta:
         ordering = ('-year', )
-            
+        unique_together = (('person', 'year', 'tournament', 'role'))
+
     def __str__(self):
         return "{} {}".format(self.person, self.year)
 

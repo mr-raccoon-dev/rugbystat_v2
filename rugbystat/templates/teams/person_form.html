@@ -16,7 +16,9 @@
 {{ block.super }}
   <script type="text/javascript" src="{% static 'js/persons.js' %}"></script>
   <script type="text/javascript">
-    var personListUrl = "{% url 'person-list' %}";
+    var personListUrl = "{% url 'person-list' %}",
+        personSeasonListUrl = "{% url 'personseason-list' %}",
+        person = {{ object.pk }};
   </script>
 
   <!-- Include Bootstrap Datepicker -->
@@ -101,6 +103,7 @@
 <div id="submitForm" style="display: none;">
   <div class="form-group">
     <button class="btn btn-default" id="submitPersonForm" type="submit">Сохранить</button>
+    <button class="btn btn-secondary" id="cancelPersonForm" type="submit">Отмена</button>
   </div>
 </div>
 </form>
@@ -128,12 +131,12 @@
   </div>
   <div class="form-group">
     <div class="col-sm-4">
-      {% render_field season_form.team class+="form-control" %}
-      <span class="help-block">{{ season_form.team.label }}</span>
-    </div>
-    <div class="col-sm-4">
       {% render_field season_form.tournament class+="form-control" %}
       <span class="help-block">{{ season_form.tournament.label }}</span>
+    </div>
+    <div class="col-sm-4">
+      {% render_field season_form.team class+="form-control" %}
+      <span class="help-block">{{ season_form.team.label }}</span>
     </div>
   </div>
   <div class="form-group">
@@ -144,6 +147,7 @@
 
   <div class="pull-right">
     <button class="btn btn-default" id="submitPersonSeasonForm" type="button">Сохранить</button>
+    <button class="btn btn-secondary" id="cancelPersonSeasonForm" type="button">Отмена</button>
   </div>
 </form>
   <div class="pull-right">
@@ -168,8 +172,7 @@
     <td> {{ season.role_verbose }} </td>
     <td> 
     {% if season.tournament %}
-      <a class="link" 
-         href="#">
+      <a class="link" href="#">
          {{ season.tournament }}
       </a>
     {% else %}
@@ -221,12 +224,12 @@
     </td>
   </tr>
   {% endfor %}
+
   </tbody>
 </table>
 
 {% endif %}
 
-
-{% include '_modal.html' %}
+{% include '_modal.html' with modal_id="moderationModal" %}
 
 {% endblock content %}

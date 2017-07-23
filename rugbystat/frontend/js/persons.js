@@ -48,11 +48,42 @@ $('.editable').click(function() {
     var selector = this.id + 'Form';
     $("#" + selector).show();
     $("#submitForm").show();
-})
+});
 
 $('#showPersonSeasonForm').click(function() {
     $(this).hide();
     $("#addPersonSeason").show();
-})
+});
+
+$('#cancelPersonSeasonForm').click(function() {
+    $('#showPersonSeasonForm').show();
+    $("#addPersonSeason").hide();
+});
+
+$('#submitPersonSeasonForm').click(function() {
+    $('#showPersonSeasonForm').show();
+    $("#addPersonSeason").hide();
+    var dataArray = $('#addPersonSeason').serializeArray(),
+        json = {};
+    
+    dataArray.forEach(function(obj) {
+        json[obj.name] = obj.value;
+    });
+    json['person'] = person;
+
+    $.ajax({
+        url: personSeasonListUrl,
+        type: 'POST',
+        data: JSON.stringify(json),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function () {
+            $('#showPersonSeasonForm').show();
+            $('#addPersonSeason').hide(); 
+            $('#moderationModal').modal('toggle');
+        },
+    });
+
+});
 
 });
