@@ -191,7 +191,7 @@ class PersonSeason(models.Model):
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
     )
     role = models.CharField(
-        verbose_name=_('Тип'), max_length=127,
+        verbose_name=_('Амплуа'), max_length=127,
         choices=ROLE_CHOICES, default=PLAYER
     )
     team = models.ForeignKey(

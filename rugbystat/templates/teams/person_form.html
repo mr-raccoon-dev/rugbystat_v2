@@ -101,7 +101,7 @@
 <div id="submitForm" style="display: none;">
   <div class="form-group">
     <button class="btn btn-default" id="submitPersonForm" type="submit">Сохранить</button>
-</div>
+  </div>
 </div>
 </form>
 <div id="dossier" class="editable">
@@ -113,8 +113,44 @@
 </div>
 <div id="story" class="editable">{{ object.story | safe }}</div>
 
-{% if object.seasons.all %}
+<form role="form" id="addPersonSeason" style="display: none;">
+{% csrf_token %}
+<div class="form-inputs">
+  <div class="form-group has-error">
+    <div class="col-sm-2">
+      {% render_field season_form.year class+="form-control" %}
+      <span class="help-block">{{ season_form.year.label }}</span>
+    </div>
+    <div class="col-sm-2">
+      {% render_field season_form.role class+="form-control" %}
+      <span class="help-block">{{ season_form.role.label }}</span>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-4">
+      {% render_field season_form.team class+="form-control" %}
+      <span class="help-block">{{ season_form.team.label }}</span>
+    </div>
+    <div class="col-sm-4">
+      {% render_field season_form.tournament class+="form-control" %}
+      <span class="help-block">{{ season_form.tournament.label }}</span>
+    </div>
+  </div>
+  <div class="form-group">
+      {% render_field season_form.story class+="form-control" rows="2" %}
+      <span class="help-block">{{ season_form.story.label }}</span>
+  </div>
+</div>
+
+  <div class="pull-right">
+    <button class="btn btn-default" id="submitPersonSeasonForm" type="button">Сохранить</button>
+  </div>
+</form>
+  <div class="pull-right">
+    <button class="btn btn-default" id="showPersonSeasonForm" type="button">Добавить</button>
+  </div>
 <h4>Сезоны</h4>
+{% if object.seasons.all %}
 <table class="table table-striped table-hover" id="person-seasons">
 <thead>
   <tr>

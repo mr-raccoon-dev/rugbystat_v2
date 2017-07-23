@@ -29,7 +29,6 @@ var searchManager = {
 
 };
 
-
 var timeout;
 
 $('#person-input').keypress(function() {
@@ -49,6 +48,11 @@ $('.editable').click(function() {
     var selector = this.id + 'Form';
     $("#" + selector).show();
     $("#submitForm").show();
+})
+
+$('#showPersonSeasonForm').click(function() {
+    $(this).hide();
+    $("#addPersonSeason").show();
 })
 
 });

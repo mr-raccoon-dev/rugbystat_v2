@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import UpdateView
 
-from .forms import ImportForm, PersonForm
+from .forms import ImportForm, PersonForm, PersonSeasonForm
 from .models import Person
 
 
@@ -22,3 +22,8 @@ class PersonDetailView(UpdateView):
     model = Person
     form_class = PersonForm
     
+    def get_context_data(self, **kwargs):
+        kwargs = super(PersonDetailView, self).get_context_data(**kwargs)
+        form = PersonSeasonForm(initial={'person': self.object.pk})
+        kwargs['season_form'] = form
+        return kwargs

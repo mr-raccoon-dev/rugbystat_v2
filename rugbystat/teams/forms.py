@@ -4,7 +4,7 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 from moderation.forms import BaseModeratedObjectForm
 
-from .models import Team, City, Person
+from .models import Team, City, Person, PersonSeason
 
 __author__ = 'krnr'
 
@@ -73,3 +73,13 @@ class PersonForm(BaseModeratedObjectForm):
         model = Person
         fields = ('name', 'first_name', 'middle_name', 'story',
                   'year', 'dob', 'year_death', 'dod', 'is_dead')
+
+
+class PersonSeasonForm(BaseModeratedObjectForm):
+    """Edit PersonSeason attributes"""
+    
+    class Meta:
+        model = PersonSeason
+        fields = ('person', 'year', 'role', 'team', 'tournament', 
+                  'story')
+
