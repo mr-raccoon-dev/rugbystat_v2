@@ -52,6 +52,7 @@ $('.editable').click(function() {
 
 $('#showPersonSeasonForm').click(function() {
     $(this).hide();
+    // $('#id_team').select2();
     $("#addPersonSeason").show();
 });
 

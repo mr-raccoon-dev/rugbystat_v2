@@ -84,9 +84,13 @@ class Team(TagObject):
     parent = models.ForeignKey(
         'self', verbose_name=_('Команда-родитель'),
         related_name='ancestors', blank=True, null=True)
+
+    class Meta:
+        ordering = ('year', )
     
     def __str__(self):
-        return self.short_name or self.name
+        team = self.short_name or self.name
+        return "{} ({})".format(team, self.operational_years)
     
     def save(self, **kwargs):
         if not self.short_name:
