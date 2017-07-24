@@ -6,4 +6,4 @@ from .models import Source
 
 class SourceForm(ActionForm):
     source = forms.ModelChoiceField(queryset=Source.objects.all(),
-        required=False)
+                                    required=False)

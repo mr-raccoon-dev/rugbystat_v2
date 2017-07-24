@@ -14,6 +14,7 @@ def get_years():
         for doc in docs_qs]
     )
 
+
 def get_sources():
     return tuple(
         [('', '---')] + 
