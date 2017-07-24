@@ -8,12 +8,6 @@ function objectifyForm(formArray) {
   return returnArray;
 };
 
-$('div.date').datepicker({
-  locale: 'ru',
-  pickTime: false,
-  format: "dd.mm.yyyy",
-});
-
 var searchManager = {
     get_list: function() {
         $("#results").html('');
