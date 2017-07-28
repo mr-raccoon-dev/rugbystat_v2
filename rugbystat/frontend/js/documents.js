@@ -45,7 +45,7 @@ var searchDocsManager = {
                 var link;
                 var year;
                 if (item.is_image == true) {
-                    link = '<a class="dropbox-link" href="' + item.dropbox_path + 
+                    link = '<a class="dropbox-link" target="_blank" href="' + item.dropbox_path + 
                     '"><img src="' + item.dropbox_thumb + '"/></a>'
                 } else {
                     link = '<a href="' + item.dropbox_path + 
