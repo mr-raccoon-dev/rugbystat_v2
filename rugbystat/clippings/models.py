@@ -253,7 +253,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         result = self.client.put_file('/.thumbs/{}'.format(self.filename), f)
         return result['path']
 
-    def move(to_path):
+    def move(self, to_path):
         """
         Calls file_move(from_path, to_path) method of dropbox.client.DropboxClient instance
     
@@ -292,4 +292,3 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         self.dropbox.name = to_path
         self.dropbox_path = self.get_share_link(self.dropbox.name)
         self.dropbox_thumb = self.get_share_link(self.get_thumb_path())
-        
