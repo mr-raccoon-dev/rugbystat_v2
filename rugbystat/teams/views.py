@@ -21,7 +21,7 @@ def import_teams(request):
 class PersonDetailView(UpdateView):
     model = Person
     form_class = PersonForm
-    
+
     def get_context_data(self, **kwargs):
         kwargs = super(PersonDetailView, self).get_context_data(**kwargs)
         form = PersonSeasonForm(initial={'person': self.object.pk})

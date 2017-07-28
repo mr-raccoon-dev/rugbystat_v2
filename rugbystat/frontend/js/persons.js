@@ -1,10 +1,12 @@
 $().ready(function() {
 
-// $('div.date').datepicker({
-//   locale: 'ru',
-//   pickTime: false,
-//   format: "dd.mm.yyyy", 
-// });
+function objectifyForm(formArray) {
+  var returnArray = {};
+  for (var i = 0; i < formArray.length; i++){
+    returnArray[formArray[i]['name']] = formArray[i]['value'];
+  }
+  return returnArray;
+};
 
 var searchManager = {
     get_list: function() {
@@ -52,7 +54,9 @@ $('.editable').click(function() {
 
 $('#showPersonSeasonForm').click(function() {
     $(this).hide();
-    // $('#id_team').select2();
+    $('#id_team').select2({
+        theme: "bootstrap"
+    });
     $("#addPersonSeason").show();
 });
 
@@ -66,10 +70,8 @@ $('#submitPersonSeasonForm').click(function() {
     $("#addPersonSeason").hide();
     var dataArray = $('#addPersonSeason').serializeArray(),
         json = {};
-    
-    dataArray.forEach(function(obj) {
-        json[obj.name] = obj.value;
-    });
+
+    var json = objectifyForm(dataArray);
     json['person'] = person;
 
     $.ajax({
@@ -80,11 +82,10 @@ $('#submitPersonSeasonForm').click(function() {
         dataType: 'json',
         success: function () {
             $('#showPersonSeasonForm').show();
-            $('#addPersonSeason').hide(); 
+            $('#addPersonSeason').hide();
             $('#moderationModal').modal('toggle');
         },
     });
-
 });
 
 });

@@ -1,6 +1,7 @@
 import re
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from moderation.forms import BaseModeratedObjectForm
 
@@ -74,12 +75,25 @@ class PersonForm(BaseModeratedObjectForm):
         fields = ('name', 'first_name', 'middle_name', 'story',
                   'year', 'dob', 'year_death', 'dod', 'is_dead')
 
+    def clean(self):
+        data = super(PersonForm, self).clean()
+        msg = _("Проверьте годы жизни")
+        if all([data['dod'], data['dob']]):
+            if data['dod'] < data['dob']:
+                raise ValidationError(msg)
+
+        if all([data['year_death'], data['year']]):
+            if data['year_death'] < data['year']:
+                raise ValidationError(msg)
+
+        return self.cleaned_data
+
 
 class PersonSeasonForm(BaseModeratedObjectForm):
     """Edit PersonSeason attributes"""
-    
+
     class Meta:
         model = PersonSeason
-        fields = ('person', 'year', 'role', 'team', 'tournament', 
+        fields = ('person', 'year', 'role', 'team', 'tournament',
                   'story')
 
