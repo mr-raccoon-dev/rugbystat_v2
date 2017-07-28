@@ -1,5 +1,6 @@
 from django.contrib import admin, messages
 from django.contrib.admin.filters import AllValuesFieldListFilter
+from django.db.models import FileField
 
 from .forms import SourceForm
 from .models import Source, SourceObject, Document
@@ -37,6 +38,7 @@ class DocumentAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'title', 'source', 'kind', 'preview'
     )
+    ordering = ('-id', )
     search_fields = ('title', )
     readonly_fields = ('preview',)
     action_form = SourceForm
@@ -68,6 +70,9 @@ class DocumentAdmin(admin.ModelAdmin):
             }
         ),
     )
+    formfield_overrides = {
+        FileField: {'widget': admin.widgets.AdminTextInputWidget},
+    }
 
     def preview(self, obj):
         if obj.is_image:

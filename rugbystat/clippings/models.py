@@ -252,3 +252,44 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         f = resp.read()
         result = self.client.put_file('/.thumbs/{}'.format(self.filename), f)
         return result['path']
+
+    def move(to_path):
+        """
+        Calls file_move(from_path, to_path) method of dropbox.client.DropboxClient instance
+    
+        Parameters
+            from_path
+              The path to the file or folder to be moved.
+            to_path
+              The destination path of the file or folder to be moved.
+              This parameter should include the destination filename (e.g. if
+              ``from_path`` is ``'/test.txt'``, ``to_path`` might be
+              ``'/dir/test.txt'``). If there's already a file at the
+              ``to_path`` it will raise an ErrorResponse.
+        
+        Returns
+              A dictionary containing the metadata of the new copy of the file or folder.
+        
+              For a detailed description of what this call returns, visit:
+              https://www.dropbox.com/developers/core/docs#fileops-move
+        
+        Raises
+              A :class:`dropbox.rest.ErrorResponse` with an HTTP status of:
+        
+              - 400: Bad request (may be due to many things; check e.error for details).
+              - 403: An invalid move operation was attempted
+                (e.g. there is already a file at the given destination,
+                or moving a shared folder into a shared folder).
+              - 404: No file was found at given from_path.
+              - 503: User over storage quota.
+        """
+        try:
+            self.client.file_move(self.dropbox.name, to_path)
+        except ErrorResponse:
+            # TODO log error
+            pass
+
+        self.dropbox.name = to_path
+        self.dropbox_path = self.get_share_link(self.dropbox.name)
+        self.dropbox_thumb = self.get_share_link(self.get_thumb_path())
+        
