@@ -66,6 +66,25 @@ class ImportForm(forms.Form):
         parse_teams(data['input'])
 
 
+class TeamForm(BaseModeratedObjectForm):
+    """Edit Team attributes"""
+    name = forms.CharField(max_length=32, label=_('Название'))
+
+    class Meta:
+        model = Team
+        fields = ('story', 
+                  'year', 'disband_year', 'year_prefix', 'disband_year_prefix')
+
+    def clean(self):
+        data = super(TeamForm, self).clean()
+        msg = _("Проверьте годы cуществования")
+        if all([data['year'], data['disband_year']]):
+            if data['year'] < data['disband_year']:
+                raise ValidationError(msg)
+
+        return self.cleaned_data
+
+
 class PersonForm(BaseModeratedObjectForm):
     """Edit Person attributes"""
     name = forms.CharField(max_length=32, label=_('Фамилия'))

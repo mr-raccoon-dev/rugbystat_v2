@@ -1,6 +1,7 @@
 Person.story - WYSIWYG-widget
 Person.years - format dd.MM.yyy
 PersonSeason.tournament - link to Season page (/tourn/234/1976)
+PersonAddForm
 PersonEditForm - ajax save
 PersonSeasonForm - validation before closing
 PersonSeasonForm - add helper text
@@ -10,6 +11,7 @@ PersonSeasonStat - matches, tries, convs, pens, drops, season(FK -> PersonSeason
 PersonSeasonStat appears on click on the "year"
 Person.documents - list after PersonSeasons
 Person.filefoto - FK to Document?
+Teams page
 Team.story - WYSIWYG-widget
 Team.documents - filter all / photos / scans / programs / protocols, etc...
 TeamEditForm

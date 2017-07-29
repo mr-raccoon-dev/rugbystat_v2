@@ -2,8 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import UpdateView
 
-from .forms import ImportForm, PersonForm, PersonSeasonForm
-from .models import Person
+from .forms import ImportForm, PersonForm, PersonSeasonForm, TeamForm
+from .models import Person, Team
 
 
 def import_teams(request):
@@ -18,7 +18,12 @@ def import_teams(request):
     return render(request, 'import.html', {'form': form})
 
 
-class PersonDetailView(UpdateView):
+class TeamUpdateView(UpdateView):
+    model = Team
+    form_class = TeamForm
+
+
+class PersonUpdateView(UpdateView):
     model = Person
     form_class = PersonForm
 
