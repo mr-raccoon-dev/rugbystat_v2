@@ -209,6 +209,10 @@ class Document(TitleDescriptionModel, TimeStampedModel):
 
         super(Document, self).save(**kwargs)
 
+    def delete(self, **kwargs):
+        self.client.file_delete(self.dropbox.name)
+        super(Document, self).delete(**kwargs)
+
     def get_share_link(self, path, convert=True):
         """
         Return content URL for given path.
@@ -292,3 +296,4 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         self.dropbox.name = to_path
         self.dropbox_path = self.get_share_link(self.dropbox.name)
         self.dropbox_thumb = self.get_share_link(self.get_thumb_path())
+        self.title = self.filename
