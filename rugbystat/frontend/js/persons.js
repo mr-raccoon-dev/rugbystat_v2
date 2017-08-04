@@ -46,11 +46,22 @@ $('#search-submit-btn').click(function() {
     searchManager.get_list();
 });
 
-$('.editable').click(function() {
-    var selector = this.id + 'Form';
-    $("#" + selector).show();
-    $("#submitForm").show();
+// $('.editable').click(function() {
+//     var selector = this.id + 'Form';
+//     $("#" + selector).show();
+//     $("#submitForm").show();
+// });
+
+$('#showPersonForm').click(function() {
+    $(this).hide();
+    $('form#personForm').show();
 });
+
+$('#cancelPersonForm').click(function() {
+    $('button#showPersonForm').show();
+    $('form#personForm').hide();
+});
+
 
 $('#showPersonSeasonForm').click(function() {
     $(this).hide();

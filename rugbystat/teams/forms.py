@@ -110,6 +110,7 @@ class PersonForm(BaseModeratedObjectForm):
 
 class PersonSeasonForm(BaseModeratedObjectForm):
     """Edit PersonSeason attributes"""
+    story = forms.CharField(label=_('Комментарии'), widget=forms.Textarea)
 
     class Meta:
         model = PersonSeason

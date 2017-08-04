@@ -33,7 +33,7 @@
 <div class="form-group">
   <label class="control-label" for="focusedInput">&nbsp;</label>
   <div class="input-group">
-    <input type="text" class="form-control" id="team-input" />
+    <input type="search" class="form-control" id="team-input" />
     <span class="input-group-btn">
       <button class="btn btn-default" id="search-submit-btn" type="button">Искать</button>
     </span>
@@ -92,6 +92,9 @@
   </div>
 </div>
 </form>
+
+{{ form.media }}
+
 <div id="dossier" class="editable">
   <b>Годы:</b> {{ object.operational_years }}
 </div>

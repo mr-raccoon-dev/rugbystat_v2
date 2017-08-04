@@ -3,11 +3,12 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from markdownx.models import MarkdownxField
 
 
 class TagObject(models.Model):
     name = models.CharField(max_length=127, verbose_name=_('Базовое название'))
-    story = models.TextField(verbose_name=_('История'), blank=True, )
+    story = MarkdownxField(verbose_name=_('История'), blank=True, )
 
     def __str__(self):
         return "Model: {0}".format(repr(self.target))

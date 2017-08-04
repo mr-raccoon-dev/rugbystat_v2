@@ -30,11 +30,12 @@ router.register(r'issues', SourceObjectViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^import-teams/', import_teams),
     url(r'^django-rq/', include('django_rq.urls')),
+    url(r'^markdownx/', include('markdownx.urls')),
+    url(r'^import-teams/', import_teams),
     url(r'^dropbox-webhook/', import_from_dropbox),
-    url(r'^api/v1/', include('authentication.urls')),
     url(r'^api/v1/', include(router.urls)),
+    url(r'^api/v1/', include('authentication.urls')),
 
     url(r'^teams/$', views.teams_view, name='teams'),
     url(r'^teams/(?P<pk>\d+)/', TeamUpdateView.as_view(), name='teams_detail'),
@@ -50,6 +51,7 @@ urlpatterns = [
     url(r'^$', RedirectView.as_view(url=reverse_lazy('api-root'), permanent=False)),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 if settings.DEBUG:
     import debug_toolbar

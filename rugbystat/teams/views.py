@@ -28,7 +28,7 @@ class PersonUpdateView(UpdateView):
     form_class = PersonForm
 
     def get_context_data(self, **kwargs):
-        kwargs = super(PersonDetailView, self).get_context_data(**kwargs)
+        kwargs = super(PersonUpdateView, self).get_context_data(**kwargs)
         form = PersonSeasonForm(initial={'person': self.object.pk})
         kwargs['season_form'] = form
         return kwargs

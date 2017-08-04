@@ -22,6 +22,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'adminsortable2',
     'moderation',
+    'markdownx',
 
     # Your apps
     'authentication',
