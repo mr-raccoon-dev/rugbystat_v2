@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load widget_tweaks %}
+{% load markdownx %}
 
 {% block stylesheets %}
 
@@ -16,7 +17,7 @@
 {% block js %}
 
 {{ block.super }}
-  <script type="text/javascript" src="{% static 'js/persons.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/teams.js' %}"></script>
   <script type="text/javascript">
     var teamListUrl = "{% url 'team-list' %}",
         teamUpdate = "{% url 'teams_detail' pk=object.pk %}",
@@ -54,12 +55,16 @@
 {% endif %}
 </div>
 
+  <div class="pull-right">
+    <button class="btn btn-default" id="showTeamForm" type="button">Редактировать(*)</button>
+  </div>
 <h2 id="name" class="editable">{{ object.name }} {{ object.city.name }} ({{ object.operational_years }})</h2>
 
 <form role="form" id="teamForm"
-      method="POST" action="{% url 'teams_detail' pk=object.pk %}">
+      method="POST" action="{% url 'teams_detail' pk=object.pk %}"
+      style="display: none;">
 {% csrf_token %}
-<div id="dossierForm" class="form-inputs" style="display: none;">
+<div id="dossierForm" class="form-inputs">
   <div class="form-inline row">
     <div class="col-sm-3">
       {% render_field form.year_prefix class+="form-control" %}
@@ -79,13 +84,13 @@
     </div>
   </div>
 </div>
-<div id="storyForm" class="form-inputs" style="display: none;">
+<div id="storyForm" class="form-inputs">
   <div class="form-group">
     {% render_field form.story class+="form-control" rows="5" %}
     <span class="help-block">{{ form.story.label }}</span>
   </div>
 </div>
-<div id="submitForm" style="display: none;">
+<div id="submitForm">
   <div class="form-group">
     <button class="btn btn-default" id="submitTeamForm" type="submit">Сохранить</button>
     <button class="btn btn-secondary" id="cancelTeamForm" type="submit">Отмена</button>
@@ -100,7 +105,7 @@
 </div>
 <div id="story" class="editable">
   <b>История:</b>
-  <div>{{ object.story | safe }}</div>
+  <div>{{ object.story | markdown }}</div>
 </div>
 
   <div class="pull-right">

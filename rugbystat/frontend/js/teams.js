@@ -104,6 +104,17 @@ $('#search-submit-btn').click(function() {
     searchManager.get_list();
 });
 
+$('#showTeamForm').click(function() {
+    $(this).hide();
+    $('form#teamForm').show();
+});
+
+$('#cancelTeamForm').click(function() {
+    $('button#showTeamForm').show();
+    $('form#teamForm').hide();
+});
+
+
 
 // function yHandler() {
 //     if(document.body.scrollHeight - window.innerHeight - 50 < window.scrollY) {

@@ -68,7 +68,6 @@ class ImportForm(forms.Form):
 
 class TeamForm(BaseModeratedObjectForm):
     """Edit Team attributes"""
-    name = forms.CharField(max_length=32, label=_('Название'))
 
     class Meta:
         model = Team
@@ -79,7 +78,7 @@ class TeamForm(BaseModeratedObjectForm):
         data = super(TeamForm, self).clean()
         msg = _("Проверьте годы cуществования")
         if all([data['year'], data['disband_year']]):
-            if data['year'] < data['disband_year']:
+            if data['year'] > data['disband_year']:
                 raise ValidationError(msg)
 
         return self.cleaned_data

@@ -108,6 +108,9 @@ class Team(TagObject):
                                     self.disband_year or '')
         return years
 
+    def get_absolute_url(self):
+        return reverse('teams_detail', kwargs={'pk': self.pk})
+
 
 class Person(TagObject):
     first_name = models.CharField(

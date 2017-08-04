@@ -65,7 +65,7 @@
 
 <form role="form" id="personForm"
       method="POST" action="{% url 'persons_detail' pk=object.pk %}"
-       style="display: none;">
+      style="display: none;">
 {% csrf_token %}
 <div id="nameForm" class="form-inputs">
   <div class="form-inline row">
