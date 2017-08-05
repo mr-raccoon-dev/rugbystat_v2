@@ -142,8 +142,8 @@ class Person(TagObject):
 
     @property
     def living_years(self):
-        birth = self.dob or self.year or '???'
-        death = self.dod or self.year_death or '???'
+        birth = self.dob.strftime('%d.%m.%Y') if self.dob else self.year or '???'
+        death = self.dod.strftime('%d.%m.%Y') if self.dod else self.year_death or '???'
         if self.is_dead:
             return "{}-{}".format(birth, death)
         return "{}".format(birth)

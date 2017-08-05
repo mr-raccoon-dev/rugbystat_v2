@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic import UpdateView
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic import CreateView, UpdateView
 
 from .forms import ImportForm, PersonForm, PersonSeasonForm, TeamForm
 from .models import Person, Team
@@ -21,6 +22,13 @@ def import_teams(request):
 class TeamUpdateView(UpdateView):
     model = Team
     form_class = TeamForm
+
+
+class PersonCreateView(CreateView):
+    model = Person
+    form_class = PersonForm
+    success_url = reverse_lazy('persons')
+    template_name = 'persons.html'
 
 
 class PersonUpdateView(UpdateView):

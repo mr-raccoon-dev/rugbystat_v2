@@ -1,0 +1,81 @@
+{% load widget_tweaks %}
+{% load markdownx %}
+
+<form role="form" id="personForm"
+      method="POST" action="{{ action_url }}"
+      style="display: none;">
+
+{% csrf_token %}
+
+<div id="formErrors">
+{% if form.errors %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+    <div class="fieldError">
+        {{ field.errors }}
+    </div>
+    {% endfor %}
+{% endif %}
+</div>
+
+<div id="nameForm" class="form-inputs">
+  <div class="form-inline row">
+    <div class="col-sm-4">
+      {% render_field form.name class+="form-control" %}
+      <span class="help-block">{{ form.name.label }}</span>
+    </div>
+    <div class="col-sm-4">
+      {% render_field form.first_name class+="form-control" %}
+      <span class="help-block">{{ form.first_name.label }}</span>
+    </div>
+    <div class="col-sm-4">
+      {% render_field form.middle_name class+="form-control" %}
+      <span class="help-block">{{ form.middle_name.label }}</span>
+    </div>
+  </div>
+</div>
+<div id="dossierForm" class="form-inputs">
+  <div class="form-group row">
+    <div class="col-sm-2">
+      {% render_field form.year class+="form-control" %}
+      <span class="help-block">{{ form.year.label }}</span>
+    </div>
+    <div class="col-sm-3">
+      <div class="input-group input-append date">
+        {% render_field form.dob class+="form-control" %}
+        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+      </div>
+        <span class="help-block">{{ form.dob.label }}</span>
+    </div>
+    <div class="col-sm-2">
+      {% render_field form.year_death class+="form-control" %}
+      <span class="help-block">{{ form.year_death.label }}</span>
+    </div>
+    <div class="col-sm-3">
+      <div class="input-group input-append date">
+        {% render_field form.dod class+="form-control" %}
+        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+      </div>
+        <span class="help-block">{{ form.dod.label }}</span>
+    </div>
+    <div class="col-sm-2">
+      {% render_field form.is_dead class+="form-control" %}
+      <span class="help-block">{{ form.is_dead.label }}</span>
+    </div>
+  </div>
+</div>
+<div id="storyForm" class="form-inputs">
+  <div class="form-group">
+    {% render_field form.story class+="form-control" rows="5" %}
+    <span class="help-block">{{ form.story.label }}</span>
+  </div>
+</div>
+<div id="submitForm">
+  <div class="form-group">
+    <button class="btn btn-default" id="submitPersonForm" type="submit">Сохранить</button>
+    <button class="btn btn-secondary" id="cancelPersonForm" type="submit">Отмена</button>
+  </div>
+</div>
+</form>
+
+{{ form.media }}

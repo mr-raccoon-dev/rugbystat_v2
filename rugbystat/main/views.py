@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from teams.forms import PersonForm
+
 from .forms import ClippingsForm
 
 
@@ -16,7 +18,8 @@ def tournaments_view(request):
 
 
 def persons_view(request):
-    return render(request, 'persons.html')
+    form = PersonForm()
+    return render(request, 'persons.html', {'form': form})
 
 
 def clippings_view(request):

@@ -46,6 +46,20 @@ $('#search-submit-btn').click(function() {
     searchManager.get_list();
 });
 
+  $('#id_dob').datepicker({
+    language: 'ru',
+    format: "dd.mm.yyyy", 
+    clearBtn: true,
+    startView: 2,
+  });
+  $('#id_dod').datepicker({
+    language: 'ru',
+    format: "dd.mm.yyyy", 
+    clearBtn: true,
+    startView: 2, 
+  });
+
+
 // $('.editable').click(function() {
 //     var selector = this.id + 'Form';
 //     $("#" + selector).show();

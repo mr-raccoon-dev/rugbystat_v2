@@ -40,10 +40,10 @@ class DocumentAdmin(admin.ModelAdmin):
     )
     ordering = ('-id', )
     search_fields = ('title', )
-    readonly_fields = ('preview',)
+    readonly_fields = ('preview', 'tag', )
     action_form = SourceForm
     actions = ['set_source_action']
-    filter_horizontal = ('tag', 'versions')
+    filter_horizontal = ('versions', )
     fieldsets = (
         (None, {
             'fields': ('title', 'description', 'preview')
@@ -70,9 +70,9 @@ class DocumentAdmin(admin.ModelAdmin):
             }
         ),
     )
-    formfield_overrides = {
-        FileField: {'widget': admin.widgets.AdminTextInputWidget},
-    }
+    # formfield_overrides = {
+    #     FileField: {'widget': admin.widgets.AdminTextInputWidget},
+    # }
 
     def preview(self, obj):
         if obj.is_image:

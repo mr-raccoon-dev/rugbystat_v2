@@ -59,6 +59,12 @@ class Source(models.Model):
         return result
 
 
+class SourceObjectManager(models.Manager):
+    def get_queryset(self):
+        qs = super(SourceObjectManager, self).get_queryset()
+        return qs.select_related('source')
+
+
 class SourceObject(models.Model):
     source = models.ForeignKey(Source, related_name='instances')
     edition = models.CharField(
@@ -68,6 +74,8 @@ class SourceObject(models.Model):
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
     )
     date = models.DateField(verbose_name=_('Дата'), blank=True, null=True)
+
+    objects = SourceObjectManager()
 
     class Meta:
         ordering = ('source', 'year', )

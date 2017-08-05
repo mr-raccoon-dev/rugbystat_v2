@@ -44,6 +44,12 @@
 <span id="indicator" style="display:none;"><img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/></span>
 <div id="results"></div>
 
+<div class="pull-right">
+  <button class="btn btn-default" id="showTeamForm" type="button">Редактировать(*)</button>
+</div>
+
+<h2 id="name" class="editable">{{ object.name }} {{ object.city.name }} ({{ object.operational_years }})</h2>
+
 <div id="formErrors">
 {% if form.errors %}
     {{ form.non_field_errors }}
@@ -54,11 +60,6 @@
     {% endfor %}
 {% endif %}
 </div>
-
-  <div class="pull-right">
-    <button class="btn btn-default" id="showTeamForm" type="button">Редактировать(*)</button>
-  </div>
-<h2 id="name" class="editable">{{ object.name }} {{ object.city.name }} ({{ object.operational_years }})</h2>
 
 <form role="form" id="teamForm"
       method="POST" action="{% url 'teams_detail' pk=object.pk %}"
