@@ -1,5 +1,3 @@
-Person.story - WYSIWYG-widget and safe
-Team.story - WYSIWYG-widget and safe
 Person.years - format dd.MM.yyy
 PersonSeason.tournament - link to Season page (/tourn/234/1976)
 PersonAddForm
@@ -15,7 +13,9 @@ Person.filefoto - FK to Document?
 Team.documents - filter all / photos / scans / programs / protocols, etc...
 TeamEditForm
 TeamSeasonForm - must be somehow linked to final Table, which links to Season
-Team.seasons - 1969; Первенство Москвы; 12 9 3 0 156-22 21; 1 из 7; есть сведения, что 2 место - tournament links to Season page, each match links to list of matches filtered by... (or better hovered!). All is kept in Table model: season(FK -> Season), team(FK -> TeamSeason), rank, total_teams, team_name, matches, wins, draws, losses, scored_for, scored_against, scored_diff, points
+Team.seasons 
+- 1969; Первенство Москвы; 12 9 3 0 156-22 21; 1 из 7; есть сведения, что 2 место 
+- tournament links to Season page, each match links to list of matches filtered by... (or better hovered!). All is kept in Table model: season(FK -> Season), team(FK -> TeamSeason), rank, total_teams, team_name, matches, wins, draws, losses, scored_for, scored_against, scored_diff, points
 TeamSeasonEditForm
 Tournaments:
  - Чемпионат СССР
@@ -49,3 +49,5 @@ User may log in only via facebook account
 If user is unauthenticated - show him popup with login button
 
 ImportForm for butch adding PersonSeason for a team roster
+Person.story - WYSIWYG-widget and safe
+Team.story - WYSIWYG-widget and safe

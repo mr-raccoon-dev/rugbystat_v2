@@ -54,6 +54,7 @@ $('#search-submit-btn').click(function() {
 
 $('#showPersonForm').click(function() {
     $(this).hide();
+    $('.editable').hide();
     $('form#personForm').show();
 });
 

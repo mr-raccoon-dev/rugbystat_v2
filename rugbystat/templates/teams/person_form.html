@@ -17,16 +17,32 @@
 {% block js %}
 
 {{ block.super }}
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/locales/bootstrap-datepicker.ru.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
   <script type="text/javascript" src="{% static 'js/persons.js' %}"></script>
   <script type="text/javascript">
     var personListUrl = "{% url 'person-list' %}",
         personSeasonListUrl = "{% url 'personseason-list' %}",
         personUpdate = "{% url 'persons_detail' pk=object.pk %}",
         person = {{ object.pk }};
-  </script>
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    $().ready(function() {
+      $('#id_dob').datepicker({
+        language: 'ru',
+        format: "dd.mm.yyyy", 
+        clearBtn: true,
+        startView: 2,
+      });
+      $('#id_dod').datepicker({
+        language: 'ru',
+        format: "dd.mm.yyyy", 
+        clearBtn: true,
+        startView: 2, 
+      });
+    });
+  </script>
 
 {% endblock js %}
 
@@ -83,12 +99,6 @@
     </div>
   </div>
 </div>
-<div id="storyForm" class="form-inputs">
-  <div class="form-group">
-    {% render_field form.story class+="form-control" rows="5" %}
-    <span class="help-block">{{ form.story.label }}</span>
-  </div>
-</div>
 <div id="dossierForm" class="form-inputs">
   <div class="form-group row">
     <div class="col-sm-2">
@@ -117,6 +127,12 @@
       {% render_field form.is_dead class+="form-control" %}
       <span class="help-block">{{ form.is_dead.label }}</span>
     </div>
+  </div>
+</div>
+<div id="storyForm" class="form-inputs">
+  <div class="form-group">
+    {% render_field form.story class+="form-control" rows="5" %}
+    <span class="help-block">{{ form.story.label }}</span>
   </div>
 </div>
 <div id="submitForm">
