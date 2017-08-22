@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import os
 import re
+import logging
 from datetime import date
 
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -14,6 +16,9 @@ from dropbox.rest import ErrorResponse
 
 from storages.backends.dropbox import DropBoxStorage
 from teams.models import TagObject
+
+
+logger = logging.getLogger('django.server')
 
 
 def get_dropbox_content_url(url):
@@ -190,6 +195,11 @@ class Document(TitleDescriptionModel, TimeStampedModel):
     def __init__(self, *args, **kwargs):
         super(Document, self).__init__(*args, **kwargs)
         self.client = self.dropbox.storage.client
+        self._original_state = self._as_dict()
+
+    def _as_dict(self):
+        return dict([(f.name, getattr(self, f.name)) 
+                     for f in self._meta.local_fields if not f.rel])
 
     @cached_property
     def filename(self):
@@ -203,6 +213,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         return self.title
 
     def save(self, **kwargs):
+        # Get dropbox share links on first upload
         if not self.dropbox_path and self.dropbox:
             if self.extension in ['jpg', 'jpeg', 'png', 'tiff', 'tif', 'gif']:
                 self.is_image = True
@@ -212,8 +223,15 @@ class Document(TitleDescriptionModel, TimeStampedModel):
                 self.dropbox_path = self.get_share_link(self.dropbox.name, 
                                                         convert=False)
 
+        # Get newspaper / photo / ... kind from self.source if possible
         if not self.kind and self.source:
             self.kind = self.source.kind
+
+        # Move file inside dropbox folder to another path in the same dir
+        if self.title != self._original_state['title']:
+            to_path = os.path.join(os.path.dirname(self.dropbox.name), 
+                                   self.title)
+            self.move_dropbox(to_path)
 
         super(Document, self).save(**kwargs)
 
@@ -265,7 +283,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         result = self.client.put_file('/.thumbs/{}'.format(self.filename), f)
         return result['path']
 
-    def move(self, to_path):
+    def move_dropbox(self, to_path):
         """
         Calls file_move(from_path, to_path) method of dropbox.client.DropboxClient instance
     
@@ -297,9 +315,9 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         """
         try:
             self.client.file_move(self.dropbox.name, to_path)
-        except ErrorResponse:
+        except ErrorResponse as e:
             # TODO log error
-            pass
+            logger.error("Couldn't move Dropbox file. {}".format(e))
 
         self.dropbox.name = to_path
         self.dropbox_path = self.get_share_link(self.dropbox.name)
