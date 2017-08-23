@@ -32,6 +32,7 @@ var searchManager = {
             url: teamListUrl + id + "/",
             success: function(data) {
                 window.history.pushState({}, '', '/teams/' + id + '/');
+                window.location.reload();
                 searchManager.process_team(data);
             }
         });

@@ -112,6 +112,36 @@ class Team(TagObject):
         return reverse('teams_detail', kwargs={'pk': self.pk})
 
 
+class TeamSeason(models.Model):
+    """Representation of each tournament a team played"""
+    name = models.CharField(verbose_name=_('Базовое название'),
+        max_length=127, blank=True)
+    team = models.ForeignKey(
+        Team, verbose_name=_('Команда'), related_name='seasons', 
+    )
+    year = models.PositiveSmallIntegerField(
+        verbose_name=_('Год'),
+        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
+    )
+    season = models.ForeignKey(
+        'matches.Season', verbose_name=_('Турнир'), 
+        related_name='_team_seasons'
+    )
+    story = models.TextField(verbose_name=_('История'), blank=True, )
+
+    class Meta:
+        ordering = ('-year', 'team')
+        unique_together = (('team', 'year', 'season'))
+
+    def __str__(self):
+        return "{}".format(self.name)
+
+    def save(self, **kwargs):
+        if not self.name:
+            self.name = "{}: {} ({})".format(self.team, self.season, self.year)
+        super(TeamSeason, self).save(**kwargs)
+
+
 class Person(TagObject):
     first_name = models.CharField(
         max_length=127, verbose_name=_('Имя'), blank=True, )
@@ -217,6 +247,7 @@ class PersonSeason(models.Model):
         unique_together = (('person', 'year', 'tournament', 'role'))
 
     def __str__(self):
+        # beware select_related when looping!
         return "{} {}".format(self.person, self.year)
 
     @property

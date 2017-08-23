@@ -20,6 +20,8 @@ All forms appear and sent only via logged in users
 User may log in only via facebook account
 If user is unauthenticated - show him popup with login button
 
-ImportForm for butch adding PersonSeason for a team roster
+ImportForm for batch adding PersonSeason for a team roster
 Person.story - WYSIWYG-widget and safe
 Team.story - WYSIWYG-widget and safe
+
+DocumentEditForm?
