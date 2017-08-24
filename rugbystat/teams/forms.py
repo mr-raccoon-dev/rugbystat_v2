@@ -85,7 +85,7 @@ class TeamForm(BaseModeratedObjectForm):
         return self.cleaned_data
 
 
-class TeamSeasonForm(forms.ModelForm):
+class TeamSeasonForm(BaseModeratedObjectForm):
     """Edit TeamSeason attributes"""
 
     class Meta:
