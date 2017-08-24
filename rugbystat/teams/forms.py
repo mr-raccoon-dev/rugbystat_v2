@@ -1,11 +1,12 @@
 import re
 
+from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from moderation.forms import BaseModeratedObjectForm
 
-from .models import Team, City, Person, PersonSeason
+from .models import Team, TeamSeason, City, Person, PersonSeason
 
 __author__ = 'krnr'
 
@@ -82,6 +83,19 @@ class TeamForm(BaseModeratedObjectForm):
                 raise ValidationError(msg)
 
         return self.cleaned_data
+
+
+class TeamSeasonForm(forms.ModelForm):
+    """Edit TeamSeason attributes"""
+
+    class Meta:
+        model = TeamSeason
+        fields = ('name', 'year', 'season', 'team', 'story')
+        widgets = {
+            'team': autocomplete.ModelSelect2(url='autocomplete-teams'),
+            'season': autocomplete.ModelSelect2(url='autocomplete-seasons',
+                                                forward=['year'])
+        }
 
 
 class PersonForm(BaseModeratedObjectForm):

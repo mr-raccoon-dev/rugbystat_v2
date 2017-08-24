@@ -14,7 +14,10 @@ from clippings.viewsets import (DocumentViewSet,
                                 SourceViewSet,
                                 SourceObjectViewSet)
 from main import views
-from teams.views import import_teams, PersonCreateView, PersonUpdateView, TeamUpdateView
+from matches.views import SeasonAutocomplete
+from teams.views import (import_teams, 
+                         PersonCreateView, PersonUpdateView, TeamUpdateView, 
+                         TeamAutocomplete)
 from teams.viewsets import TeamViewSet, PersonViewSet, PersonSeasonViewSet
 from users.viewsets import UserViewSet
 
@@ -36,6 +39,11 @@ urlpatterns = [
     url(r'^dropbox-webhook/', import_from_dropbox),
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/', include('authentication.urls')),
+
+    url(r'^autocomplete-seasons/$', SeasonAutocomplete.as_view(), 
+        name='autocomplete-seasons'),
+    url(r'^autocomplete-teams/$', TeamAutocomplete.as_view(), 
+        name='autocomplete-teams'),
 
     url(r'^teams/$', views.teams_view, name='teams'),
     url(r'^teams/(?P<pk>\d+)/', TeamUpdateView.as_view(), name='teams_detail'),

@@ -1,3 +1,5 @@
+from dal import autocomplete
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.core.urlresolvers import reverse_lazy
@@ -17,6 +19,20 @@ def import_teams(request):
     else:
         form = ImportForm()
     return render(request, 'import.html', {'form': form})
+
+
+class TeamAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # if not self.request.user.is_authenticated():
+        #     return Team.objects.none()
+
+        qs = Team.objects.all()
+
+        if self.q:
+            qs = qs.filter(Q(short_name__icontains=self.q) |
+                           Q(city__name__icontains=self.q))
+
+        return qs
 
 
 class TeamUpdateView(UpdateView):

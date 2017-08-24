@@ -4,6 +4,9 @@ from os.path import join
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 INSTALLED_APPS = (
+    'dal',
+    'dal_select2',
+    # `dal` must be before django.contrib.admin!
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

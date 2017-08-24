@@ -10,6 +10,7 @@ dj-database-url==0.4.1
 # Models
 django-model-utils==2.6
 django-moderation==0.4.0
+django-autocomplete-light==3.2.9
 
 # Rest apis
 djangorestframework==3.5.3

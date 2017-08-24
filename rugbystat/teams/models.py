@@ -114,14 +114,16 @@ class Team(TagObject):
 
 class TeamSeason(models.Model):
     """Representation of each tournament a team played"""
+
     name = models.CharField(verbose_name=_('Базовое название'),
         max_length=127, blank=True)
+    year = models.PositiveSmallIntegerField(
+        verbose_name=_('Год'), blank=True, null=True,
+        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
+    )
+    # both `name` and `year` serves only for simpler repr and sql query
     team = models.ForeignKey(
         Team, verbose_name=_('Команда'), related_name='seasons', 
-    )
-    year = models.PositiveSmallIntegerField(
-        verbose_name=_('Год'),
-        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
     )
     season = models.ForeignKey(
         'matches.Season', verbose_name=_('Турнир'), 
@@ -138,7 +140,9 @@ class TeamSeason(models.Model):
 
     def save(self, **kwargs):
         if not self.name:
-            self.name = "{}: {} ({})".format(self.team, self.season, self.year)
+            self.name = "{}: {}".format(self.team, self.season)
+        if not self.year:
+            self.year = self.season.date_end.year
         super(TeamSeason, self).save(**kwargs)
 
 

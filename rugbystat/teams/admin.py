@@ -3,7 +3,8 @@ from markdownx.admin import MarkdownxModelAdmin
 from moderation.admin import ModerationAdmin
 
 from clippings.admin import DropdownFilter
-from .models import Person, PersonSeason, Team, Stadium, City
+from .forms import TeamSeasonForm
+from .models import Person, PersonSeason, Team, TeamSeason, Stadium, City
 
 
 @admin.register(City)
@@ -29,6 +30,21 @@ class TeamAdmin(admin.ModelAdmin):
         ('year', DropdownFilter),
     )
     search_fields = ('short_name', )
+
+
+@admin.register(TeamSeason)
+class TeamSeasonAdmin(admin.ModelAdmin):
+    form = TeamSeasonForm
+
+    search_fields = ('team__name', )
+    list_display = ('__str__', 'season', 'team')
+    list_select_related = ('season', 'team')
+    list_filter = (
+        ('team__name', DropdownFilter),
+        ('year', DropdownFilter),
+        ('season__name', DropdownFilter),
+    )
+    # raw_id_fields = ('team', 'season')
 
 
 class PersonSeasonInline(admin.TabularInline):
@@ -65,8 +81,8 @@ class PersonAdmin(ModerationAdmin, MarkdownxModelAdmin):
 @admin.register(PersonSeason)
 class PersonSeasonAdmin(admin.ModelAdmin):
     search_fields = ('person__name', 'person__first_name', )
-    list_display = ('__str__', 'role',)
-    list_select_related = ('person', )
+    list_display = ('__str__', 'role', 'team')
+    list_select_related = ('person', 'team')
     list_filter = (
         ('person__name', DropdownFilter),
         ('year', DropdownFilter),
