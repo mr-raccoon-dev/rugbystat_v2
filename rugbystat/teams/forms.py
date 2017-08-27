@@ -127,6 +127,4 @@ class PersonSeasonForm(BaseModeratedObjectForm):
 
     class Meta:
         model = PersonSeason
-        fields = ('person', 'year', 'role', 'team', 'tournament',
-                  'story')
-
+        fields = ('person', 'year', 'role', 'team', 'season', 'story')

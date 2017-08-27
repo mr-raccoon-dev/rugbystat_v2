@@ -131,6 +131,29 @@ class TeamSeason(models.Model):
     )
     story = models.TextField(verbose_name=_('История'), blank=True, )
 
+    played = models.PositiveSmallIntegerField(
+        verbose_name=_('И'), null=True, blank=True,
+        validators=(MaxValueValidator(100)),
+    )
+    wins = models.PositiveSmallIntegerField(
+        verbose_name=_('В'), null=True, blank=True,
+        validators=(MaxValueValidator(100)),
+    )
+    draws = models.PositiveSmallIntegerField(
+        verbose_name=_('Н'), null=True, blank=True,
+        validators=(MaxValueValidator(100)),
+    )
+    losses = models.PositiveSmallIntegerField(
+        verbose_name=_('П'), null=True, blank=True,
+        validators=(MaxValueValidator(100)),
+    )
+    points = models.PositiveSmallIntegerField(
+        verbose_name=_('О'), null=True, blank=True,
+        validators=(MaxValueValidator(100)),
+    )
+    score = models.CharField(verbose_name=_('Р/О'),
+        max_length=10, blank=True)
+
     class Meta:
         ordering = ('-year', 'team')
         unique_together = (('team', 'year', 'season'))
@@ -197,18 +220,18 @@ class Person(TagObject):
 
 class PersonSeason(models.Model):
     """Representation of each year in a person's career"""
-    PLAYER = 'player'
-    PROP = 'prop'
-    HOOKER = 'hooker'
-    LOCK = 'lock'
-    BACKROW = 'backrow'
-    SH = 'scrum-half'
-    FH = 'fly-half'
-    CENTER = 'center'
-    WINGER = 'winger'
-    FB = 'fullback'
-    REF = 'referee'
-    COACH = 'coach'
+    PROP = '01-prop'
+    HOOKER = '02-hooker'
+    LOCK = '03-lock'
+    BACKROW = '04-backrow'
+    SH = '05-scrum-half'
+    FH = '06-fly-half'
+    CENTER = '07-center'
+    WINGER = '08-winger'
+    FB = '09-fullback'
+    PLAYER = '20-player'
+    REF = '30-referee'
+    COACH = '40-coach'
     
     ROLE_CHOICES = (
         (PLAYER, _('игрок')),
@@ -240,15 +263,15 @@ class PersonSeason(models.Model):
         Team, verbose_name=_('Команда'), related_name='_person_seasons', 
         blank=True, null=True
     )
-    tournament = models.ForeignKey(
-        'matches.Tournament', verbose_name=_('Турнир'), 
+    season = models.ForeignKey(
+        'matches.Season', verbose_name=_('Розыгрыш турнира'), 
         related_name='_person_seasons', blank=True, null=True
     )
-    story = models.TextField(verbose_name=_('История'), blank=True, )
+    story = models.TextField(verbose_name=_('Комментарий'), blank=True, )
 
     class Meta:
-        ordering = ('-year', )
-        unique_together = (('person', 'year', 'tournament', 'role'))
+        ordering = ('-year', 'season', 'role')
+        unique_together = (('person', 'year', 'season', 'role'))
 
     def __str__(self):
         # beware select_related when looping!

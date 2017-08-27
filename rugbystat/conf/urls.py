@@ -14,7 +14,8 @@ from clippings.viewsets import (DocumentViewSet,
                                 SourceViewSet,
                                 SourceObjectViewSet)
 from main import views
-from matches.views import SeasonAutocomplete
+from matches.views import (import_seasons, 
+                           TournamentAutocomplete, SeasonAutocomplete)
 from teams.views import (import_teams, 
                          PersonCreateView, PersonUpdateView, TeamUpdateView, 
                          TeamAutocomplete)
@@ -33,13 +34,16 @@ router.register(r'issues', SourceObjectViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^api/v1/', include(router.urls)),
+    url(r'^api/v1/', include('authentication.urls')),
     url(r'^django-rq/', include('django_rq.urls')),
     url(r'^markdownx/', include('markdownx.urls')),
     url(r'^import-teams/', import_teams),
+    url(r'^import-seasons/', import_seasons),
     url(r'^dropbox-webhook/', import_from_dropbox),
-    url(r'^api/v1/', include(router.urls)),
-    url(r'^api/v1/', include('authentication.urls')),
 
+    url(r'^autocomplete-tournaments/$', TournamentAutocomplete.as_view(), 
+        name='autocomplete-tournaments'),
     url(r'^autocomplete-seasons/$', SeasonAutocomplete.as_view(), 
         name='autocomplete-seasons'),
     url(r'^autocomplete-teams/$', TeamAutocomplete.as_view(), 

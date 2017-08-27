@@ -31,6 +31,9 @@ class Season(TagObject):
     date_start = models.DateField(verbose_name=_("Дата начала"))
     date_end = models.DateField(verbose_name=_("Дата окончания"))
 
+    class Meta:
+        ordering = ('tourn', 'date_start')
+
     def __str__(self):
         return self.name
 

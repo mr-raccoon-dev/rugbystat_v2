@@ -1,6 +1,8 @@
 from __future__ import absolute_import, unicode_literals
+
 from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+
 from .models import User
 
 
