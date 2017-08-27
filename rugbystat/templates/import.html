@@ -1,8 +1,103 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% load markdownx %}
+
+{% block stylesheets %}
+
+{{ block.super }}
+  <!-- Include Bootstrap Datepicker -->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker3.min.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" />
+{% endblock stylesheets %}
+
+{% block js %}
+
+{{ block.super }}
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/locales/bootstrap-datepicker.ru.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+  <script type="text/javascript" src="{% static 'js/import.js' %}"></script>
+
+{% endblock js %}
+
 {% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <form method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit" />
 </form>
+
+{% if obj_form %}
+<div id="formErrors">
+{% if obj_form.errors %}
+    {{ obj_form.non_field_errors }}
+    {% for field in obj_form %}
+    <div class="fieldError">
+        {{ field.errors }}
+    </div>
+    {% endfor %}
+{% endif %}
+</div>
+
+<form role="form" id="seasonForm"
+      method="POST" action="#">
+{% csrf_token %}
+<div id="seasonForm" class="form-inputs">
+  <div class="form-inline row">
+    <div class="col-sm-3">
+      {% render_field obj_form.name class+="form-control" %}
+      <span class="help-block">{{ obj_form.name.label }}</span>
+    </div>
+    <div class="col-sm-3">
+      <div class="input-group input-append date">
+        {% render_field obj_form.date_start class+="form-control" %}
+        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+      </div>
+      <span class="help-block">{{ obj_form.date_start.label }}</span>
+    </div>
+    <div class="col-sm-3">
+      <div class="input-group input-append date">
+        {% render_field obj_form.date_end class+="form-control" %}
+        <span class="input-group-addon add-on"><span class="glyphicon glyphicon-calendar"></span></span>
+      </div>
+      <span class="help-block">{{ obj_form.date_end.label }}</span>
+    </div>
+    <div class="col-sm-3">
+      {% render_field obj_form.tourn class+="form-control" %}
+      <span class="help-block">{{ obj_form.tourn.label }}</span>
+    </div>
+  </div>
+</div>
+
+<div id="storyForm" class="form-inputs">
+  <div class="form-group">
+    {% render_field obj_form.story class+="form-control" rows="5" %}
+    <span class="help-block">{{ obj_form.story.label }}</span>
+  </div>
+</div>
+<div id="submitForm">
+  <div class="form-group">
+    <button class="btn btn-default" id="submitSeasonForm" type="submit">Сохранить</button>
+    <button class="btn btn-secondary" id="cancelSeasonForm" type="submit">Отмена</button>
+  </div>
+</div>
+</form>
+
+{{ obj_form.media }}
+
+{% endif %}
+
 {% endblock content %}
