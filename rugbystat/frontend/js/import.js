@@ -1,5 +1,7 @@
 $().ready(function() {
 
+  $.fn.select2.defaults.set( "theme", "bootstrap" );
+  
   $('#id_date_start').datepicker({
     language: 'ru',
     format: "dd.mm.yyyy", 

@@ -36,9 +36,11 @@
 
 <form method="post">
     {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
+    {% render_field form.input class+="form-control" %}
+    <input class="btn btn-default" type="submit" value="Submit" />
 </form>
+
+<br>
 
 {% if obj_form %}
 <div id="formErrors">
