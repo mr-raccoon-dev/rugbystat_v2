@@ -1,4 +1,6 @@
 import re
+import datetime
+from difflib import SequenceMatcher as SM
 
 from dal import autocomplete
 from django import forms
@@ -9,6 +11,75 @@ from django.utils.translation import ugettext_lazy as _
 from .models import Tournament, Season
 
 __author__ = 'krnr'
+
+
+MONTHS_MAP = {
+    'январ': '01',
+    'феврал': '02',
+    'март': '03',
+    'апрел': '04',
+    'мая': '05',
+    'июн': '06',
+    'июл': '07',
+    'август': '08', 
+    'сентябр': '09',
+    'октябр': '10',
+    'ноябр': '11',
+    'декабр': '12'
+}
+
+
+def find_dates(txt, year):
+    """
+    Parse "с 5 февраля по 10 мая" to datetime objects
+    """
+    months = r'({})'.format('|'.join(MONTHS_MAP.keys()))
+    esc1 = r' (\d+(?= {}))'.format(months)     # (с ... по ...)
+    esc2 = r'(\d+-\d+(?= {}))'.format(months)  # (1-10 ...)
+    esc3 = r'в|в конце|в начале {}'.format(months)                # в октябре...
+
+    patterns = [esc1, esc2, esc3]
+    dates = [re.findall(pattern, txt) for pattern in patterns]
+    if dates:
+        # try the first found pattern
+        try:
+            date_start, date_end = dates[0]
+            day, month = date_start
+            date_start = datetime.datetime.strptime(
+                '{}/{}/{}'.format(day, MONTHS_MAP[month], year), 
+                '%d/%m/%Y'
+            )
+            day, month = date_end
+            date_end = datetime.datetime.strptime(
+                '{}/{}/{}'.format(day, MONTHS_MAP[month], year), 
+                '%d/%m/%Y'
+            )
+        except ValueError:
+            # either ('12-15', 'мая') or 'октябр'
+            try: 
+                days, month = dates[0][0]
+                day_start, day_end = days.split('-')
+                date_start = datetime.datetime.strptime(
+                    '{}/{}/{}'.format(day_start, MONTHS_MAP[month], year), 
+                    '%d/%m/%Y'
+                )
+                date_end = datetime.datetime.strptime(
+                    '{}/{}/{}'.format(day_end, MONTHS_MAP[month], year), 
+                    '%d/%m/%Y'
+                )
+            except ValueError:
+                # 'октябр'
+                date_start = datetime.datetime.strptime(
+                    '{}/{}/{}'.format('05', MONTHS_MAP[month], year), 
+                    '%d/%m/%Y'
+                )
+                date_end = datetime.datetime.strptime(
+                    '{}/{}/{}'.format('25', MONTHS_MAP[month], year), 
+                    '%d/%m/%Y'
+                )
+        return date_start, date_end
+    else:
+        return None, None
 
 
 def parse_season(data, request):
@@ -23,19 +94,30 @@ def parse_season(data, request):
     season.name = title.strip()
     season.year = year
     tourns = Tournament.objects.filter(name__icontains=season.name)
+    
     if tourns.count() == 1:
-        season.tournament = tourns.first()
+        season.tourn = tourns.first()
     else:
         if not tourns:
             msg = "No tournaments found"
         else:
-            msg = "Tournaments found for this title: {}".format(
-                ", ".join(tourn.name for tourn in tourns)
-            )
+            ratios = [SM(None, tourn.name, title).ratio() for tourn in tourns]
+            max_tourn = tourns[ratios.index(max(ratios))]
+            season.tourn = max_tourn
+            msg = "Multiple tournaments found for this title. We suggest: {}".format(
+                max_tourn.name)
         messages.add_message(request, messages.INFO, msg)
 
+    for line in rest:
+        if line.strip():
+            date_start, date_end = find_dates(line, year)
+            if date_start and date_end:
+                season.date_start = date_start
+                season.date_end = date_end
+                break
+
     season.story = "\n".join(rest)
-    print(season.__dict__)
+    return season
 
 
 class ImportForm(forms.Form):
@@ -50,7 +132,7 @@ class ImportForm(forms.Form):
 
     def clean(self):
         data = super(ImportForm, self).clean()
-        parse_season(data['input'], self.request)
+        self.season = parse_season(data['input'], self.request)
 
 
 class SeasonForm(forms.ModelForm):

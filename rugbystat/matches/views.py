@@ -16,8 +16,6 @@ class TournamentAutocomplete(autocomplete.Select2QuerySetView):
 
         qs = Tournament.objects.all()
 
-        start = self.forwarded.get('date_start', None)
-        end = self.forwarded.get('date_end', None)
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         
@@ -48,8 +46,10 @@ def import_seasons(request):
 
     if request.method == 'POST':
         form = ImportForm(request.POST, request=request)
+
         if form.is_valid():
             status = 'OK'
+            obj_form = SeasonForm(instance=form.season)
         else:
             status = 'False'
     else:
