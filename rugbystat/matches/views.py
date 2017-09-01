@@ -1,9 +1,11 @@
 from datetime import datetime
 
 from dal import autocomplete
+from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.generic import CreateView
 
 from .forms import ImportForm, SeasonForm
 from .models import Tournament, Season
@@ -61,3 +63,9 @@ def import_seasons(request):
                       'status': status,
                       'obj_form': obj_form
                   })
+
+
+class SeasonCreateView(CreateView):
+    model = Season
+    form_class = SeasonForm
+    success_url = reverse_lazy('import_seasons')

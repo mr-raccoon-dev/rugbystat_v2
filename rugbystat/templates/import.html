@@ -55,7 +55,7 @@
 </div>
 
 <form role="form" id="seasonForm"
-      method="POST" action="#">
+      method="POST" action="{% url 'seasons_new' %}">
 {% csrf_token %}
 <div id="seasonForm" class="form-inputs">
   <div class="form-inline row">

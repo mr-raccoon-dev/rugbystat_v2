@@ -1,8 +1,8 @@
 from dal import autocomplete
+from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.core.urlresolvers import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 
 from .forms import ImportForm, PersonForm, PersonSeasonForm, TeamForm

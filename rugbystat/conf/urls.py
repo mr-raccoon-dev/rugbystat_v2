@@ -14,7 +14,7 @@ from clippings.viewsets import (DocumentViewSet,
                                 SourceViewSet,
                                 SourceObjectViewSet)
 from main import views
-from matches.views import (import_seasons, 
+from matches.views import (import_seasons, SeasonCreateView,
                            TournamentAutocomplete, SeasonAutocomplete)
 from teams.views import (import_teams, 
                          PersonCreateView, PersonUpdateView, TeamUpdateView, 
@@ -39,7 +39,7 @@ urlpatterns = [
     url(r'^django-rq/', include('django_rq.urls')),
     url(r'^markdownx/', include('markdownx.urls')),
     url(r'^import-teams/', import_teams),
-    url(r'^import-seasons/', import_seasons),
+    url(r'^import-seasons/', import_seasons, name='import_seasons'),
     url(r'^dropbox-webhook/', import_from_dropbox),
 
     url(r'^autocomplete-tournaments/$', TournamentAutocomplete.as_view(), 
@@ -52,6 +52,7 @@ urlpatterns = [
     url(r'^teams/$', views.teams_view, name='teams'),
     url(r'^teams/(?P<pk>\d+)/', TeamUpdateView.as_view(), name='teams_detail'),
     url(r'^tournaments/', views.tournaments_view, name='tournaments'),
+    url(r'^seasons/new/', SeasonCreateView.as_view(), name='seasons_new'),
     url(r'^persons/$', views.persons_view, name='persons'),
     url(r'^persons/(?P<pk>\d+)/', PersonUpdateView.as_view(), name='persons_detail'),
     url(r'^persons/new/', PersonCreateView.as_view(), name='persons_new'),
