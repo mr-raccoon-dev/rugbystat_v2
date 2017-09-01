@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from teams.models import TagObject, Team, Stadium, Person
@@ -38,14 +39,27 @@ class Season(TagObject):
         return self.name
 
     def save(self, **kwargs):
+        self.full_clean()
         if not self.pk:
-            if self.date_start.year == self.date_end.year:
-                lap = self.date_start.year
-            else:
-                lap = "{}/{}".format(
-                    self.date_start.year, str(self.date_end.year)[-2:])
-            self.name = "{} {}".format(self.tourn, lap)
+            self.name = self._get_name()
         super(Season, self).save(**kwargs)
+
+    def _get_name(self):
+        """
+        Generate name like Чемпионат СССР 1978 or Кубок СССР 1977/78
+        """
+        if self.date_start.year == self.date_end.year:
+            lap = self.date_start.year
+        else:
+            lap = "{}/{}".format(
+                self.date_start.year, str(self.date_end.year)[-2:])
+        return "{} {}".format(self.tourn, lap)
+
+    def full_clean(self, **kwargs):
+        super(Season, self).full_clean(**kwargs)
+        name = self._get_name()
+        if Season.objects.filter(name=name).exclude(pk=self.pk).exists():
+            raise ValidationError('Such season already exists: {}'.format(name))
 
 
 class Match(TagObject):
