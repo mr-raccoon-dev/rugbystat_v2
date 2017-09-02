@@ -19,6 +19,7 @@ MONTHS_MAP = {
     'март': '03',
     'апрел': '04',
     'мая': '05',
+    'мае': '05',
     'июн': '06',
     'июл': '07',
     'август': '08', 
@@ -36,11 +37,12 @@ def find_dates(txt, year):
     months = r'({})'.format('|'.join(MONTHS_MAP.keys()))
     esc1 = r' (\d+(?= {}))'.format(months)     # (с ... по ...)
     esc2 = r'(\d+-\d+(?= {}))'.format(months)  # (1-10 ...)
-    esc3 = r'в|в конце|в начале {}'.format(months)                # в октябре...
+    esc3 = r'[в|в конце|в начале] {}'.format(months)                # в октябре...
 
     patterns = [esc1, esc2, esc3]
     dates = [re.findall(pattern, txt) for pattern in patterns]
-    if dates:
+    import ipdb; ipdb.set_trace()
+    if filter(bool, dates):
         # try the first found pattern
         try:
             date_start, date_end = dates[0]
@@ -54,10 +56,10 @@ def find_dates(txt, year):
                 '{}/{}/{}'.format(day, MONTHS_MAP[month], year), 
                 '%d/%m/%Y'
             )
-        except ValueError:
+        except (IndexError, ValueError):
             # either ('12-15', 'мая') or 'октябр'
             try: 
-                days, month = dates[0][0]
+                days, month = dates[1][0]
                 day_start, day_end = days.split('-')
                 date_start = datetime.datetime.strptime(
                     '{}/{}/{}'.format(day_start, MONTHS_MAP[month], year), 
@@ -67,8 +69,9 @@ def find_dates(txt, year):
                     '{}/{}/{}'.format(day_end, MONTHS_MAP[month], year), 
                     '%d/%m/%Y'
                 )
-            except ValueError:
+            except (IndexError, ValueError):
                 # 'октябр'
+                month = dates[2][0]
                 date_start = datetime.datetime.strptime(
                     '{}/{}/{}'.format('05', MONTHS_MAP[month], year), 
                     '%d/%m/%Y'
