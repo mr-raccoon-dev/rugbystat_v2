@@ -1,5 +1,8 @@
+from collections import Counter
+
 from django.shortcuts import render
 
+from clippings.models import Document, Source
 from teams.forms import PersonForm
 
 from .forms import ClippingsForm
@@ -24,4 +27,9 @@ def persons_view(request):
 
 def clippings_view(request):
     form = ClippingsForm()
-    return render(request, 'documents.html', {'form': form})
+    # TODO: rewrite for one query
+    qs = Document.objects.values_list('source__kind', flat=True)
+    counter = Counter(qs)
+    return render(request, 'documents.html', {'form': form,
+                                              'total': counter,
+                                              'sum_total': sum(counter.values())})

@@ -52,6 +52,22 @@
   <img src="http://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif"/>
 </span>
 
+<div>
+  <div>
+    Всего в базе вырезок: 
+    <ul>
+      <li>фото: {{ total.photo }}</li>
+      <li>из газет: {{ total.newspaper }}</li>
+      <li>из журналов: {{ total.magazine }}</li>
+      <li>протоколов: {{ total.protocol }}</li>
+      <li>из программок: {{ total.program }}</li>
+      <li>из книг: {{ total.book }}</li>
+      <li>прочее: {{ total.other }}</li>
+      <li>без указаний на источник: {{ total.None }}</li>
+      <li>всего: {{ sum_total }}</li>
+    </ul>
+  </div>
+</div>
 <div id="results">
   <div class="documents-div">
     <table class="table table-striped table-hover" id="documents-table">

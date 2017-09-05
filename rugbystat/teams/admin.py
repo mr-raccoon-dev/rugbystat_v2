@@ -2,7 +2,7 @@ from django.contrib import admin
 from markdownx.admin import MarkdownxModelAdmin
 from moderation.admin import ModerationAdmin
 
-from clippings.admin import DropdownFilter
+from main.filters import DropdownFilter
 from .forms import TeamSeasonForm
 from .models import Person, PersonSeason, Team, TeamSeason, Stadium, City
 
@@ -81,8 +81,8 @@ class PersonAdmin(ModerationAdmin, MarkdownxModelAdmin):
 @admin.register(PersonSeason)
 class PersonSeasonAdmin(admin.ModelAdmin):
     search_fields = ('person__name', 'person__first_name', )
-    list_display = ('__str__', 'role', 'team')
-    list_select_related = ('person', 'team')
+    list_display = ('__str__', 'role', 'team', 'season')
+    list_select_related = ('person', 'team', 'season')
     list_filter = (
         ('person__name', DropdownFilter),
         ('year', DropdownFilter),

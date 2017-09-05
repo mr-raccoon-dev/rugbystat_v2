@@ -1,7 +1,7 @@
 from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 
-from clippings.admin import DropdownFilter
+from main.filters import DropdownFilter, DateEndListFilter
 from .models import Tournament, Season, Match
 
 
@@ -12,8 +12,10 @@ class TournamentAdmin(SortableAdminMixin, admin.ModelAdmin):
 
 @admin.register(Season)
 class SeasonAdmin(admin.ModelAdmin):
+    list_display = ('name', 'date_start', 'date_end', 'story')
     list_filter = (
         ('tourn__name', DropdownFilter),
+        DateEndListFilter,
     )
     list_select_related = ('tourn', )
     search_fields = ('name', )

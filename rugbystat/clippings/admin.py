@@ -1,17 +1,9 @@
 from django.contrib import admin, messages
-from django.contrib.admin.filters import AllValuesFieldListFilter
 from django.db.models import FileField
 
+from main.filters import DropdownFilter
 from .forms import SourceForm
 from .models import Source, SourceObject, Document
-
-
-class DropdownFilter(AllValuesFieldListFilter):
-    template = 'admin/dropdown_filter.html'
-
-    def __init__(self, *args, **kwargs):
-        super(DropdownFilter, self).__init__(*args, **kwargs)
-        self.lookup_choices = [None] + list(self.lookup_choices)
 
 
 @admin.register(Source)
