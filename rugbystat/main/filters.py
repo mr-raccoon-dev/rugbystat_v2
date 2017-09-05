@@ -31,11 +31,11 @@ class DateEndListFilter(SimpleListFilter):
         human-readable name for the option that will appear
         in the right sidebar.
         """
-        values =  set(
+        values =  sorted(list(set(
             model_admin.model.objects.annotate(
                 year=ExtractYear(self.model_field)
             ).values_list('year', flat=True)
-        )
+        )))
 
         return (
             (value, value) for value in values
@@ -47,7 +47,7 @@ class DateEndListFilter(SimpleListFilter):
         provided in the query string and retrievable via
         `self.value()`.
         """
-        year = int(self.value())
-        if year:
+        if self.value():
+            year = int(self.value())
             return queryset.filter(date_end__gte=date(year, 1, 1),
                                    date_end__lte=date(year, 12, 31))

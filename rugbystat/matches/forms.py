@@ -41,7 +41,6 @@ def find_dates(txt, year):
 
     patterns = [esc1, esc2, esc3]
     dates = [re.findall(pattern, txt) for pattern in patterns]
-    import ipdb; ipdb.set_trace()
     if filter(bool, dates):
         # try the first found pattern
         try:
@@ -95,7 +94,7 @@ def parse_season(data, request):
     # first line denotes title
     title, year = re.match(YEAR, first.strip()).group(1,2)
     season.name = title.strip()
-    season.year = year
+    season.year = int(year)
     tourns = Tournament.objects.filter(name__icontains=season.name)
     
     if tourns.count() == 1:
@@ -118,6 +117,9 @@ def parse_season(data, request):
                 season.date_start = date_start
                 season.date_end = date_end
                 break
+        else:
+            season.date_start = datetime.date(season.year, 1, 1)
+            season.date_end = datetime.date(season.year, 12, 31)
 
     season.story = "\n".join(rest)
     return season

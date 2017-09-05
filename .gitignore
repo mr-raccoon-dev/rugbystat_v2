@@ -28,3 +28,4 @@ env
 site
 
 bower_components/
+static_root/
