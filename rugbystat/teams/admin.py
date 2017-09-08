@@ -57,7 +57,7 @@ class PersonSeasonInline(admin.TabularInline):
 class PersonAdmin(ModerationAdmin, MarkdownxModelAdmin):
     search_fields = ('name', 'first_name', )
     list_filter = (
-        ('year', DropdownFilter),
+        ('year_birth', DropdownFilter),
     )
     fieldsets = (
         (None, {
@@ -69,7 +69,7 @@ class PersonAdmin(ModerationAdmin, MarkdownxModelAdmin):
             }
         ),
         (None, {
-            'fields': (('year', 'dob',), ('year_death', 'dod',), 'is_dead')
+            'fields': (('year_birth', 'dob',), ('year_death', 'dod',), 'is_dead')
             }
         ),
     )

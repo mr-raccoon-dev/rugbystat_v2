@@ -11,6 +11,75 @@ from .models import Team, TeamSeason, City, Person, PersonSeason
 __author__ = 'krnr'
 
 
+class TeamForm(BaseModeratedObjectForm):
+    """Edit Team attributes"""
+
+    class Meta:
+        model = Team
+        fields = ('story', 
+                  'year', 'disband_year', 'year_prefix', 'disband_year_prefix')
+
+    def clean(self):
+        data = super(TeamForm, self).clean()
+        msg = _("Проверьте годы cуществования")
+        if all([data['year'], data['disband_year']]):
+            if data['year'] > data['disband_year']:
+                raise ValidationError(msg)
+
+        return self.cleaned_data
+
+
+class TeamSeasonForm(BaseModeratedObjectForm):
+    """Edit TeamSeason attributes"""
+
+    class Meta:
+        model = TeamSeason
+        fields = ('name', 'year', 'season', 'team', 'story')
+        widgets = {
+            'team': autocomplete.ModelSelect2(url='autocomplete-teams'),
+            'season': autocomplete.ModelSelect2(url='autocomplete-seasons',
+                                                forward=['year'])
+        }
+
+
+class PersonForm(BaseModeratedObjectForm):
+    """Edit Person attributes"""
+    name = forms.CharField(max_length=32, label=_('Фамилия'))
+
+    class Meta:
+        model = Person
+        fields = ('name', 'first_name', 'middle_name', 'story',
+                  'year_birth', 'dob', 'year_death', 'dod', 'is_dead')
+
+    def clean(self):
+        data = super(PersonForm, self).clean()
+        msg = _("Проверьте годы жизни")
+        if all([data['dod'], data['dob']]):
+            if data['dod'] < data['dob']:
+                raise ValidationError(msg)
+
+        if all([data['year_death'], data['year_birth']]):
+            if data['year_death'] < data['year_birth']:
+                raise ValidationError(msg)
+
+        return self.cleaned_data
+
+
+class PersonSeasonForm(BaseModeratedObjectForm):
+    """Edit PersonSeason attributes"""
+    story = forms.CharField(label=_('Комментарии'), widget=forms.Textarea)
+
+    class Meta:
+        model = PersonSeason
+        fields = ('person', 'year', 'role', 'team', 'season', 'story')
+        widgets = {
+            'season': autocomplete.ModelSelect2(url='autocomplete-seasons',
+                                                forward=['year']),
+            'team': autocomplete.ModelSelect2(url='autocomplete-teams',
+                                              forward=['year'])
+        }
+
+
 def init_date(prefix_year):
     try:
         # import ipdb; ipdb.set_trace()
@@ -65,66 +134,3 @@ class ImportForm(forms.Form):
     def clean(self):
         data = super(ImportForm, self).clean()
         parse_teams(data['input'])
-
-
-class TeamForm(BaseModeratedObjectForm):
-    """Edit Team attributes"""
-
-    class Meta:
-        model = Team
-        fields = ('story', 
-                  'year', 'disband_year', 'year_prefix', 'disband_year_prefix')
-
-    def clean(self):
-        data = super(TeamForm, self).clean()
-        msg = _("Проверьте годы cуществования")
-        if all([data['year'], data['disband_year']]):
-            if data['year'] > data['disband_year']:
-                raise ValidationError(msg)
-
-        return self.cleaned_data
-
-
-class TeamSeasonForm(BaseModeratedObjectForm):
-    """Edit TeamSeason attributes"""
-
-    class Meta:
-        model = TeamSeason
-        fields = ('name', 'year', 'season', 'team', 'story')
-        widgets = {
-            'team': autocomplete.ModelSelect2(url='autocomplete-teams'),
-            'season': autocomplete.ModelSelect2(url='autocomplete-seasons',
-                                                forward=['year'])
-        }
-
-
-class PersonForm(BaseModeratedObjectForm):
-    """Edit Person attributes"""
-    name = forms.CharField(max_length=32, label=_('Фамилия'))
-
-    class Meta:
-        model = Person
-        fields = ('name', 'first_name', 'middle_name', 'story',
-                  'year', 'dob', 'year_death', 'dod', 'is_dead')
-
-    def clean(self):
-        data = super(PersonForm, self).clean()
-        msg = _("Проверьте годы жизни")
-        if all([data['dod'], data['dob']]):
-            if data['dod'] < data['dob']:
-                raise ValidationError(msg)
-
-        if all([data['year_death'], data['year']]):
-            if data['year_death'] < data['year']:
-                raise ValidationError(msg)
-
-        return self.cleaned_data
-
-
-class PersonSeasonForm(BaseModeratedObjectForm):
-    """Edit PersonSeason attributes"""
-    story = forms.CharField(label=_('Комментарии'), widget=forms.Textarea)
-
-    class Meta:
-        model = PersonSeason
-        fields = ('person', 'year', 'role', 'team', 'season', 'story')

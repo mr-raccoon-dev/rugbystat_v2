@@ -174,7 +174,7 @@ class Person(TagObject):
         max_length=127, verbose_name=_('Имя'), blank=True, )
     middle_name = models.CharField(
         max_length=127, verbose_name=_('Отчество'), blank=True, )
-    year = models.PositiveSmallIntegerField(
+    year_birth = models.PositiveSmallIntegerField(
         verbose_name=_('Год рождения'), blank=True, null=True,
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
     )
@@ -199,7 +199,7 @@ class Person(TagObject):
 
     @property
     def living_years(self):
-        birth = self.dob.strftime('%d.%m.%Y') if self.dob else self.year or '???'
+        birth = self.dob.strftime('%d.%m.%Y') if self.dob else self.year_birth or '???'
         death = self.dod.strftime('%d.%m.%Y') if self.dod else self.year_death or '???'
         if self.is_dead:
             return "{}-{}".format(birth, death)
@@ -207,7 +207,7 @@ class Person(TagObject):
 
     def save(self, **kwargs):
         if self.dob:
-            self.year = self.dob.year
+            self.year_birth = self.dob.year
         if self.dod:
             self.year_death = self.dod.year
         if self.dod or self.year_death:

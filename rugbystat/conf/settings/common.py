@@ -80,7 +80,7 @@ LANGUAGE_CODE = 'ru-ru'
 USE_I18N = False
 USE_L10N = False
 USE_TZ = True
-DATE_FORMAT = '%d.%m.%Y'
+DATE_FORMAT = 'd.m.Y'
 DATE_INPUT_FORMATS = [
     '%Y-%m-%d', '%m/%d/%Y', '%m/%d/%y', # '2006-10-25', '10/25/2006', '10/25/06'
     '%b %d %Y', '%b %d, %Y',            # 'Oct 25 2006', 'Oct 25, 2006'

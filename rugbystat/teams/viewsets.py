@@ -29,7 +29,7 @@ class PersonViewSet(mixins.CreateModelMixin,
     filter_backends = (filters.SearchFilter,
                        filters.DjangoFilterBackend,)
     search_fields = ('^name', '^first_name',)
-    filter_fields = ('year', 'name',)
+    filter_fields = ('year_birth', 'name',)
 
 
 class PersonSeasonViewSet(mixins.CreateModelMixin,

@@ -52,6 +52,6 @@ class PersonSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Person
         fields = ('url', 'id', '__str__', 'full_name', 'story',
-                  'year', 'dob', 'year_death', 'dod', 'living_years',
+                  'year_birth', 'dob', 'year_death', 'dod', 'living_years',
                   'seasons')
 

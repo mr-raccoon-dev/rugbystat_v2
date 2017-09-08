@@ -28,6 +28,12 @@ class TeamAutocomplete(autocomplete.Select2QuerySetView):
 
         qs = Team.objects.all()
 
+        year = self.forwarded.get('year', None)
+        if year:
+            qs = qs.filter(Q(year__lte=year, disband_year__gte=year) | 
+                           Q(year__lte=year, disband_year__isnull=True))
+        
+
         if self.q:
             qs = qs.filter(Q(short_name__icontains=self.q) |
                            Q(city__name__icontains=self.q))

@@ -80,9 +80,6 @@ $('#cancelPersonForm').click(function() {
 
 $('#showPersonSeasonForm').click(function() {
     $(this).hide();
-    $('#id_team').select2({
-        theme: "bootstrap"
-    });
     $("#addPersonSeason").show();
 });
 
