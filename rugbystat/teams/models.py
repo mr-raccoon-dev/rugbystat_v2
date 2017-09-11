@@ -88,11 +88,11 @@ class Team(TagObject):
 
     class Meta:
         ordering = ('year', )
-    
+
     def __str__(self):
         team = self.short_name or self.name
         return "{} ({})".format(team, self.operational_years)
-    
+
     def save(self, **kwargs):
         if not self.short_name:
             self.short_name = "{} {}".format(self.name,
@@ -116,43 +116,43 @@ class TeamSeason(models.Model):
     """Representation of each tournament a team played"""
 
     name = models.CharField(verbose_name=_('Базовое название'),
-        max_length=127, blank=True)
+                            max_length=127, blank=True)
     year = models.PositiveSmallIntegerField(
         verbose_name=_('Год'), blank=True, null=True,
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
     )
     # both `name` and `year` serves only for simpler repr and sql query
     team = models.ForeignKey(
-        Team, verbose_name=_('Команда'), related_name='seasons', 
+        Team, verbose_name=_('Команда'), related_name='seasons',
     )
     season = models.ForeignKey(
-        'matches.Season', verbose_name=_('Турнир'), 
+        'matches.Season', verbose_name=_('Турнир'),
         related_name='_team_seasons'
     )
     story = models.TextField(verbose_name=_('История'), blank=True, )
 
     played = models.PositiveSmallIntegerField(
         verbose_name=_('И'), null=True, blank=True,
-        validators=(MaxValueValidator(100)),
+        validators=(MaxValueValidator(100),),
     )
     wins = models.PositiveSmallIntegerField(
         verbose_name=_('В'), null=True, blank=True,
-        validators=(MaxValueValidator(100)),
+        validators=(MaxValueValidator(100),),
     )
     draws = models.PositiveSmallIntegerField(
         verbose_name=_('Н'), null=True, blank=True,
-        validators=(MaxValueValidator(100)),
+        validators=(MaxValueValidator(100),),
     )
     losses = models.PositiveSmallIntegerField(
         verbose_name=_('П'), null=True, blank=True,
-        validators=(MaxValueValidator(100)),
+        validators=(MaxValueValidator(100),),
     )
     points = models.PositiveSmallIntegerField(
         verbose_name=_('О'), null=True, blank=True,
-        validators=(MaxValueValidator(100)),
+        validators=(MaxValueValidator(100),),
     )
-    score = models.CharField(verbose_name=_('Р/О'),
-        max_length=10, blank=True)
+    score = models.CharField(
+        verbose_name=_('Р/О'), max_length=10, blank=True)
 
     class Meta:
         ordering = ('-year', 'team')

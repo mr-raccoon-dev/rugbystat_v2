@@ -114,38 +114,33 @@
   </div>
 
 {% if object.seasons.all %}
-<h4>Сезоны</h4>
+<h3>Сезоны</h3>
 <table class="table table-striped table-hover" id="person-seasons">
 <thead>
   <tr>
-    <th>Год</th>
-    <th>Амплуа</th>
     <th>Турнир</th>
-    <th>Команда</th>
-    <th>Комментарии</th>
+    <th>И</th>
+    <th>В</th>
+    <th>Н</th>
+    <th>П</th>
+    <th>Р/О</th>
+    <th>О</th>
   </tr>
 </thead>
 <tbody>
 {% for season in object.seasons.all %}
   <tr class="document-row">
-    <td> {{ season.year }} </td>
-    <td> {{ season.role_verbose }} </td>
     <td> 
-    {% if season.tournament %}
       <a class="link" href="#">
-         {{ season.tournament }}
+         {{ season.season }}
       </a>
-    {% else %}
-      -
-    {% endif %}
     </td>
-    <td>
-    {% if season.team %}
-      {{ season.team.short_name }}
-    {% else %}
-      -
-    {% endif %}
-    </td>
+    <td>{{ season.played|default:"-" }}</td>
+    <td>{{ season.wins|default:"-" }}</td>
+    <td>{{ season.draws|default:"-" }}</td>
+    <td>{{ season.losses|default:"-" }}</td>
+    <td>{{ season.score|default:"-" }}</td>
+    <td>{{ season.points|default:"-" }}</td>
     <td> {{ season.story }} </td>
   </tr>
 {% endfor %}
@@ -153,7 +148,7 @@
 {% endif %}
 
 {% if object.documents %}
-<h4>Документы</h4>
+<h3>Документы</h3>
 <table class="table table-striped table-hover" id="documents-table">
   <thead>
     <tr>

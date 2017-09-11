@@ -32,7 +32,7 @@ class TeamAutocomplete(autocomplete.Select2QuerySetView):
         if year:
             qs = qs.filter(Q(year__lte=year, disband_year__gte=year) | 
                            Q(year__lte=year, disband_year__isnull=True))
-        
+
 
         if self.q:
             qs = qs.filter(Q(short_name__icontains=self.q) |

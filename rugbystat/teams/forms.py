@@ -16,7 +16,7 @@ class TeamForm(BaseModeratedObjectForm):
 
     class Meta:
         model = Team
-        fields = ('story', 
+        fields = ('story',
                   'year', 'disband_year', 'year_prefix', 'disband_year_prefix')
 
     def clean(self):
@@ -34,7 +34,9 @@ class TeamSeasonForm(BaseModeratedObjectForm):
 
     class Meta:
         model = TeamSeason
-        fields = ('name', 'year', 'season', 'team', 'story')
+        fields = ('name', 'year', 'team', 'season', 'story',
+                  'played', 'wins', 'draws', 'losses', 'points', 'score')
+
         widgets = {
             'team': autocomplete.ModelSelect2(url='autocomplete-teams'),
             'season': autocomplete.ModelSelect2(url='autocomplete-seasons',
@@ -82,7 +84,6 @@ class PersonSeasonForm(BaseModeratedObjectForm):
 
 def init_date(prefix_year):
     try:
-        # import ipdb; ipdb.set_trace()
         year = int(prefix_year.strip().split(' ')[-1])
         prefix = prefix_year[:prefix_year.find(str(year))]
     except:
@@ -102,8 +103,9 @@ def init_team(line):
     prefix_create, create = init_date(year_create)
     prefix_disband, disband = init_date(year_disband)
 
-    team = Team(name=name, story=story, city=city_instance, year=create or None,
-                year_prefix=prefix_create, disband_year=disband or None,
+    team = Team(name=name, story=story, city=city_instance,
+                year=create or None, year_prefix=prefix_create,
+                disband_year=disband or None,
                 disband_year_prefix=prefix_disband)
     return team
 
@@ -127,7 +129,7 @@ def parse_teams(data):
 
 class ImportForm(forms.Form):
     input = forms.CharField(
-        strip=False, 
+        strip=False,
         widget=forms.Textarea(attrs={'cols': 80, 'rows': 20})
     )
 

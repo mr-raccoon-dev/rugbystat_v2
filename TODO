@@ -1,7 +1,15 @@
+TournamentList + YearList
+TournamentDetail - SeasonList
+SeasonByYear - SeasonList
+SeasonDetail - SeasonTable, Season.matches
+
+TeamSeasonDetail - matches of the Team, TeamRoster
+
 TeamSeasonForm - must be somehow linked to final Table, which links to Season
 Team.seasons 
 - 1969; Первенство Москвы; 12 9 3 0 156-22 21; 1 из 7; есть сведения, что 2 место 
-- tournament links to Season page, each match links to list of matches filtered by... (or better hovered!). All is kept in Table model: season(FK -> Season), team(FK -> TeamSeason), rank, total_teams, team_name, matches, wins, draws, losses, scored_for, scored_against, scored_diff, points
+- tournament links to TeamSeasonDetail page, each match links to list of matches filtered by... (or better hovered!). Everything is kept in Table model: season(FK -> Season), team(FK -> TeamSeason), rank, total_teams, team_name, matches, wins, draws, losses, scored_for, scored_against, scored_diff, points
+
 PersonSeason.tournament - link to Season page (/tourn/234/1976)
 PersonAddForm - add modal with success/errors messages
 PersonEditForm - ajax save

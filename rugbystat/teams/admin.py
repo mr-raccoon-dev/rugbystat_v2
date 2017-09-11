@@ -45,6 +45,33 @@ class TeamSeasonAdmin(admin.ModelAdmin):
         ('season__name', DropdownFilter),
     )
     # raw_id_fields = ('team', 'season')
+    fieldsets = (
+        (
+            None,
+            {
+                'fields': ('name', 'year', )
+            }
+        ),
+        (
+            None,
+            {
+                'fields': ('team', 'season', )
+            }
+        ),
+        (
+            None,
+            {
+                'fields': ('played', 'wins', 'draws', 'losses', 'points',
+                           'score')
+            }
+        ),
+        (
+            None,
+            {
+                'fields': ('story',)
+            }
+        ),
+    )
 
 
 class PersonSeasonInline(admin.TabularInline):
@@ -60,16 +87,23 @@ class PersonAdmin(ModerationAdmin, MarkdownxModelAdmin):
         ('year_birth', DropdownFilter),
     )
     fieldsets = (
-        (None, {
-            'fields': ('name', 'first_name', 'middle_name', )
+        (
+            None,
+            {
+                'fields': ('name', 'first_name', 'middle_name', )
             }
         ),
-        (None, {
-            'fields': ('story',)
+        (
+            None,
+            {
+                'fields': ('story',)
             }
         ),
-        (None, {
-            'fields': (('year_birth', 'dob',), ('year_death', 'dod',), 'is_dead')
+        (
+            None,
+            {
+                'fields': (('year_birth', 'dob',),
+                           ('year_death', 'dod',), 'is_dead')
             }
         ),
     )
