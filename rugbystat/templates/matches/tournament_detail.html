@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<h2 id="name">{{ object.name }}</h2>
+
+<article>{{ object.story }}</article>
+
+<ul>
+  {% for season in object.seasons.all %}
+    <li> <a class="link" 
+            href="{{ season.get_absolute_url }}">
+            {{ season }}
+         </a>
+    </li>
+  {% endfor %}
+</ul>
+
+{% endblock content %}

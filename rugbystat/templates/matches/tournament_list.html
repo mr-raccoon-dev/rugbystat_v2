@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<h2 id="name">Турниры</h2>
+
+<ul>
+  {% for obj in object_list %}
+    <li> <a class="link" 
+            href="{{ obj.get_absolute_url }}">
+            {{ obj.name }}
+         </a>
+    </li>
+  {% endfor %}
+</ul>
+
+<h2 id="name">Годы</h2>
+
+<ul>
+  {% for date in ends %}
+    <li> <a class="link" 
+            href="{{ date.year }}">
+            {{ date.year }}
+         </a>
+    </li>
+  {% endfor %}
+</ul>
+
+{% endblock content %}

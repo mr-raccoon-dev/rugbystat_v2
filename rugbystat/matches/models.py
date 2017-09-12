@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from teams.models import TagObject, Team, Stadium, Person
@@ -23,6 +24,9 @@ class Tournament(TagObject):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('tournament_detail', kwargs={'pk': self.pk})
 
 
 class Season(TagObject):

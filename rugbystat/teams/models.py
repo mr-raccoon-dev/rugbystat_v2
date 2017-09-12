@@ -46,7 +46,7 @@ class City(models.Model):
 
     class Meta:
         ordering = ('name', )
-            
+
     def __str__(self):
         return self.name
 
@@ -232,7 +232,7 @@ class PersonSeason(models.Model):
     PLAYER = '20-player'
     REF = '30-referee'
     COACH = '40-coach'
-    
+
     ROLE_CHOICES = (
         (PLAYER, _('игрок')),
         (PROP, _('1/3')),
@@ -249,7 +249,7 @@ class PersonSeason(models.Model):
     )
 
     person = models.ForeignKey(
-        Person, verbose_name=_('Персона'), related_name='seasons', 
+        Person, verbose_name=_('Персона'), related_name='seasons',
     )
     year = models.PositiveSmallIntegerField(
         verbose_name=_('Год'),
@@ -260,11 +260,11 @@ class PersonSeason(models.Model):
         choices=ROLE_CHOICES, default=PLAYER
     )
     team = models.ForeignKey(
-        Team, verbose_name=_('Команда'), related_name='_person_seasons', 
+        Team, verbose_name=_('Команда'), related_name='_person_seasons',
         blank=True, null=True
     )
     season = models.ForeignKey(
-        'matches.Season', verbose_name=_('Розыгрыш турнира'), 
+        'matches.Season', verbose_name=_('Розыгрыш турнира'),
         related_name='_person_seasons', blank=True, null=True
     )
     story = models.TextField(verbose_name=_('Комментарий'), blank=True, )

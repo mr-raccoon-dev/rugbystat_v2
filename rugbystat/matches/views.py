@@ -3,9 +3,8 @@ from datetime import datetime
 from dal import autocomplete
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
-from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView, DetailView
 
 from .forms import ImportForm, SeasonForm
 from .models import Tournament, Season
@@ -20,7 +19,7 @@ class TournamentAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(name__icontains=self.q)
-        
+
         return qs
 
 
@@ -33,9 +32,9 @@ class SeasonAutocomplete(autocomplete.Select2QuerySetView):
 
         year = self.forwarded.get('year', None)
         if year:
-            qs = qs.filter(Q(date_end__year=year) | 
+            qs = qs.filter(Q(date_end__year=year) |
                            Q(date_start__year=year))
-        
+
         if self.q:
             qs = qs.filter(name__icontains=self.q)
 
@@ -56,10 +55,10 @@ def import_seasons(request):
             status = 'False'
     else:
         form = ImportForm()
-    return render(request, 
-                  'import.html', 
+    return render(request,
+                  'import.html',
                   {
-                      'form': form, 
+                      'form': form,
                       'status': status,
                       'obj_form': obj_form
                   })
@@ -69,3 +68,18 @@ class SeasonCreateView(CreateView):
     model = Season
     form_class = SeasonForm
     success_url = reverse_lazy('import_seasons')
+
+
+class TournamentListView(ListView):
+    """Base list of all Tournaments"""
+    model = Tournament
+
+    def get_context_data(self, **kwargs):
+        ctx = super(TournamentListView, self).get_context_data(**kwargs)
+        ctx['ends'] = Season.objects.dates('date_end', 'year')
+        return ctx
+
+
+class TournamentDetailView(DetailView):
+    """List of all Tournament Seasons"""
+    model = Tournament

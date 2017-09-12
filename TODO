@@ -1,4 +1,3 @@
-TournamentList + YearList
 TournamentDetail - SeasonList
 SeasonByYear - SeasonList
 SeasonDetail - SeasonTable, Season.matches

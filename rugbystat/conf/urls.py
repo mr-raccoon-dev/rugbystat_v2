@@ -15,9 +15,10 @@ from clippings.viewsets import (DocumentViewSet,
                                 SourceObjectViewSet)
 from main import views
 from matches.views import (import_seasons, SeasonCreateView,
+                           TournamentListView, TournamentDetailView,
                            TournamentAutocomplete, SeasonAutocomplete)
-from teams.views import (import_teams, 
-                         PersonCreateView, PersonUpdateView, TeamUpdateView, 
+from teams.views import (import_teams,
+                         PersonCreateView, PersonUpdateView, TeamUpdateView,
                          TeamAutocomplete)
 from teams.viewsets import TeamViewSet, PersonViewSet, PersonSeasonViewSet
 from users.viewsets import UserViewSet
@@ -42,19 +43,22 @@ urlpatterns = [
     url(r'^import-seasons/', import_seasons, name='import_seasons'),
     url(r'^dropbox-webhook/', import_from_dropbox),
 
-    url(r'^autocomplete-tournaments/$', TournamentAutocomplete.as_view(), 
+    url(r'^autocomplete-tournaments/$', TournamentAutocomplete.as_view(),
         name='autocomplete-tournaments'),
-    url(r'^autocomplete-seasons/$', SeasonAutocomplete.as_view(), 
+    url(r'^autocomplete-seasons/$', SeasonAutocomplete.as_view(),
         name='autocomplete-seasons'),
-    url(r'^autocomplete-teams/$', TeamAutocomplete.as_view(), 
+    url(r'^autocomplete-teams/$', TeamAutocomplete.as_view(),
         name='autocomplete-teams'),
 
     url(r'^teams/$', views.teams_view, name='teams'),
     url(r'^teams/(?P<pk>\d+)/', TeamUpdateView.as_view(), name='teams_detail'),
-    url(r'^tournaments/', views.tournaments_view, name='tournaments'),
+    url(r'^tournaments/$', TournamentListView.as_view(), name='tournaments'),
+    url(r'^tournaments/(?P<pk>\d+)/', TournamentDetailView.as_view(),
+        name='tournament_detail'),
     url(r'^seasons/new/', SeasonCreateView.as_view(), name='seasons_new'),
     url(r'^persons/$', views.persons_view, name='persons'),
-    url(r'^persons/(?P<pk>\d+)/', PersonUpdateView.as_view(), name='persons_detail'),
+    url(r'^persons/(?P<pk>\d+)/', PersonUpdateView.as_view(),
+        name='persons_detail'),
     url(r'^persons/new/', PersonCreateView.as_view(), name='persons_new'),
 
     url(r'^clippings/', views.clippings_view, name='clippings'),
@@ -62,7 +66,8 @@ urlpatterns = [
 
     # the 'api-root' from django rest-frameworks default router
     # http://www.django-rest-framework.org/api-guide/routers/#defaultrouter
-    url(r'^$', RedirectView.as_view(url=reverse_lazy('api-root'), permanent=False)),
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('api-root'),
+        permanent=False)),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
