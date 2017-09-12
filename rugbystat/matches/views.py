@@ -4,7 +4,8 @@ from dal import autocomplete
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.shortcuts import render
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import (CreateView, ListView, DetailView,
+                                  YearArchiveView)
 
 from .forms import ImportForm, SeasonForm
 from .models import Tournament, Season
@@ -68,6 +69,12 @@ class SeasonCreateView(CreateView):
     model = Season
     form_class = SeasonForm
     success_url = reverse_lazy('import_seasons')
+
+
+class SeasonYearView(YearArchiveView):
+    model = Season
+    date_field = 'date_end'
+    make_object_list = True
 
 
 class SeasonDetailView(DetailView):

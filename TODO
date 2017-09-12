@@ -1,6 +1,4 @@
-TournamentDetail - SeasonList
 SeasonByYear - SeasonList
-SeasonDetail - SeasonTable, Season.matches
 
 TeamSeasonDetail - matches of the Team, TeamRoster
 

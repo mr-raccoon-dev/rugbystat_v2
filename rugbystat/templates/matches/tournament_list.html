@@ -21,8 +21,8 @@
 <ul>
   {% for date in ends %}
     <li> <a class="link" 
-            href="{{ date.year }}">
-            {{ date.year }}
+            href="{% url 'seasons_year' date|date:"Y" %}">
+            {{ date|date:"Y" }}
          </a>
     </li>
   {% endfor %}
