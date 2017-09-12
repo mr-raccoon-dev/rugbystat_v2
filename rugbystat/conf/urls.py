@@ -14,7 +14,8 @@ from clippings.viewsets import (DocumentViewSet,
                                 SourceViewSet,
                                 SourceObjectViewSet)
 from main import views
-from matches.views import (import_seasons, SeasonCreateView,
+from matches.views import (import_seasons,
+                           SeasonCreateView, SeasonDetailView,
                            TournamentListView, TournamentDetailView,
                            TournamentAutocomplete, SeasonAutocomplete)
 from teams.views import (import_teams,
@@ -53,9 +54,11 @@ urlpatterns = [
     url(r'^teams/$', views.teams_view, name='teams'),
     url(r'^teams/(?P<pk>\d+)/', TeamUpdateView.as_view(), name='teams_detail'),
     url(r'^tournaments/$', TournamentListView.as_view(), name='tournaments'),
-    url(r'^tournaments/(?P<pk>\d+)/', TournamentDetailView.as_view(),
+    url(r'^tournaments/(?P<pk>\d+)/$', TournamentDetailView.as_view(),
         name='tournament_detail'),
-    url(r'^seasons/new/', SeasonCreateView.as_view(), name='seasons_new'),
+    url(r'^tournaments/(?P<tourn_pk>\d+)/(?P<lap>[\d\-]{4,7})/(?P<pk>\d+)/',
+        SeasonDetailView.as_view(), name='season_detail'),
+    url(r'^seasons/new/$', SeasonCreateView.as_view(), name='seasons_new'),
     url(r'^persons/$', views.persons_view, name='persons'),
     url(r'^persons/(?P<pk>\d+)/', PersonUpdateView.as_view(),
         name='persons_detail'),

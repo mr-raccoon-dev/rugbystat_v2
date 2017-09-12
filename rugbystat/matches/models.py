@@ -48,16 +48,32 @@ class Season(TagObject):
             self.name = self._get_name()
         super(Season, self).save(**kwargs)
 
+    def get_absolute_url(self):
+        lap = self._get_lap().replace('/', '-')
+        return reverse('season_detail',
+                       kwargs={
+                           'tourn_pk': self.tourn_id,
+                           'lap': lap,
+                           'pk': self.pk,
+                       })
+
+    def _get_lap(self):
+        """
+        Return year part for season: '1977' for Чемпионат СССР 1978
+        '1977/78' for Кубок СССР 1977/78
+        """
+        if self.date_start.year == self.date_end.year:
+            lap = str(self.date_start.year)
+        else:
+            lap = "{}/{}".format(
+                self.date_start.year, str(self.date_end.year)[-2:])
+        return lap
+
     def _get_name(self):
         """
         Generate name like Чемпионат СССР 1978 or Кубок СССР 1977/78
         """
-        if self.date_start.year == self.date_end.year:
-            lap = self.date_start.year
-        else:
-            lap = "{}/{}".format(
-                self.date_start.year, str(self.date_end.year)[-2:])
-        return "{} {}".format(self.tourn, lap)
+        return "{} {}".format(self.tourn, self._get_lap())
 
     def full_clean(self, **kwargs):
         super(Season, self).full_clean(**kwargs)

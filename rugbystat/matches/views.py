@@ -70,6 +70,11 @@ class SeasonCreateView(CreateView):
     success_url = reverse_lazy('import_seasons')
 
 
+class SeasonDetailView(DetailView):
+    """List of all matches and table"""
+    model = Season
+
+
 class TournamentListView(ListView):
     """Base list of all Tournaments"""
     model = Tournament
