@@ -35,11 +35,11 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
 class PersonSeasonSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonSeason
-        fields = ('id', '__str__', 'person', 'team', 
+        fields = ('id', '__str__', 'person', 'team',
                   'year', 'story', 'role')
 
     def validate(self, attrs):
-        kwargs = {field: attrs[field] 
+        kwargs = {field: attrs[field]
                   for field in ['person', 'year', 'team', 'role']}
         if PersonSeason.objects.filter(**kwargs).exists():
             raise ValidationError('Violates unique_together condition')
@@ -54,4 +54,3 @@ class PersonSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', '__str__', 'full_name', 'story',
                   'year_birth', 'dob', 'year_death', 'dod', 'living_years',
                   'seasons')
-

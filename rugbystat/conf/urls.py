@@ -19,7 +19,8 @@ from matches.views import (import_seasons,
                            TournamentListView, TournamentDetailView,
                            TournamentAutocomplete, SeasonAutocomplete)
 from teams.views import (import_teams,
-                         PersonCreateView, PersonUpdateView, TeamUpdateView,
+                         PersonCreateView, PersonUpdateView,
+                         TeamUpdateView, TeamSeasonView,
                          TeamAutocomplete)
 from teams.viewsets import TeamViewSet, PersonViewSet, PersonSeasonViewSet
 from users.viewsets import UserViewSet
@@ -52,7 +53,10 @@ urlpatterns = [
         name='autocomplete-teams'),
 
     url(r'^teams/$', views.teams_view, name='teams'),
-    url(r'^teams/(?P<pk>\d+)/', TeamUpdateView.as_view(), name='teams_detail'),
+    url(r'^teams/(?P<pk>\d+)/$',
+        TeamUpdateView.as_view(), name='teams_detail'),
+    url(r'^teams/(?P<team_pk>\d+)/(?P<year>\d{4})/(?P<pk>\d+)/',
+        TeamSeasonView.as_view(), name='teamseason_detail'),
     url(r'^tournaments/$', TournamentListView.as_view(), name='tournaments'),
     url(r'^tournaments/(?P<pk>\d+)/$', TournamentDetailView.as_view(),
         name='tournament_detail'),

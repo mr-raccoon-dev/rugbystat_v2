@@ -1,5 +1,3 @@
-SeasonByYear - SeasonList
-
 TeamSeasonDetail - matches of the Team, TeamRoster
 
 TeamSeasonForm - must be somehow linked to final Table, which links to Season

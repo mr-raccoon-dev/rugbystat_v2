@@ -2,7 +2,7 @@ from rest_framework import viewsets, mixins, filters
 
 from .filters import TeamFullTextFilter
 from .models import Team, Person, PersonSeason
-from .serializers import (TeamSerializer, 
+from .serializers import (TeamSerializer,
                           PersonSerializer, PersonSeasonSerializer)
 
 __author__ = 'krnr'

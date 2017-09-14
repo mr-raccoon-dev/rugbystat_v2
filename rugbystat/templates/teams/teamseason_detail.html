@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<h2 id="name"><a href="{{ object.team.get_absolute_url }}">{{ object.team }}</a></h2>
+
+<div><a href="{{ object.season.get_absolute_url }}">{{ object.season }}</a></div>
+<article>{{ object.story }}</article>
+
+<h3>Матчи</h3>
+
+...
+
+<h3>Таблица</h3>
+
+...
+
+{% endblock content %}

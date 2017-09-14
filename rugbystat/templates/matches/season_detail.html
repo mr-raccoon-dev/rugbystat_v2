@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h2 id="name">{{ object.name }}</h2>
+<h2 id="name"><a href="{{ object.tourn.get_absolute_url }}">{{ object.name }}</a></h2>
 
 <article>{{ object.story }}</article>
 

@@ -131,7 +131,7 @@
 {% for season in object.seasons.all %}
   <tr class="document-row">
     <td> 
-      <a class="link" href="#">
+      <a class="link" href="{{ season.get_absolute_url }}">
          {{ season.season }}
       </a>
     </td>

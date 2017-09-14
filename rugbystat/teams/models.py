@@ -127,7 +127,7 @@ class TeamSeason(models.Model):
     )
     season = models.ForeignKey(
         'matches.Season', verbose_name=_('Турнир'),
-        related_name='_team_seasons'
+        related_name='standings'
     )
     story = models.TextField(verbose_name=_('История'), blank=True, )
 
@@ -167,6 +167,14 @@ class TeamSeason(models.Model):
         if not self.year:
             self.year = self.season.date_end.year
         super(TeamSeason, self).save(**kwargs)
+
+    def get_absolute_url(self):
+        return reverse('teamseason_detail',
+                       kwargs={
+                           'team_pk': self.team_id,
+                           'year': self.year,
+                           'pk': self.pk,
+                       })
 
 
 class Person(TagObject):

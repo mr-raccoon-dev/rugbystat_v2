@@ -3,10 +3,10 @@ from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView
 
 from .forms import ImportForm, PersonForm, PersonSeasonForm, TeamForm
-from .models import Person, Team
+from .models import Person, Team, TeamSeason
 
 
 def import_teams(request):
@@ -30,9 +30,8 @@ class TeamAutocomplete(autocomplete.Select2QuerySetView):
 
         year = self.forwarded.get('year', None)
         if year:
-            qs = qs.filter(Q(year__lte=year, disband_year__gte=year) | 
+            qs = qs.filter(Q(year__lte=year, disband_year__gte=year) |
                            Q(year__lte=year, disband_year__isnull=True))
-
 
         if self.q:
             qs = qs.filter(Q(short_name__icontains=self.q) |
@@ -44,6 +43,11 @@ class TeamAutocomplete(autocomplete.Select2QuerySetView):
 class TeamUpdateView(UpdateView):
     model = Team
     form_class = TeamForm
+
+
+class TeamSeasonView(DetailView):
+    """List of all matches of a specific Team in a Season"""
+    model = TeamSeason
 
 
 class PersonCreateView(CreateView):
