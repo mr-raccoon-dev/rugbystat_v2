@@ -1,4 +1,5 @@
 TeamSeasonDetail - matches of the Team, TeamRoster
+Remove moderation from django admin
 
 TeamSeasonForm - must be somehow linked to final Table, which links to Season
 Team.seasons 

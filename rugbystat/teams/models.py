@@ -176,6 +176,9 @@ class TeamSeason(models.Model):
                            'pk': self.pk,
                        })
 
+    def get_players(self):
+        return self.season._person_seasons.filter(team=self.team)
+
 
 class Person(TagObject):
     first_name = models.CharField(

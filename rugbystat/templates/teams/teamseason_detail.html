@@ -17,4 +17,11 @@
 
 ...
 
+<h3>Состав</h3>
+<ul>
+{% for player in object.get_players %}
+  <li><a href="{{ player.person.get_absolute_url }}">{{ player.person.full_name }}</a></li>
+{% endfor %}
+</ul>
+
 {% endblock content %}
