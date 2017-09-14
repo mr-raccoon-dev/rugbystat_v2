@@ -129,8 +129,9 @@ class TeamSeason(models.Model):
         'matches.Season', verbose_name=_('Турнир'),
         related_name='standings'
     )
-    story = models.TextField(verbose_name=_('История'), blank=True, )
-
+    place = models.CharField(
+        verbose_name=_('Место'), max_length=2, blank=True,
+    )
     played = models.PositiveSmallIntegerField(
         verbose_name=_('И'), null=True, blank=True,
         validators=(MaxValueValidator(100),),
@@ -152,11 +153,17 @@ class TeamSeason(models.Model):
         validators=(MaxValueValidator(100),),
     )
     score = models.CharField(
-        verbose_name=_('Р/О'), max_length=10, blank=True)
+        verbose_name=_('Р/О'), max_length=10, blank=True
+    )
+    order = models.PositiveSmallIntegerField(
+        verbose_name=_('Сортировка'), null=True, blank=True,
+        validators=(MaxValueValidator(40),),
+    )
+    story = models.TextField(verbose_name=_('История'), blank=True, )
 
     class Meta:
-        ordering = ('-year', 'team')
-        unique_together = (('team', 'year', 'season'))
+        ordering = ('-year', 'team', 'order')
+        unique_together = (('team', 'year', 'season'),)
 
     def __str__(self):
         return "{}".format(self.name)

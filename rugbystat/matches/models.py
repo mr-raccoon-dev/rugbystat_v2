@@ -48,6 +48,13 @@ class Season(TagObject):
             self.name = self._get_name()
         super(Season, self).save(**kwargs)
 
+    def full_clean(self, **kwargs):
+        super(Season, self).full_clean(**kwargs)
+        name = self._get_name()
+        if Season.objects.filter(name=name).exclude(pk=self.pk).exists():
+            msg = 'Such season already exists: {}'
+            raise ValidationError(msg.format(name))
+
     def get_absolute_url(self):
         lap = self._get_lap().replace('/', '-')
         return reverse('season_detail',
@@ -56,6 +63,12 @@ class Season(TagObject):
                            'lap': lap,
                            'pk': self.pk,
                        })
+
+    def get_table(self):
+        """
+        Return list of TeamSeason-s sorted by place
+        """
+        return self.standings.order_by('order')
 
     def _get_lap(self):
         """
@@ -74,12 +87,6 @@ class Season(TagObject):
         Generate name like Чемпионат СССР 1978 or Кубок СССР 1977/78
         """
         return "{} {}".format(self.tourn, self._get_lap())
-
-    def full_clean(self, **kwargs):
-        super(Season, self).full_clean(**kwargs)
-        name = self._get_name()
-        if Season.objects.filter(name=name).exclude(pk=self.pk).exists():
-            raise ValidationError('Such season already exists: {}'.format(name))
 
 
 class Match(TagObject):
