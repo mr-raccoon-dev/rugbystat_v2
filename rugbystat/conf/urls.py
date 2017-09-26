@@ -21,7 +21,7 @@ from matches.views import (import_seasons,
 from teams.views import (import_teams,
                          PersonCreateView, PersonUpdateView,
                          TeamUpdateView, TeamSeasonView,
-                         TeamAutocomplete)
+                         TeamAutocomplete, TeamSeasonAutocomplete)
 from teams.viewsets import TeamViewSet, PersonViewSet, PersonSeasonViewSet
 from users.viewsets import UserViewSet
 
@@ -51,6 +51,8 @@ urlpatterns = [
         name='autocomplete-seasons'),
     url(r'^autocomplete-teams/$', TeamAutocomplete.as_view(),
         name='autocomplete-teams'),
+    url(r'^autocomplete-teamseasons/$', TeamSeasonAutocomplete.as_view(),
+        name='autocomplete-teamseasons'),
 
     url(r'^teams/$', views.teams_view, name='teams'),
     url(r'^teams/(?P<pk>\d+)/$',

@@ -7,6 +7,7 @@ from .models import Team, TeamSeason, Person, PersonSeason
 class NoNotifyModerator(GenericModerator):
     notify_moderator = False
     notify_user = False
+    admin_integration_enabled = False
 
 
 class TeamModerator(NoNotifyModerator):

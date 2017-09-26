@@ -89,6 +89,25 @@ class Season(TagObject):
         return "{} {}".format(self.tourn, self._get_lap())
 
 
+class Group(models.Model):
+    """Stage of a Season: preliminary round, group A/group B, etc."""
+    name = models.CharField(verbose_name=_("Название"),
+                            max_length=127, blank=True)
+    season = models.ForeignKey(
+        Season, verbose_name=_("Розыгрыш"), related_name='groups')
+    date_start = models.DateField(verbose_name=_("Дата начала"))
+    date_end = models.DateField(verbose_name=_("Дата окончания"))
+    comment = models.TextField(verbose_name=_("Комментарий"), blank=True, )
+    teams = models.ManyToManyField('teams.TeamSeason', related_name='groups',
+                                   blank=True)
+
+    class Meta:
+        ordering = ('season', 'date_end')
+
+    def __str__(self):
+        return "{0.date_start.year} {0.name}".format(self)
+
+
 class Match(TagObject):
     home = models.ForeignKey(
         Team, verbose_name=_("Хозяева"), related_name='home_matches', )

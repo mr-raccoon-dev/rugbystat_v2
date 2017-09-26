@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Tournament, Season
+from .models import Tournament, Season, Group
 
 __author__ = 'krnr'
 
@@ -22,7 +22,7 @@ MONTHS_MAP = {
     'мае': '05',
     'июн': '06',
     'июл': '07',
-    'август': '08', 
+    'август': '08',
     'сентябр': '09',
     'октябр': '10',
     'ноябр': '11',
@@ -37,7 +37,7 @@ def find_dates(txt, year):
     months = r'({})'.format('|'.join(MONTHS_MAP.keys()))
     esc1 = r' (\d+(?= {}))'.format(months)     # (с ... по ...)
     esc2 = r'(\d+-\d+(?= {}))'.format(months)  # (1-10 ...)
-    esc3 = r'[в|в конце|в начале] {}'.format(months)                # в октябре...
+    esc3 = r'[в|в конце|в начале] {}'.format(months)  # в октябре...
 
     patterns = [esc1, esc2, esc3]
     dates = [re.findall(pattern, txt) for pattern in patterns]
@@ -47,36 +47,36 @@ def find_dates(txt, year):
             date_start, date_end = dates[0]
             day, month = date_start
             date_start = datetime.datetime.strptime(
-                '{}/{}/{}'.format(day, MONTHS_MAP[month], year), 
+                '{}/{}/{}'.format(day, MONTHS_MAP[month], year),
                 '%d/%m/%Y'
             )
             day, month = date_end
             date_end = datetime.datetime.strptime(
-                '{}/{}/{}'.format(day, MONTHS_MAP[month], year), 
+                '{}/{}/{}'.format(day, MONTHS_MAP[month], year),
                 '%d/%m/%Y'
             )
         except (IndexError, ValueError):
             # either ('12-15', 'мая') or 'октябр'
-            try: 
+            try:
                 days, month = dates[1][0]
                 day_start, day_end = days.split('-')
                 date_start = datetime.datetime.strptime(
-                    '{}/{}/{}'.format(day_start, MONTHS_MAP[month], year), 
+                    '{}/{}/{}'.format(day_start, MONTHS_MAP[month], year),
                     '%d/%m/%Y'
                 )
                 date_end = datetime.datetime.strptime(
-                    '{}/{}/{}'.format(day_end, MONTHS_MAP[month], year), 
+                    '{}/{}/{}'.format(day_end, MONTHS_MAP[month], year),
                     '%d/%m/%Y'
                 )
             except (IndexError, ValueError):
                 # 'октябр'
                 month = dates[2][0]
                 date_start = datetime.datetime.strptime(
-                    '{}/{}/{}'.format('05', MONTHS_MAP[month], year), 
+                    '{}/{}/{}'.format('05', MONTHS_MAP[month], year),
                     '%d/%m/%Y'
                 )
                 date_end = datetime.datetime.strptime(
-                    '{}/{}/{}'.format('25', MONTHS_MAP[month], year), 
+                    '{}/{}/{}'.format('25', MONTHS_MAP[month], year),
                     '%d/%m/%Y'
                 )
         return date_start, date_end
@@ -92,11 +92,11 @@ def parse_season(data, request):
     season = Season()
     first, *rest = data.split('\n')
     # first line denotes title
-    title, year = re.match(YEAR, first.strip()).group(1,2)
+    title, year = re.match(YEAR, first.strip()).group(1, 2)
     season.name = title.strip()
     season.year = int(year)
     tourns = Tournament.objects.filter(name__icontains=season.name)
-    
+
     if tourns.count() == 1:
         season.tourn = tourns.first()
     else:
@@ -106,9 +106,10 @@ def parse_season(data, request):
             ratios = [SM(None, tourn.name, title).ratio() for tourn in tourns]
             max_tourn = tourns[ratios.index(max(ratios))]
             season.tourn = max_tourn
-            msg = "Multiple tournaments found for this title. We suggest: {}".format(
-                max_tourn.name)
-        messages.add_message(request, messages.INFO, msg)
+            msg = "Multiple tournaments found for this title. We suggest: {}"
+        messages.add_message(
+            request, messages.INFO, msg.format(max_tourn.name)
+        )
 
     for line in rest:
         if line.strip():
@@ -127,7 +128,7 @@ def parse_season(data, request):
 
 class ImportForm(forms.Form):
     input = forms.CharField(
-        strip=False, 
+        strip=False,
         widget=forms.Textarea(attrs={'cols': 80, 'rows': 10})
     )
 
@@ -146,4 +147,13 @@ class SeasonForm(forms.ModelForm):
         fields = ['name', 'story', 'date_start', 'date_end', 'tourn']
         widgets = {
             'tourn': autocomplete.ModelSelect2(url='autocomplete-tournaments')
+        }
+
+
+class GroupForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name', 'comment', 'season', 'date_start', 'date_end', 'teams']  # noqa
+        widgets = {
+            'teams': autocomplete.ModelSelect2(url='autocomplete-teamseasons')
         }

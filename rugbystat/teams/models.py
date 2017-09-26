@@ -213,12 +213,12 @@ class Person(TagObject):
 
     @property
     def full_name(self):
-        return " ".join(filter(bool, [self.name, self.first_name, self.middle_name]))
+        return " ".join(filter(bool, -[self.name, self.first_name, self.middle_name]))  # noqa
 
     @property
     def living_years(self):
-        birth = self.dob.strftime('%d.%m.%Y') if self.dob else self.year_birth or '???'
-        death = self.dod.strftime('%d.%m.%Y') if self.dod else self.year_death or '???'
+        birth = self.dob.strftime('%d.%m.%Y') if self.dob else self.year_birth or '???'  # noqa
+        death = self.dod.strftime('%d.%m.%Y') if self.dod else self.year_death or '???'  # noqa
         if self.is_dead:
             return "{}-{}".format(birth, death)
         return "{}".format(birth)

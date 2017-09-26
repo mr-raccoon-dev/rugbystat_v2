@@ -40,6 +40,21 @@ class TeamAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 
+class TeamSeasonAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = TeamSeason.objects.all()
+
+        season = self.forwarded.get('season', None)
+        if season:
+            qs = qs.filter(season=season)
+
+        if self.q:
+            qs = qs.filter(Q(short_name__icontains=self.q) |
+                           Q(city__name__icontains=self.q))
+
+        return qs
+
+
 class TeamUpdateView(UpdateView):
     model = Team
     form_class = TeamForm

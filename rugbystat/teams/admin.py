@@ -1,9 +1,8 @@
 from django.contrib import admin
 from markdownx.admin import MarkdownxModelAdmin
-from moderation.admin import ModerationAdmin
 
 from main.filters import DropdownFilter
-from .forms import TeamSeasonForm
+# from .forms import TeamSeasonForm
 from .models import Person, PersonSeason, Team, TeamSeason, Stadium, City
 
 
@@ -34,7 +33,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 @admin.register(TeamSeason)
 class TeamSeasonAdmin(admin.ModelAdmin):
-    form = TeamSeasonForm
+    # form = TeamSeasonForm
 
     search_fields = ('team__name', )
     list_display = ('__str__', 'season', 'team')
@@ -81,7 +80,7 @@ class PersonSeasonInline(admin.TabularInline):
 
 
 @admin.register(Person)
-class PersonAdmin(ModerationAdmin, MarkdownxModelAdmin):
+class PersonAdmin(MarkdownxModelAdmin):
     search_fields = ('name', 'first_name', )
     list_filter = (
         ('year_birth', DropdownFilter),
