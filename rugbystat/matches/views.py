@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.views.generic import (CreateView, ListView, DetailView,
                                   YearArchiveView)
 
-from .forms import ImportForm, SeasonForm
+from .forms import ImportForm, SeasonForm, MatchForm
 from .models import Tournament, Season
 
 
@@ -80,6 +80,11 @@ class SeasonYearView(YearArchiveView):
 class SeasonDetailView(DetailView):
     """List of all matches and table"""
     model = Season
+
+    def get_context_data(self, **kwargs):
+        ctx = super(SeasonDetailView, self).get_context_data(**kwargs)
+        ctx['match_form'] = MatchForm(initial={'tourn_season': ctx['object']})
+        return ctx
 
 
 class TournamentListView(ListView):

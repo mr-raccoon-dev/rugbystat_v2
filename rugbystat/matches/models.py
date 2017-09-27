@@ -133,16 +133,28 @@ class Match(TagObject):
     def __str__(self):
         return self.name
 
+    def _get_name_from_score(self):
+        home_score = '??' if self.home_score is None else self.home_score
+        away_score = '??' if self.away_score is None else self.away_score
+
+        if home_score == 1:
+            home_score = "в"
+            away_score = "п"
+        if away_score == 1:
+            away_score = "в"
+            home_score = "п"
+
+        name = "{} - {} - {}:{}".format(
+            self.home.short_name, self.away.short_name,
+            home_score, away_score,
+        )
+        return name
+
     def save(self, **kwargs):
         if not self.pk:
-            home_score = self.home_score or '??'
-            away_score = self.away_score or '??'
-
-            if home_score == 1:
-                home_score = "+"
-            if away_score == 1:
-                away_score = "+"
-
-            self.name = "{} - {} - {}:{}".format(
-                self.home, self.away, home_score, away_score, )
+            self.name = self._get_name_from_score()
         super(Match, self).save(**kwargs)
+
+    def get_absolute_url(self):
+        # TODO
+        return ''

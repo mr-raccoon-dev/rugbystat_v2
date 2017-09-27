@@ -186,6 +186,15 @@ class TeamSeason(models.Model):
     def get_players(self):
         return self.season._person_seasons.filter(team=self.team)
 
+    def get_matches(self):
+        """
+        Return all matches for this Season with this Team
+        """
+        from matches.models import Match
+        return Match.objects.filter(
+            models.Q(home=self.team) | models.Q(away=self.team)
+        ).filter(tourn_season=self.season)
+
 
 class Person(TagObject):
     first_name = models.CharField(
@@ -213,7 +222,7 @@ class Person(TagObject):
 
     @property
     def full_name(self):
-        return " ".join(filter(bool, -[self.name, self.first_name, self.middle_name]))  # noqa
+        return " ".join(filter(bool, [self.name, self.first_name, self.middle_name]))  # noqa
 
     @property
     def living_years(self):

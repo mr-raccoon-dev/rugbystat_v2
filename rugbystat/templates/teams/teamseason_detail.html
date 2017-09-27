@@ -9,13 +9,8 @@
 <div><a href="{{ object.season.get_absolute_url }}">{{ object.season }}</a></div>
 <article>{{ object.story }}</article>
 
-<h3>Матчи</h3>
-
-...
-
-<h3>Таблица</h3>
-
-...
+{% include 'matches/match_list.html' with matches=object.get_matches %}
+{% include 'matches/season_table.html' with object=object.season %}
 
 <h3>Состав</h3>
 <ul>

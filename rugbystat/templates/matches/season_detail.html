@@ -1,6 +1,32 @@
 {% extends "base.html" %}
 
 {% load staticfiles %}
+{% load widget_tweaks %}
+{% load markdownx %}
+
+{% block stylesheets %}
+{{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
+  <!-- Include Bootstrap Datepicker -->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker3.min.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" />
+{% endblock stylesheets %}
+
+{% block js %}
+{{ block.super }}
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/locales/bootstrap-datepicker.ru.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+  <script type="text/javascript" src="{% static 'js/matches.js' %}"></script>
+  <!-- <script type="text/javascript">
+    var personListUrl = "{% url 'person-list' %}",
+        personSeasonListUrl = "{% url 'personseason-list' %}",
+        personUpdate = "{% url 'persons_detail' pk=object.pk %}",
+        person = {{ object.pk }};
+   </script> -->
+{% endblock js %}
 
 {% block content %}
 
@@ -8,43 +34,91 @@
 
 <article>{{ object.story }}</article>
 
-<h3>Таблица</h3>
+{% include 'matches/season_table.html' with object=object %}
+{% include 'matches/match_list.html' with matches=object.matches.all %}
 
-<table class="table table-striped table-hover" id="person-seasons">
-<thead>
-  <tr>
-    <th>М</th>
-    <th>Команда</th>
-    <th>И</th>
-    <th>В</th>
-    <th>Н</th>
-    <th>П</th>
-    <th>Р/О</th>
-    <th>О</th>
-  </tr>
-</thead>
-<tbody>
-{% for team in object.get_table %}
-  <tr class="document-row">
-    <td>{{ team.place }}</td>
-    <td> 
-      <a class="link" href="{{ team.get_absolute_url }}">
-         {{ team.team.name }} {{ team.team.city }}
-      </a>
-    </td>
-    <td>{{ team.played|default:"-" }}</td>
-    <td>{{ team.wins|default:"-" }}</td>
-    <td>{{ team.draws|default:"-" }}</td>
-    <td>{{ team.losses|default:"-" }}</td>
-    <td>{{ team.score|default:"-" }}</td>
-    <td>{{ team.points|default:"-" }}</td>
-  </tr>
-{% endfor %}
-</tbody></table>
+<h3>Добавить матч</h3>
+<form role="form" id="addMatch" class="addForm" style="display: none;">
+{% csrf_token %}
+<div class="form-inputs">
+  <input type="hidden" 
+         name="tourn_season" 
+         id="id_tourn_season" 
+         value="{{ match_form.tourn_season.value }}">
+  <div class="form-group row">
+    <div class="col-sm-2">
+      {% render_field match_form.date class+="form-control" %}
+    </div>
+    <div class="col-sm-3">
+      {% render_field match_form.home class+="form-control" %}
+    </div>
+    <div class="col-sm-3">
+      {% render_field match_form.away class+="form-control" %}
+    </div>
+    <div class="col-sm-1">
+      {% render_field match_form.home_score class+="form-control" %}
+    </div>
+    <div class="col-sm-1">
+      {% render_field match_form.away_score class+="form-control" %}
+    </div>
+  </div>
 
-<h3>Матчи</h3>
+  <div class="form-group row">
+    <div class="col-sm-2 text-center">
+      <span class="help-block">{{ match_form.date.label }}</span>
+    </div>
+    <div class="col-sm-3 text-center has-error">
+      <span class="help-block">{{ match_form.home.label }}</span>
+    </div>
+    <div class="col-sm-3 text-center has-error">
+      <span class="help-block">{{ match_form.away.label }}</span>
+    </div>
+    <div class="col-sm-2 text-center">
+      <span class="help-block">Счет</span>
+    </div>
+    <div class="col-sm-2 text-center">
+      <span class="help-block">Счет 1 тайма</span>
+    </div>
+  </div>
 
-...
+  <div class="form-group row">
+    <div class="col-sm-2">
+      <!-- empty -->
+    </div>
+    <div class="col-sm-3 text-center">
+      {% render_field match_form.stadium class+="form-control" rows="2" %}
+      <span class="help-block">{{ match_form.stadium.label }}</span>
+    </div>
+    <div class="col-sm-3 text-center">
+      {% render_field match_form.ref class+="form-control" rows="2" %}
+      <span class="help-block">{{ match_form.ref.label }}</span>
+    </div>
+  </div>
 
+  <div class="form-group row">
+    <div class="col-sm-12">
+      {% render_field match_form.story class+="form-control" rows="2" %}
+      <span class="help-block">Произвольная информация о матче</span>
+    </div>
+  </div>
+</div>
+
+{{ match_form.media }}
+
+  <div class="pull-right">
+    <button class="btn btn-default submitForm" 
+            id="submitMatchForm" 
+            type="button">Сохранить</button>
+    <button class="btn btn-secondary cancelForm" 
+            id="cancelMatchForm" 
+            type="button">Отмена</button>
+  </div>
+</form>
+
+  <div class="pull-right">
+    <button class="btn btn-default showForm" 
+            id="showMatchForm" 
+            type="button">Добавить</button>
+  </div>
 
 {% endblock content %}

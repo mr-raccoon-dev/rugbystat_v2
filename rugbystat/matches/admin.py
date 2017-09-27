@@ -1,9 +1,10 @@
 from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
+from markdownx.admin import MarkdownxModelAdmin
 
 from main.filters import DropdownFilter, DateEndListFilter
 from teams.models import TeamSeason
-from .forms import GroupForm
+from .forms import GroupForm, MatchForm
 from .models import Tournament, Season, Group, Match
 
 
@@ -60,5 +61,12 @@ class GroupAdmin(admin.ModelAdmin):
 
 
 @admin.register(Match)
-class MatchAdmin(admin.ModelAdmin):
-    pass
+class MatchAdmin(MarkdownxModelAdmin):
+    form = MatchForm
+    fieldsets = (
+        (None, {'fields': ('name',)}),
+        (None, {'fields': (('tourn_season', 'date'), )}),
+        (None, {'fields': ('home', 'away', )}),
+        (None, {'fields': (('home_score', 'away_score',), )}),
+        (None, {'fields': (('stadium', 'ref'), )}),
+    )

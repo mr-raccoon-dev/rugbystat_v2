@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, UpdateView
 
 from .forms import ImportForm, PersonForm, PersonSeasonForm, TeamForm
-from .models import Person, Team, TeamSeason
+from .models import Person, PersonSeason, Team, TeamSeason
 
 
 def import_teams(request):
@@ -44,13 +44,58 @@ class TeamSeasonAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = TeamSeason.objects.all()
 
-        season = self.forwarded.get('season', None)
+        season = (self.forwarded.get('season', None) or
+                  self.forwarded.get('tourn_season', None))
         if season:
             qs = qs.filter(season=season)
 
         if self.q:
-            qs = qs.filter(Q(short_name__icontains=self.q) |
-                           Q(city__name__icontains=self.q))
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs
+
+
+class TeamBySeasonAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Team.objects.all()
+
+        season = (self.forwarded.get('season', None) or
+                  self.forwarded.get('tourn_season', None))
+        if season:
+            qs = qs.filter(seasons__season=season)
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs
+
+
+class PersonSeasonAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = PersonSeason.objects.all()
+
+        season = (self.forwarded.get('season', None) or
+                  self.forwarded.get('tourn_season', None))
+        if season:
+            qs = qs.filter(season=season)
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs
+
+
+class PersonBySeasonAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Person.objects.all()
+
+        season = (self.forwarded.get('season', None) or
+                  self.forwarded.get('tourn_season', None))
+        if season:
+            qs = qs.filter(seasons__season=season)
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
 
         return qs
 

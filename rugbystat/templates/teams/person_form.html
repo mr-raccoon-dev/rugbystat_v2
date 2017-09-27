@@ -205,9 +205,9 @@
     <td> {{ season.year }} </td>
     <td> {{ season.role_verbose }} </td>
     <td> 
-    {% if season.tournament %}
-      <a class="link" href="#">
-         {{ season.tournament }}
+    {% if season.season %}
+      <a class="link" href="{{ season.season.get_absolute_url }}">
+         {{ season.season }}
       </a>
     {% else %}
       -
@@ -243,7 +243,7 @@
   <tr class="document-row">
     <td> {{ doc.title }} </td>
     <td> {{ doc.description }} </td>
-    <td> {{ doc.date }} </td>
+    <td> {{ doc.date|default:"" }} </td>
     <td> {% if doc.is_image %}
       <a class="dropbox-link" 
          href="{{ doc.dropbox_path }}">

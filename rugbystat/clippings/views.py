@@ -5,10 +5,11 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from .utils import validate_request, process_user
+from .utils import validate_request
 
 
 logger = logging.getLogger('django.request')
+
 
 @csrf_exempt
 def import_from_dropbox(request):
@@ -23,7 +24,7 @@ def import_from_dropbox(request):
         logger.debug('Got dropbox request')
         logger.debug(str(req))
         for uid in req['delta']['users']:
-            # We need to respond quickly to the webhook request, 
+            # We need to respond quickly to the webhook request,
             # so we do the actual work in a separate thread.
             fname = '{}/{}.lock'.format(settings.BASE_DIR, uid)
             logger.debug('Try to create {}'.format(fname))

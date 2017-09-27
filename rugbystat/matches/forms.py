@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Tournament, Season, Group
+from .models import Tournament, Season, Group, Match
 
 __author__ = 'krnr'
 
@@ -156,4 +156,21 @@ class GroupForm(forms.ModelForm):
         fields = ['name', 'comment', 'season', 'date_start', 'date_end', 'teams']  # noqa
         widgets = {
             'teams': autocomplete.ModelSelect2(url='autocomplete-teamseasons')
+        }
+
+
+class MatchForm(forms.ModelForm):
+    name = forms.CharField(required=False)
+
+    class Meta:
+        model = Match
+        fields = ('name', 'tourn_season', 'date', 'home', 'away',
+                  'home_score', 'away_score', 'stadium', 'ref', 'story')
+        widgets = {
+            'home': autocomplete.ModelSelect2(url='autocomplete-teamseasons',
+                                              forward=['tourn_season']),
+            'away': autocomplete.ModelSelect2(url='autocomplete-teamseasons',
+                                              forward=['tourn_season']),
+            'ref': autocomplete.ModelSelect2(url='autocomplete-personseasons',
+                                             forward=['tourn_season']),
         }

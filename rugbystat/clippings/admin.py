@@ -22,10 +22,10 @@ class SourceObjectAdmin(admin.ModelAdmin):
 class DocumentAdmin(admin.ModelAdmin):
     list_filter = (
         ('year', DropdownFilter),
-        ('source__title', DropdownFilter), 
-        ('kind', DropdownFilter), 
-        'is_image', 
-        'is_deleted', 
+        ('source__title', DropdownFilter),
+        ('kind', DropdownFilter),
+        'is_image',
+        'is_deleted',
     )
     list_display = (
         'id', 'title', 'source', 'kind', 'preview'
@@ -76,6 +76,6 @@ class DocumentAdmin(admin.ModelAdmin):
         source = request.POST['source']
         source_obj = Source.objects.get(id=source)
         updated = queryset.update(source=source, kind=source_obj.kind)
-        messages.success(request, 
+        messages.success(request,
                          '{0} documents were updated'.format(updated))
     set_source_action.short_description = u'Update source'

@@ -1,0 +1,33 @@
+<h3>Таблица</h3>
+
+<table class="table table-striped table-hover" id="person-seasons">
+<thead>
+  <tr>
+    <th>М</th>
+    <th>Команда</th>
+    <th>И</th>
+    <th>В</th>
+    <th>Н</th>
+    <th>П</th>
+    <th>Р/О</th>
+    <th>О</th>
+  </tr>
+</thead>
+<tbody>
+{% for team in object.get_table %}
+  <tr class="document-row">
+    <td>{{ team.place }}</td>
+    <td> 
+      <a class="link" href="{{ team.get_absolute_url }}">
+         {{ team.team.name }} {{ team.team.city }}
+      </a>
+    </td>
+    <td>{{ team.played|default:"-" }}</td>
+    <td>{{ team.wins|default:"-" }}</td>
+    <td>{{ team.draws|default:"-" }}</td>
+    <td>{{ team.losses|default:"-" }}</td>
+    <td>{{ team.score|default:"-" }}</td>
+    <td>{{ team.points|default:"-" }}</td>
+  </tr>
+{% endfor %}
+</tbody></table>
