@@ -1,14 +1,20 @@
 import re
+import logging
+from difflib import SequenceMatcher as SM
 
 from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib.messages import success
 from django.utils.translation import ugettext_lazy as _
 from moderation.forms import BaseModeratedObjectForm
 
 from .models import Team, TeamSeason, City, Person, PersonSeason
 
 __author__ = 'krnr'
+
+
+logger = logging.getLogger('django.request')
 
 
 class TeamForm(BaseModeratedObjectForm):
@@ -93,8 +99,8 @@ def init_date(prefix_year):
 
 
 def init_team(line):
-    team_and_city, year_create, year_disband, story = re.findall(
-                '<li>(.+) \(([^-]*)-*([^-]*)\)(.*)', line)[0]
+    expr = '<li>(.+) \(([^-]*)-*([^-]*)\)(.*)'
+    team_and_city, year_create, year_disband, story = re.findall(expr, line)[0]
     city = team_and_city.split(' ')[-1]
     name = team_and_city[:team_and_city.find(city)].strip().strip('<b>')
 
@@ -136,3 +142,114 @@ class ImportForm(forms.Form):
     def clean(self):
         data = super(ImportForm, self).clean()
         parse_teams(data['input'])
+
+
+POSITIONS = {
+    '15': PersonSeason.FB,
+    '14-11': PersonSeason.BACK,
+    '10': PersonSeason.FH,
+    '9': PersonSeason.SH,
+    '6-8': PersonSeason.BACKROW,
+    '4-5': PersonSeason.LOCK,
+    '1-3': PersonSeason.FIRST_ROW,
+    '14': PersonSeason.WINGER,
+    '13': PersonSeason.CENTER,
+    '12': PersonSeason.CENTER,
+    '12-13': PersonSeason.CENTER,
+    '11': PersonSeason.WINGER,
+    '9-10': PersonSeason.HALF,
+    '8': PersonSeason.BACKROW,
+    '7': PersonSeason.BACKROW,
+    '6': PersonSeason.BACKROW,
+    '5': PersonSeason.LOCK,
+    '4': PersonSeason.LOCK,
+    '4/5': PersonSeason.LOCK,
+    '3': PersonSeason.PROP,
+    '2': PersonSeason.HOOKER,
+    '1': PersonSeason.PROP,
+    '1/3': PersonSeason.PROP,
+    '1-8': PersonSeason.FORWARD,
+    '15-9': PersonSeason.BACK,
+}
+
+
+def parse_rosters(request, data):
+    input_ = data['input'].replace('\r\n', ' ').replace(' / ', ';')
+    positions = input_.strip().split(";")
+    for position in positions:
+        # split number from names
+        esc = r'(\d{1,2}-*\d{0,2}).(.*)'
+        try:
+            print("Checking {}".format(position))
+            number, players = re.findall(esc, position)[0]
+        except ValueError:
+            msg = "Couldn't import data: {}".format(position)
+            print(msg)
+            logger.warning(msg)
+        else:
+            role = POSITIONS.get(number, PersonSeason.PLAYER)
+            for player in players.split(','):
+                # find person
+                try:
+                    first_name, name = player.split()
+                except ValueError:
+                    msg = "Couldn't split: {}".format(player)
+                    print(msg)
+                    logger.warning(msg)
+
+                    name = player
+
+                persons = Person.objects.filter(name=name)
+                # what if there're multiple?
+                print("Finding best match from {}".format(persons))
+
+                person = find_best_match(persons, name, first_name)
+                print("Found {}".format(person))
+
+                # get_or_create PersonSeason for number
+                obj, created = PersonSeason.objects.get_or_create(
+                    role=role, person=person, season_id=data['season'],
+                    team_id=data['team'], year=data['year']
+                )
+                if created:
+                    success(request, "Created {}".format(obj))
+                else:
+                    success(request, "Found {}".format(obj))
+
+
+def find_best_match(queryset, name, first_name, all=False):
+    """
+    Find the most suitable instance by SequenceMatcher from queryset.
+
+    If None found, try to look for all objects.
+    If again None found - create one.
+    """
+    ratios = [SM(None, str(obj), "{} {}".format(first_name, name)).ratio()
+              for obj in queryset]
+
+    if ratios and max(ratios) > 0.6:
+        found = queryset[ratios.index(max(ratios))]
+    elif all:
+        found = Person.objects.create(name=name, first_name=first_name)
+    else:
+        queryset = Person.objects.all()
+        found = find_best_match(queryset, name, first_name, all=True)
+    return found
+
+
+class ImportRosterForm(forms.Form):
+    input = forms.CharField(
+        strip=True,
+        widget=forms.Textarea(attrs={'cols': 80, 'rows': 20})
+    )
+    season = forms.IntegerField(widget=forms.HiddenInput())
+    year = forms.IntegerField(widget=forms.HiddenInput())
+    team = forms.IntegerField(widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super(ImportRosterForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        data = super(ImportRosterForm, self).clean()
+        parse_rosters(self.request, data)

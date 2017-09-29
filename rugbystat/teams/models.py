@@ -184,7 +184,9 @@ class TeamSeason(models.Model):
                        })
 
     def get_players(self):
-        return self.season._person_seasons.filter(team=self.team)
+        return self.season._person_seasons.filter(
+            team=self.team
+        ).order_by('role')
 
     def get_matches(self):
         """
@@ -256,13 +258,17 @@ class PersonSeason(models.Model):
     CENTER = '07-center'
     WINGER = '08-winger'
     FB = '09-fullback'
+    FIRST_ROW = '10-firstrow'
+    FORWARD = '12-forward'
+    HALF = '14-half'
+    BACK = '16-back'
     PLAYER = '20-player'
     REF = '30-referee'
     COACH = '40-coach'
 
     ROLE_CHOICES = (
         (PLAYER, _('игрок')),
-        (PROP, _('1/3')),
+        (PROP, _('1, 3')),
         (HOOKER, _('2')),
         (LOCK, _('4/5')),
         (BACKROW, _('6-8')),
@@ -271,6 +277,10 @@ class PersonSeason(models.Model):
         (CENTER, _('12/13')),
         (WINGER, _('11/14')),
         (FB, _('15')),
+        (FIRST_ROW, _('1-3')),
+        (FORWARD, _('1-8')),
+        (HALF, _('9-10')),
+        (BACK, _('11-15')),
         (REF, _('судья')),
         (COACH, _('тренер')),
     )

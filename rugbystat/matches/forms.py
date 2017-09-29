@@ -164,13 +164,11 @@ class MatchForm(forms.ModelForm):
 
     class Meta:
         model = Match
-        fields = ('name', 'tourn_season', 'date', 'home', 'away',
-                  'home_score', 'away_score', 'stadium', 'ref', 'story')
+        fields = ('name', 'tourn_season', 'date', 'home', 'away', 'home_score',
+                  'away_score', 'home_halfscore', 'away_halfscore', 'story')
         widgets = {
             'home': autocomplete.ModelSelect2(url='autocomplete-teamseasons',
                                               forward=['tourn_season']),
             'away': autocomplete.ModelSelect2(url='autocomplete-teamseasons',
                                               forward=['tourn_season']),
-            'ref': autocomplete.ModelSelect2(url='autocomplete-personseasons',
-                                             forward=['tourn_season']),
         }

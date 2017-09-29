@@ -109,6 +109,11 @@ class Group(models.Model):
 
 
 class Match(TagObject):
+    date = models.DateField(
+        verbose_name="Дата матча", blank=True, null=True, )
+    tourn_season = models.ForeignKey(
+        Season, verbose_name=_("Турнир"), related_name='matches',
+        blank=True, null=True)
     home = models.ForeignKey(
         Team, verbose_name=_("Хозяева"), related_name='home_matches', )
     away = models.ForeignKey(
@@ -117,21 +122,13 @@ class Match(TagObject):
         verbose_name=_("Счёт хозяев"), blank=True, null=True, )
     away_score = models.PositiveSmallIntegerField(
         verbose_name=_("Счёт гостей"), blank=True, null=True, )
-    date = models.DateField(
-        verbose_name="Дата матча", blank=True, null=True, )
-
-    tourn_season = models.ForeignKey(
-        Season, verbose_name=_("Турнир"), related_name='matches',
-        blank=True, null=True)
-    stadium = models.ForeignKey(
-        Stadium, verbose_name=_("Стадион"), related_name='matches',
-        blank=True, null=True)
-    ref = models.ForeignKey(
-        Person, verbose_name=_("Судья"), related_name='matches_reffed',
-        blank=True, null=True)
+    home_halfscore = models.PositiveSmallIntegerField(
+        verbose_name=_("1 тайм хозяев"), blank=True, null=True, )
+    away_halfscore = models.PositiveSmallIntegerField(
+        verbose_name=_("1 тайм гостей"), blank=True, null=True, )
 
     def __str__(self):
-        return self.name
+        return self._get_name_from_score()
 
     def _get_name_from_score(self):
         home_score = '??' if self.home_score is None else self.home_score
@@ -148,6 +145,14 @@ class Match(TagObject):
             self.home.short_name, self.away.short_name,
             home_score, away_score,
         )
+
+        # add halftime
+        home_halfscore = '??' if self.home_halfscore is None else self.home_halfscore  # noqa
+        away_halfscore = '??' if self.away_halfscore is None else self.away_halfscore  # noqa
+        if any((self.home_halfscore is not None,
+                self.away_halfscore is not None)):
+            name = "{} ({}:{})".format(name, home_halfscore, away_halfscore)
+
         return name
 
     def save(self, **kwargs):

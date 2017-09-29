@@ -45,25 +45,8 @@
          name="tourn_season" 
          id="id_tourn_season" 
          value="{{ match_form.tourn_season.value }}">
-  <div class="form-group row">
-    <div class="col-sm-2">
-      {% render_field match_form.date class+="form-control" %}
-    </div>
-    <div class="col-sm-3">
-      {% render_field match_form.home class+="form-control" %}
-    </div>
-    <div class="col-sm-3">
-      {% render_field match_form.away class+="form-control" %}
-    </div>
-    <div class="col-sm-1">
-      {% render_field match_form.home_score class+="form-control" %}
-    </div>
-    <div class="col-sm-1">
-      {% render_field match_form.away_score class+="form-control" %}
-    </div>
-  </div>
 
-  <div class="form-group row">
+  <div class="row">
     <div class="col-sm-2 text-center">
       <span class="help-block">{{ match_form.date.label }}</span>
     </div>
@@ -80,18 +63,27 @@
       <span class="help-block">Счет 1 тайма</span>
     </div>
   </div>
-
   <div class="form-group row">
     <div class="col-sm-2">
-      <!-- empty -->
+      {% render_field match_form.date class+="form-control" %}
     </div>
-    <div class="col-sm-3 text-center">
-      {% render_field match_form.stadium class+="form-control" rows="2" %}
-      <span class="help-block">{{ match_form.stadium.label }}</span>
+    <div class="col-sm-3">
+      {% render_field match_form.home %}
     </div>
-    <div class="col-sm-3 text-center">
-      {% render_field match_form.ref class+="form-control" rows="2" %}
-      <span class="help-block">{{ match_form.ref.label }}</span>
+    <div class="col-sm-3">
+      {% render_field match_form.away class+="form-control" %}
+    </div>
+    <div class="col-sm-1">
+      {% render_field match_form.home_score class+="form-control" %}
+    </div>
+    <div class="col-sm-1">
+      {% render_field match_form.away_score class+="form-control" %}
+    </div>
+    <div class="col-sm-1">
+      {% render_field match_form.home_halfscore class+="form-control" %}
+    </div>
+    <div class="col-sm-1">
+      {% render_field match_form.away_halfscore class+="form-control" %}
     </div>
   </div>
 

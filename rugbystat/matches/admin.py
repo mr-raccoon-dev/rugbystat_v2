@@ -67,6 +67,6 @@ class MatchAdmin(MarkdownxModelAdmin):
         (None, {'fields': ('name',)}),
         (None, {'fields': (('tourn_season', 'date'), )}),
         (None, {'fields': ('home', 'away', )}),
-        (None, {'fields': (('home_score', 'away_score',), )}),
-        (None, {'fields': (('stadium', 'ref'), )}),
+        (None, {'fields': (('home_score', 'away_score',),
+                           ('home_halfscore', 'away_halfscore',), )}),
     )

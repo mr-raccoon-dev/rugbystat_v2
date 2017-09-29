@@ -1,5 +1,11 @@
-Import TeamRoster (list of PlayerSeason-s)
+Import TeamRoster - messages framework
+
 Match.get_absolute_url
+Match save form
+Match.form - what if no ref? Ref must be MatchDetail attribute?
+
+MatchDetails
+
 Remove moderation from django admin
 
 TeamSeasonForm - must be somehow linked to final Table, which links to Season

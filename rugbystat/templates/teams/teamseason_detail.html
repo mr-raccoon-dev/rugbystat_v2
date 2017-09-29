@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load staticfiles %}
+{% load widget_tweaks %}
 
 {% block content %}
 
@@ -15,8 +16,26 @@
 <h3>Состав</h3>
 <ul>
 {% for player in object.get_players %}
-  <li><a href="{{ player.person.get_absolute_url }}">{{ player.person.full_name }}</a></li>
+  <li><a href="{{ player.person.get_absolute_url }}">{{ player.person.full_name }}</a> {{ player.get_role_display }}</li>
 {% endfor %}
 </ul>
 
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div>
+  <form method="post">
+    {% csrf_token %}
+    {% render_field form.input class+="form-control" %}
+    {% render_field form.season class+="form-control" %}
+    {% render_field form.year class+="form-control" %}
+    {% render_field form.team class+="form-control" %}
+    <input class="btn btn-default" type="submit" value="Submit" />
+  </form>
+</div>
 {% endblock content %}

@@ -4,8 +4,10 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic.edit import FormMixin
 
-from .forms import ImportForm, PersonForm, PersonSeasonForm, TeamForm
+from .forms import (ImportForm, PersonForm, PersonSeasonForm, TeamForm,
+                    ImportRosterForm)
 from .models import Person, PersonSeason, Team, TeamSeason
 
 
@@ -105,9 +107,35 @@ class TeamUpdateView(UpdateView):
     form_class = TeamForm
 
 
-class TeamSeasonView(DetailView):
+class TeamSeasonView(FormMixin, DetailView):
     """List of all matches of a specific Team in a Season"""
     model = TeamSeason
+    form_class = ImportRosterForm
+
+    def get_initial(self):
+        return {'season': self.object.season.pk,
+                'team': self.object.team.pk,
+                'year': self.object.season.date_end.year}
+
+    def get_form_kwargs(self):
+        kwargs = super(TeamSeasonView, self).get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests, instantiating a form instance with the passed
+        POST variables and then checked for validity.
+        """
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 
 class PersonCreateView(CreateView):
