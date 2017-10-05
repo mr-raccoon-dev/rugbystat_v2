@@ -1,0 +1,1832 @@
+[
+{
+  "model": "clippings.sourceobject",
+  "pk": 1,
+  "fields": {
+    "source": 1,
+    "edition": "Sport in Soviet Society",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 2,
+  "fields": {
+    "source": 2,
+    "edition": "\u043a\u0438\u043d\u043e\u043f\u043b\u0435\u043d\u043a\u0430, \u0443\u0447.\u21161076",
+    "year": 1912,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 3,
+  "fields": {
+    "source": 3,
+    "edition": "\u041f\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433\u0441\u043a\u0430\u044f \u0433\u0430\u0437\u0435\u0442\u0430",
+    "year": 1907,
+    "date": "1907-10-29"
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 5,
+  "fields": {
+    "source": 4,
+    "edition": "\u0414\u044e\u043f\u0435\u0440\u0440\u043e\u043d \u0413. \u041b\u0435\u0433\u043a\u0430\u044f \u0430\u0442\u043b\u0435\u0442\u0438\u043a\u0430 \u0438 \u0438\u0433\u0440\u044b",
+    "year": 1909,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 6,
+  "fields": {
+    "source": 5,
+    "edition": "\u0410\u0442\u043b\u0435\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u0433\u0440\u044b",
+    "year": 1922,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 7,
+  "fields": {
+    "source": 6,
+    "edition": "\u211623",
+    "year": 1926,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 8,
+  "fields": {
+    "source": 6,
+    "edition": "\u211611",
+    "year": 1933,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 9,
+  "fields": {
+    "source": 6,
+    "edition": "\u211611",
+    "year": 1934,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 10,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 11,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1986,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 12,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1957,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 13,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1957,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 14,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1959,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 15,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1960,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 16,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1961,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 17,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1961,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 18,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1962,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 19,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1962,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 20,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1963,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 21,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1964,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 22,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1965,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 23,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1966,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 24,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1967,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 25,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1967,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 26,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1967,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 27,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1967,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 28,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1967,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 29,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1967,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 30,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1967,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 31,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1968,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 32,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1968,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 33,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1968,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 34,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1968,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 35,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1968,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 36,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1968,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 37,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1969,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 38,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1969,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 39,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1969,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 40,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1969,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 41,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1969,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 42,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1971,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 43,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1972,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 44,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1972,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 45,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1973,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 46,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1973,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 47,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1973,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 48,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1973,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 49,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1973,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 50,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1974,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 51,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1974,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 52,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1974,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 53,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1974,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 54,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1974,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 55,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1974,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 56,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1975,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 57,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1975,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 58,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1975,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 59,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1975,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 60,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1975,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 61,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1975,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 62,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1976,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 63,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1976,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 64,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1976,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 65,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1976,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 66,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1976,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 67,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1976,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 68,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1976,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 69,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1976,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 70,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1976,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 71,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1976,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 72,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1977,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 73,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1977,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 74,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1977,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 75,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1977,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 76,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1977,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 77,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1977,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 78,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1977,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 79,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1977,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 80,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1977,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 81,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 82,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 83,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 84,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 85,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 86,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 87,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 88,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 89,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 90,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 91,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1978,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 92,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1979,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 93,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1979,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 94,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1979,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 95,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1979,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 96,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1979,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 97,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1979,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 98,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 99,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 100,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 101,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 102,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 103,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 104,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 105,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 106,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 107,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 108,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 109,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1980,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 110,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1981,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 111,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1981,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 112,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1981,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 113,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1981,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 114,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1981,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 115,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1981,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 116,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1981,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 117,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1981,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 118,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1981,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 119,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1981,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 120,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 121,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 122,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 123,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 124,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 125,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 126,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 127,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 128,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 129,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 130,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1982,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 131,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 132,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 133,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 134,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 135,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 136,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 137,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 138,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 139,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 140,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 141,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1983,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 142,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 143,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 144,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 145,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 146,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 147,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 148,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 149,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 150,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 151,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1984,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 152,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1985,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 153,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1985,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 154,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1985,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 155,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1985,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 156,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1985,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 157,
+  "fields": {
+    "source": 17,
+    "edition": "\u211609",
+    "year": 1985,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 158,
+  "fields": {
+    "source": 17,
+    "edition": "\u211610",
+    "year": 1985,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 159,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1985,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 160,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1985,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 161,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1986,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 162,
+  "fields": {
+    "source": 17,
+    "edition": "\u211603",
+    "year": 1986,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 163,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1986,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 164,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1986,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 165,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1986,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 166,
+  "fields": {
+    "source": 17,
+    "edition": "\u211608",
+    "year": 1986,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 167,
+  "fields": {
+    "source": 17,
+    "edition": "\u211612",
+    "year": 1986,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 168,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1987,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 169,
+  "fields": {
+    "source": 17,
+    "edition": "\u211604",
+    "year": 1987,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 170,
+  "fields": {
+    "source": 17,
+    "edition": "\u211605",
+    "year": 1987,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 171,
+  "fields": {
+    "source": 17,
+    "edition": "\u211607",
+    "year": 1987,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 172,
+  "fields": {
+    "source": 17,
+    "edition": "\u211601",
+    "year": 1988,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 173,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1988,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 174,
+  "fields": {
+    "source": 17,
+    "edition": "\u211606",
+    "year": 1988,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 175,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1988,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 176,
+  "fields": {
+    "source": 17,
+    "edition": "\u211602",
+    "year": 1989,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 177,
+  "fields": {
+    "source": 17,
+    "edition": "\u211611",
+    "year": 1989,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 178,
+  "fields": {
+    "source": 6,
+    "edition": "\u21166",
+    "year": 1935,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 179,
+  "fields": {
+    "source": 21,
+    "edition": "\u211611",
+    "year": 1949,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 180,
+  "fields": {
+    "source": 41,
+    "edition": "\u211609",
+    "year": 1966,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 181,
+  "fields": {
+    "source": 59,
+    "edition": "\u0420\u0435\u0433\u0431\u0438",
+    "year": 1938,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 182,
+  "fields": {
+    "source": 59,
+    "edition": "\u0420\u0435\u0433\u0431\u0438 (1946)",
+    "year": 1946,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 183,
+  "fields": {
+    "source": 62,
+    "edition": "\u21166",
+    "year": 2007,
+    "date": null
+  }
+},
+{
+  "model": "clippings.sourceobject",
+  "pk": 184,
+  "fields": {
+    "source": 84,
+    "edition": "\u21164",
+    "year": 1962,
+    "date": null
+  }
+}
+]
