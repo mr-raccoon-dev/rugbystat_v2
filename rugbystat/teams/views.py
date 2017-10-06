@@ -1,13 +1,14 @@
 from dal import autocomplete
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
+from django.forms.formsets import formset_factory
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.edit import FormMixin
 
 from .forms import (ImportForm, PersonForm, PersonSeasonForm, TeamForm,
-                    ImportRosterForm)
+                    PersonRosterForm, ImportRosterForm)
 from .models import Person, PersonSeason, Team, TeamSeason
 
 
@@ -111,6 +112,12 @@ class TeamSeasonView(FormMixin, DetailView):
     """List of all matches of a specific Team in a Season"""
     model = TeamSeason
     form_class = ImportRosterForm
+
+    def get_context_data(self, **kwargs):
+        kwargs = super(TeamSeasonView, self).get_context_data(**kwargs)
+        kwargs['person_form'] = PersonRosterForm(initial=self.get_initial())
+        # import ipdb; ipdb.set_trace()
+        return kwargs
 
     def get_initial(self):
         return {'season': self.object.season.pk,

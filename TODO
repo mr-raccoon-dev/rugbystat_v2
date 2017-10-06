@@ -1,4 +1,5 @@
-Import TeamRoster - messages framework
+Import TeamRoster - messages framework; display only for admin
+Add PersonSeason from TeamSeason - send to back, save, title 
 
 Match.get_absolute_url
 Match save form

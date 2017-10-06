@@ -2,13 +2,15 @@ import re
 import logging
 from difflib import SequenceMatcher as SM
 
-from dal import autocomplete
 from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.messages import success
+from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 from moderation.forms import BaseModeratedObjectForm
 
+from matches.models import Season
+from utils.widgets import ModelSelect2Bootstrap
 from .models import Team, TeamSeason, City, Person, PersonSeason
 
 __author__ = 'krnr'
@@ -44,9 +46,9 @@ class TeamSeasonForm(BaseModeratedObjectForm):
                   'played', 'wins', 'draws', 'losses', 'points', 'score')
 
         widgets = {
-            'team': autocomplete.ModelSelect2(url='autocomplete-teams'),
-            'season': autocomplete.ModelSelect2(url='autocomplete-seasons',
-                                                forward=['year'])
+            'team': ModelSelect2Bootstrap(url='autocomplete-teams'),
+            'season': ModelSelect2Bootstrap(url='autocomplete-seasons',
+                                            forward=['year'])
         }
 
 
@@ -81,11 +83,28 @@ class PersonSeasonForm(BaseModeratedObjectForm):
         model = PersonSeason
         fields = ('person', 'year', 'role', 'team', 'season', 'story')
         widgets = {
-            'season': autocomplete.ModelSelect2(url='autocomplete-seasons',
-                                                forward=['year']),
-            'team': autocomplete.ModelSelect2(url='autocomplete-teams',
-                                              forward=['year'])
+            'season': ModelSelect2Bootstrap(url='autocomplete-seasons',
+                                            forward=['year']),
+            'team': ModelSelect2Bootstrap(url='autocomplete-teams',
+                                          forward=['year'])
         }
+
+
+class PersonRosterForm(PersonSeasonForm):
+    class Meta:
+        model = PersonSeason
+        fields = ('id', 'person', 'year', 'role', 'team', 'season', 'story')
+        widgets = {
+            'person': ModelSelect2Bootstrap(url='autocomplete-personseasons'),
+            'year': forms.HiddenInput(),
+            'season': forms.HiddenInput(),
+            'team': forms.HiddenInput(),
+        }
+
+
+# can't get it to work with dal widget (((
+PersonSeasonFormSet = inlineformset_factory(Season, PersonSeason,
+                                            form=PersonRosterForm, extra=1)
 
 
 def init_date(prefix_year):

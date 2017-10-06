@@ -77,6 +77,10 @@ APPEND_SLASH = True
 LOGIN_REDIRECT_URL = '/'
 TIME_ZONE = 'Europe/Moscow'
 LANGUAGE_CODE = 'ru-ru'
+LANGUAGES = [
+    ('ru', 'Russian'),
+    ('en', 'English'),
+]
 USE_I18N = False
 USE_L10N = False
 USE_TZ = True
