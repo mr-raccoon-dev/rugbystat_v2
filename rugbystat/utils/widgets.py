@@ -21,6 +21,5 @@ class ModelSelect2Bootstrap(autocomplete.ModelSelect2):
 
     def build_attrs(self, *args, **kwargs):
         attrs = super().build_attrs(*args, **kwargs)
-        attrs.setdefault('data-theme',
-                         'bootstrap')
+        attrs.setdefault('data-theme', 'bootstrap')
         return attrs

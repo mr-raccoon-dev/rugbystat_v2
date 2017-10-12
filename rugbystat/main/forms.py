@@ -9,16 +9,16 @@ def get_years():
         'year').annotate(count=Count('year')).values_list(
         'year', 'count', ).order_by('year')
     return tuple(
-        [('', '---')] + 
-        [(doc[0], "{} (всего {})".format(doc[0], doc[1])) 
+        [('', '---')] +
+        [(doc[0], "{} (всего {})".format(doc[0], doc[1]))
         for doc in docs_qs]
     )
 
 
 def get_sources():
     return tuple(
-        [('', '---')] + 
-        [(source.id, source) 
+        [('', '---')] +
+        [(source.id, source)
         for source in Source.objects.exclude(scans__isnull=True)]
     )
 
@@ -26,7 +26,7 @@ def get_sources():
 class ClippingsForm(forms.Form):
     year = forms.DateField(
         widget=forms.Select(
-            choices=get_years(), 
+            choices=get_years(),
             attrs={'class': 'form-control'},
         )
     )
@@ -35,6 +35,6 @@ class ClippingsForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control'},)
     )
     source_type = forms.ChoiceField(
-        choices=tuple([('', '---')] + list(Source.TYPE_CHOICES)), 
+        choices=tuple([('', '---')] + list(Source.TYPE_CHOICES)),
         widget=forms.Select(attrs={'class': 'form-control'},)
     )

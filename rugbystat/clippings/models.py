@@ -12,9 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from dropbox.exceptions import ApiError
-from dropbox.rest import ErrorResponse
 
-from storages.backends.dropbox import DropBoxStorage
+from storages.backends.dropbox import DropBoxStorage, DropBoxStorageException
 from teams.models import TagObject
 
 
@@ -119,7 +118,7 @@ class DocumentQuerySet(models.QuerySet):
             # '89-12-20filename.jpg'
             # '91-05-06_name.jpg'
             year, month, day, name = re.findall('(\d+)-*(\d*)-*(\d*)_*(.*)',
-                                                 fname)[0]
+                                                fname)[0]
             if len(day) > 2:
                 name = day + name
                 day = ''
@@ -130,14 +129,14 @@ class DocumentQuerySet(models.QuerySet):
             if month and day and int(day) > 0:
                 try:
                     doc_date = date(int(year), int(month), int(day))
-                except:
+                except (ValueError, TypeError):
                     doc_date = None
             else:
                 doc_date = None
 
             # create a Document
             document = self.model(title=fname, dropbox=metadata.path_lower,
-                                  date=doc_date, year=year, month=month or None, )
+                                  date=doc_date, year=year, month=month or None,)  # noqa
             document.save(force_insert=True)
         return document
 
@@ -158,8 +157,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         SourceObject, verbose_name=_('Выпуск'), related_name='scans',
         blank=True, null=True)
     kind = models.CharField(
-        verbose_name=_('Тип'), max_length=127,
-        choices=Source.TYPE_CHOICES, 
+        verbose_name=_('Тип'), max_length=127, choices=Source.TYPE_CHOICES,
         blank=True)
     dropbox = models.FileField(
         verbose_name=_('Путь в Dropbox'), storage=MyDropbox(),
@@ -167,7 +165,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
     dropbox_path = models.URLField(
         verbose_name=_('Прямая ссылка на файл'), max_length=127, blank=True)
     dropbox_thumb = models.URLField(
-        verbose_name=_('Прямая ссылка на превью'), max_length=127, 
+        verbose_name=_('Прямая ссылка на превью'), max_length=127,
         blank=True, null=True)
     year = models.PositiveSmallIntegerField(
         verbose_name=_('Год создания'), blank=True, null=True,
@@ -190,7 +188,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
     objects = DocumentQuerySet.as_manager()
 
     class Meta:
-        ordering = ('year', 'month', 'title' )
+        ordering = ('year', 'month', 'title', )
 
     def __init__(self, *args, **kwargs):
         super(Document, self).__init__(*args, **kwargs)
@@ -198,7 +196,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         self._original_state = self._as_dict()
 
     def _as_dict(self):
-        return dict([(f.name, getattr(self, f.name)) 
+        return dict([(f.name, getattr(self, f.name))
                      for f in self._meta.local_fields if not f.rel])
 
     @cached_property
@@ -220,7 +218,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
                 self.dropbox_path = self.get_share_link(self.dropbox.name)
                 self.dropbox_thumb = self.get_share_link(self.get_thumb_path())
             else:
-                self.dropbox_path = self.get_share_link(self.dropbox.name, 
+                self.dropbox_path = self.get_share_link(self.dropbox.name,
                                                         convert=False)
 
         # Get newspaper / photo / ... kind from self.source if possible
@@ -229,14 +227,14 @@ class Document(TitleDescriptionModel, TimeStampedModel):
 
         # Move file inside dropbox folder to another path in the same dir
         if self.title != self._original_state['title']:
-            to_path = os.path.join(os.path.dirname(self.dropbox.name), 
+            to_path = os.path.join(os.path.dirname(self.dropbox.name),
                                    self.title)
             self.move_dropbox(to_path)
 
         super(Document, self).save(**kwargs)
 
     def delete(self, **kwargs):
-        self.client.file_delete(self.dropbox.name)
+        self.client.files_delete(self.dropbox.name)
         super(Document, self).delete(**kwargs)
 
     def get_share_link(self, path, convert=True):
@@ -255,38 +253,43 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         :rtype: str
         """
         try:
-            result = self.client.share(path, False)
+            result = self.client.sharing_create_shared_link(path, False)
             if convert:
-                return get_dropbox_content_url(result['url']) 
+                return get_dropbox_content_url(result.url)
             else:
-                return result['url']
-        except ApiError:
-            pass
-        except ErrorResponse:
-            # link exists, but file - doesn't
-            pass
+                return result.url
+        except DropBoxStorageException as e:
+            logger.error('Cant share link {}'.format(path))
+            logger.exception(e)
         return None
 
     def get_thumb_path(self):
+        thumb_path = '/.thumbs/{}'.format(self.filename)
         try:
-            meta = self.client.metadata('/.thumbs/{}'.format(self.filename))
-            result = meta['path']
-            if meta.get('is_deleted'):
+            meta = self.client.files_list_revisions(thumb_path)
+            if meta.is_deleted:
                 result = self.create_dropbox_thumb()
-        except ErrorResponse:
+            else:
+                # return the latest entry path
+                result = meta.entries[0].path_lower
+        except Exception as e:
+            msg = "Caught an exception trying to get thumb path from Dropbox"
+            logger.error(msg)
+            logger.exception(e)
             result = self.create_dropbox_thumb()
         return result
 
     def create_dropbox_thumb(self):
-        resp, metadata = self.client.thumbnail_and_metadata(self.dropbox.name)
-        f = resp.read()
-        result = self.client.put_file('/.thumbs/{}'.format(self.filename), f)
-        return result['path']
+        thumb_path = '/.thumbs/{}'.format(self.filename)
+        meta, resp = self.client.files_get_thumbnail(self.dropbox.name)
+        f = resp.content
+        result = self.client.files_upload(f, thumb_path)
+        return result.path_lower
 
     def move_dropbox(self, to_path):
         """
-        Calls file_move(from_path, to_path) method of dropbox.client.DropboxClient instance
-    
+        Calls move(from_path, to_path) method of dropbox.Dropbox instance
+
         Parameters
             from_path
               The path to the file or folder to be moved.
@@ -295,29 +298,20 @@ class Document(TitleDescriptionModel, TimeStampedModel):
               This parameter should include the destination filename (e.g. if
               ``from_path`` is ``'/test.txt'``, ``to_path`` might be
               ``'/dir/test.txt'``). If there's already a file at the
-              ``to_path`` it will raise an ErrorResponse.
-        
+              ``to_path`` it will raise a DropBoxStorageException.
+
         Returns
-              A dictionary containing the metadata of the new copy of the file or folder.
-        
-              For a detailed description of what this call returns, visit:
-              https://www.dropbox.com/developers/core/docs#fileops-move
-        
+              None
+
         Raises
-              A :class:`dropbox.rest.ErrorResponse` with an HTTP status of:
-        
-              - 400: Bad request (may be due to many things; check e.error for details).
-              - 403: An invalid move operation was attempted
-                (e.g. there is already a file at the given destination,
-                or moving a shared folder into a shared folder).
-              - 404: No file was found at given from_path.
-              - 503: User over storage quota.
+              DropBoxStorageException
         """
         try:
-            self.client.file_move(self.dropbox.name, to_path)
-        except ErrorResponse as e:
+            self.client.files_move(self.dropbox.name, to_path)
+        except DropBoxStorageException as e:
             # TODO log error
-            logger.error("Couldn't move Dropbox file. {}".format(e))
+            logger.error("Couldn't move Dropbox file.")
+            logger.exception(e)
 
         self.dropbox.name = to_path
         self.dropbox_path = self.get_share_link(self.dropbox.name)
