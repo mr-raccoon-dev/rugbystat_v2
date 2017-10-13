@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from matches.models import Season
+from matches.models import Season, Tournament
 from teams.models import Team, City, Person, PersonSeason
 
 logger = logging.getLogger('django.request')
@@ -187,10 +187,9 @@ def parse_season(data, request):
             ratios = [SM(None, tourn.name, title).ratio() for tourn in tourns]
             max_tourn = tourns[ratios.index(max(ratios))]
             season.tourn = max_tourn
-            msg = "Multiple tournaments found for this title. We suggest: {}"
-        messages.add_message(
-            request, messages.INFO, msg.format(max_tourn.name)
-        )
+            msg = "Multiple tournaments found for this title. "
+            msg = msg + "We suggest: {}".format(max_tourn.name)
+        messages.add_message(request, messages.INFO, msg)
 
     for line in rest:
         if line.strip():
