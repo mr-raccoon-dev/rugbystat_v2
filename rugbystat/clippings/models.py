@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_extensions.db.models import TimeStampedModel, TitleDescriptionModel
 from dropbox.exceptions import ApiError
+from dropbox.files import ThumbnailSize
 
 from storages.backends.dropbox import DropBoxStorage, DropBoxStorageException
 from teams.models import TagObject
@@ -234,7 +235,10 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         super(Document, self).save(**kwargs)
 
     def delete(self, **kwargs):
-        self.client.files_delete(self.dropbox.name)
+        try:
+            self.client.files_delete(self.dropbox.name)
+        except ApiError:
+            logger.error("No file found: {}".format(self.dropbox.name))
         super(Document, self).delete(**kwargs)
 
     def get_share_link(self, path, convert=True):
@@ -281,7 +285,8 @@ class Document(TitleDescriptionModel, TimeStampedModel):
 
     def create_dropbox_thumb(self):
         thumb_path = '/.thumbs/{}'.format(self.filename)
-        meta, resp = self.client.files_get_thumbnail(self.dropbox.name)
+        size = ThumbnailSize('w128h128', None)
+        meta, resp = self.client.files_get_thumbnail(self.dropbox.name, size=size)  # noqa
         f = resp.content
         result = self.client.files_upload(f, thumb_path)
         return result.path_lower

@@ -57,7 +57,7 @@ def process_folder(metadata, dbx):
         logger.debug('Has more: ' + str(result.has_more))
 
         for metadata in result.entries:
-            logger.debug('Got metadata:\n')
+            logger.debug('\nGot metadata:')
             logger.debug(metadata)
 
             # Ignore enclosed folders
