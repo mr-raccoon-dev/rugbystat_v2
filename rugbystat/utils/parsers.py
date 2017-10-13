@@ -217,7 +217,7 @@ def find_dates(txt, year):
 
     patterns = [esc1, esc2, esc3]
     dates = [re.findall(pattern, txt) for pattern in patterns]
-    if filter(bool, dates):
+    if tuple(filter(bool, dates)):
         # try the first found pattern
         try:
             date_start, date_end = dates[0]

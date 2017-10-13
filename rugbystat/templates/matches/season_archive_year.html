@@ -2,6 +2,8 @@
 
 {% load staticfiles %}
 
+{% block title %}{{ block.super }} || Турниры {{ year|date:"Y" }} года{% endblock title %}
+
 {% block content %}
 
 <h2 id="name">{{ year|date:"Y" }}</h2>

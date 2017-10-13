@@ -28,9 +28,9 @@
 {% include 'matches/season_table.html' with object=object %}
 {% include 'matches/match_list.html' with matches=object.matches.all %}
 
-<h3>Добавить матч</h3>
 <form role="form" id="addMatch" class="addForm" style="display: none;">
 {% csrf_token %}
+<h3>Добавить матч</h3>
 <div class="form-inputs">
   <input type="hidden" 
          name="tourn_season" 
