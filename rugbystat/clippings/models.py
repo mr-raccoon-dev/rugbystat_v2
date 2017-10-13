@@ -118,26 +118,33 @@ class DocumentQuerySet(models.QuerySet):
             # '91-03_dd.jpg'
             # '89-12-20filename.jpg'
             # '91-05-06_name.jpg'
-            year, month, day, name = re.findall('(\d+)-*(\d*)-*(\d*)_*(.*)',
-                                                fname)[0]
-            if len(day) > 2:
-                name = day + name
-                day = ''
-
-            if len(year) < 4:
-                year = '19' + year
-
-            if month and day and int(day) > 0:
-                try:
-                    doc_date = date(int(year), int(month), int(day))
-                except (ValueError, TypeError):
-                    doc_date = None
+            try:
+                pattern = '(\d+)-*(\d*)-*(\d*)_*(.*)'
+                year, month, day, name = re.findall(pattern, fname)[0]
+            except IndexError:
+                # regexp didn't return date!
+                document = self.model(title=fname, dropbox=metadata.path_lower)
             else:
-                doc_date = None
+                if len(day) > 2:
+                    name = day + name
+                    day = ''
 
-            # create a Document
-            document = self.model(title=fname, dropbox=metadata.path_lower,
-                                  date=doc_date, year=year, month=month or None,)  # noqa
+                if len(year) < 4:
+                    year = '19' + year
+
+                if month and day and int(day) > 0:
+                    try:
+                        doc_date = date(int(year), int(month), int(day))
+                    except (ValueError, TypeError):
+                        doc_date = None
+                else:
+                    doc_date = None
+
+                # create a Document
+                document = self.model(title=fname, dropbox=metadata.path_lower,
+                                      date=doc_date, year=year,
+                                      month=month or None,)
+
             document.save(force_insert=True)
         return document
 
