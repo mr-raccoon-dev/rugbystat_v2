@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
+from matches.models import Season
 from teams.models import Team, City, Person, PersonSeason
 
 logger = logging.getLogger('django.request')
