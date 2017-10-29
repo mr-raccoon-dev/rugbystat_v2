@@ -200,7 +200,7 @@
 {% for season in object.seasons.all %}
   <tr class="document-row">
     <td> {{ season.year }} </td>
-    <td> {{ season.role_verbose }} </td>
+    <td> {{ season.role_verbose|default:"" }} </td>
     <td> 
     {% if season.season %}
       <a class="link" href="{{ season.season.get_absolute_url }}">

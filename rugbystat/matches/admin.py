@@ -4,12 +4,13 @@ from markdownx.admin import MarkdownxModelAdmin
 
 from main.filters import DropdownFilter, DateEndListFilter
 from teams.models import TeamSeason
+from teams.moderator import NoModerationAdmin
 from .forms import GroupForm, MatchForm
 from .models import Tournament, Season, Group, Match
 
 
 @admin.register(Tournament)
-class TournamentAdmin(SortableAdminMixin, admin.ModelAdmin):
+class TournamentAdmin(SortableAdminMixin, NoModerationAdmin):
     pass
 
 
@@ -26,7 +27,7 @@ class GroupInline(admin.TabularInline):
 
 
 @admin.register(Season)
-class SeasonAdmin(admin.ModelAdmin):
+class SeasonAdmin(NoModerationAdmin):
     list_display = ('name', 'date_start', 'date_end', 'story')
     list_filter = (
         ('tourn__name', DropdownFilter),
@@ -41,7 +42,7 @@ class SeasonAdmin(admin.ModelAdmin):
 
 
 @admin.register(Group)
-class GroupAdmin(admin.ModelAdmin):
+class GroupAdmin(NoModerationAdmin):
     list_display = ('name', 'date_start', 'date_end', 'season')
     list_select_related = ('season', )
     list_filter = (('season__name', DropdownFilter), DateEndListFilter,)
@@ -61,7 +62,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 
 @admin.register(Match)
-class MatchAdmin(MarkdownxModelAdmin):
+class MatchAdmin(NoModerationAdmin, MarkdownxModelAdmin):
     form = MatchForm
     fieldsets = (
         (None, {'fields': ('name',)}),

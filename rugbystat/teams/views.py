@@ -116,7 +116,6 @@ class TeamSeasonView(FormMixin, DetailView):
     def get_context_data(self, **kwargs):
         kwargs = super(TeamSeasonView, self).get_context_data(**kwargs)
         kwargs['person_form'] = PersonRosterForm(initial=self.get_initial())
-        # import ipdb; ipdb.set_trace()
         return kwargs
 
     def get_initial(self):

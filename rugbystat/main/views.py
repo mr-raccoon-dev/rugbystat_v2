@@ -1,5 +1,6 @@
 from collections import Counter
 
+from django.db.models import Count
 from django.shortcuts import render
 
 from clippings.models import Document
@@ -23,10 +24,15 @@ def persons_view(request):
 
 def clippings_view(request):
     form = ClippingsForm()
-    # TODO: rewrite for one query
     qs = Document.objects.values_list('source__kind', flat=True)
+    # qs = dict(
+    #     Document.objects.values_list('source__kind')
+    #     .annotate(Count('id')).order_by()
+    # )
     counter = Counter(qs)
     total = sum(counter.values())
+    null = counter[None]
     return render(request, 'documents.html', {'form': form,
                                               'total': counter,
+                                              'null': null,
                                               'sum_total': total})

@@ -186,6 +186,8 @@ class TeamSeason(models.Model):
     def get_players(self):
         return self.season._person_seasons.filter(
             team=self.team
+        ).select_related(
+            'person__tagobject_ptr'
         ).order_by('role')
 
     def get_matches(self):

@@ -64,7 +64,7 @@
 {% for season in object.seasons.all %}
   <tr class="document-row">
     <td> {{ season.year }} </td>
-    <td> {{ season.role_verbose }} </td>
+    <td> {{ season.role_verbose|default:"" }} </td>
     <td> 
     {% if season.tournament %}
       <a class="link" 

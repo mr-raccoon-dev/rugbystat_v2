@@ -3,7 +3,15 @@ from markdownx.admin import MarkdownxModelAdmin
 
 from main.filters import DropdownFilter
 # from .forms import TeamSeasonForm
-from .models import Person, PersonSeason, Team, TeamSeason, Stadium, City
+from .models import (Person, PersonSeason, Team, TeamSeason, Stadium, City,
+                     TagObject, )
+from .moderator import NoModerationAdmin
+
+
+@admin.register(TagObject)
+class TagAdmin(admin.ModelAdmin):
+    list_select_related = ('team', 'tournament', 'season', 'match', 'person',)
+    search_fields = ('name', )
 
 
 @admin.register(City)
@@ -21,7 +29,7 @@ class StadiumAdmin(admin.ModelAdmin):
 
 
 @admin.register(Team)
-class TeamAdmin(admin.ModelAdmin):
+class TeamAdmin(NoModerationAdmin):
     list_display = ('short_name', 'city', )
     list_select_related = ('city', )
     list_filter = (
@@ -32,7 +40,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 @admin.register(TeamSeason)
-class TeamSeasonAdmin(admin.ModelAdmin):
+class TeamSeasonAdmin(NoModerationAdmin):
     # form = TeamSeasonForm
 
     search_fields = ('team__name', )
@@ -80,7 +88,7 @@ class PersonSeasonInline(admin.TabularInline):
 
 
 @admin.register(Person)
-class PersonAdmin(MarkdownxModelAdmin):
+class PersonAdmin(MarkdownxModelAdmin, NoModerationAdmin):
     search_fields = ('name', 'first_name', )
     list_filter = (
         ('year_birth', DropdownFilter),
@@ -109,10 +117,11 @@ class PersonAdmin(MarkdownxModelAdmin):
     inlines = [
         PersonSeasonInline,
     ]
+    admin_integration_enabled = False
 
 
 @admin.register(PersonSeason)
-class PersonSeasonAdmin(admin.ModelAdmin):
+class PersonSeasonAdmin(NoModerationAdmin):
     search_fields = ('person__name', 'person__first_name', )
     list_display = ('__str__', 'role', 'team', 'season')
     list_select_related = ('person', 'team', 'season')
@@ -121,4 +130,4 @@ class PersonSeasonAdmin(admin.ModelAdmin):
         ('year', DropdownFilter),
         ('team__name', DropdownFilter),
     )
-    raw_id_fields = ('team', )
+    raw_id_fields = ('team', 'person', 'season')

@@ -1,5 +1,4 @@
 from django.contrib import admin, messages
-from django.db.models import FileField
 
 from main.filters import DropdownFilter
 from .forms import SourceForm
@@ -18,6 +17,12 @@ class SourceObjectAdmin(admin.ModelAdmin):
     search_fields = ('source__title', )
 
 
+class TagInline(admin.TabularInline):
+    model = Document.tag.through
+    raw_id_fields = ('tagobject', )
+    extra = 1
+
+
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
     list_filter = (
@@ -32,10 +37,10 @@ class DocumentAdmin(admin.ModelAdmin):
     )
     ordering = ('-id', )
     search_fields = ('title', )
-    readonly_fields = ('preview', 'tag', )
+    readonly_fields = ('preview', 'versions', 'tag')
     action_form = SourceForm
     actions = ['set_source_action']
-    filter_horizontal = ('versions', )
+    # filter_horizontal = ('versions', )
     fieldsets = (
         (None, {
             'fields': ('title', 'description', 'preview')
@@ -65,6 +70,9 @@ class DocumentAdmin(admin.ModelAdmin):
     # formfield_overrides = {
     #     FileField: {'widget': admin.widgets.AdminTextInputWidget},
     # }
+    inlines = (
+        TagInline,
+    )
 
     def preview(self, obj):
         if obj.is_image:

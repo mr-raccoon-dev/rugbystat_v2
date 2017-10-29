@@ -1,13 +1,17 @@
 from moderation import moderation
 from moderation.moderator import GenericModerator
+from moderation.admin import ModerationAdmin
 
 from .models import Team, TeamSeason, Person, PersonSeason
+
+
+class NoModerationAdmin(ModerationAdmin):
+    admin_integration_enabled = False
 
 
 class NoNotifyModerator(GenericModerator):
     notify_moderator = False
     notify_user = False
-    admin_integration_enabled = False
 
 
 class TeamModerator(NoNotifyModerator):
