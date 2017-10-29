@@ -39,6 +39,11 @@ class TagObject(models.Model):
         return self.tagobject_ptr.document_set.all()
 
 
+class TagThrough(models.Model):
+    document = models.ForeignKey('clippings.Document')
+    tag = models.ForeignKey('TagObject')
+
+
 class City(models.Model):
     name = models.CharField(max_length=127, verbose_name=_('Базовое название'))
     short_name = models.CharField(

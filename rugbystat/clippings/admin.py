@@ -1,6 +1,7 @@
 from django.contrib import admin, messages
 
 from main.filters import DropdownFilter
+from teams.forms import TagThroughForm
 from .forms import SourceForm
 from .models import Source, SourceObject, Document
 
@@ -19,12 +20,15 @@ class SourceObjectAdmin(admin.ModelAdmin):
 
 class TagInline(admin.TabularInline):
     model = Document.tag.through
-    raw_id_fields = ('tagobject', )
+    form = TagThroughForm
     extra = 1
 
 
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'title', 'source', 'kind', 'preview'
+    )
     list_filter = (
         ('year', DropdownFilter),
         ('source__title', DropdownFilter),
@@ -32,14 +36,13 @@ class DocumentAdmin(admin.ModelAdmin):
         'is_image',
         'is_deleted',
     )
-    list_display = (
-        'id', 'title', 'source', 'kind', 'preview'
-    )
     ordering = ('-id', )
     search_fields = ('title', )
-    readonly_fields = ('preview', 'versions', 'tag')
+
     action_form = SourceForm
     actions = ['set_source_action']
+
+    readonly_fields = ('preview', 'versions', 'tag')
     # filter_horizontal = ('versions', )
     fieldsets = (
         (None, {

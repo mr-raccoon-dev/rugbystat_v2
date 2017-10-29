@@ -4,12 +4,22 @@ from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 from moderation.forms import BaseModeratedObjectForm
 
+from clippings.models import Document
 from matches.models import Season
 from utils.widgets import ModelSelect2Bootstrap
 from utils.parsers import parse_rosters, parse_teams
 from .models import Team, TeamSeason, Person, PersonSeason
 
 __author__ = 'krnr'
+
+
+class TagThroughForm(forms.ModelForm):
+    class Meta:
+        model = Document.tag.through
+        fields = ('tagobject', )
+        widgets = {
+            'tagobject': ModelSelect2Bootstrap(url='autocomplete-tags')
+        }
 
 
 class TeamForm(BaseModeratedObjectForm):

@@ -9,7 +9,7 @@ from django.views.generic.edit import FormMixin
 
 from .forms import (ImportForm, PersonForm, PersonSeasonForm, TeamForm,
                     PersonRosterForm, ImportRosterForm)
-from .models import Person, PersonSeason, Team, TeamSeason
+from .models import Person, PersonSeason, Team, TeamSeason, TagObject
 
 
 def import_teams(request):
@@ -22,6 +22,16 @@ def import_teams(request):
     else:
         form = ImportForm()
     return render(request, 'import.html', {'form': form})
+
+
+class TagAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = TagObject.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs
 
 
 class TeamAutocomplete(autocomplete.Select2QuerySetView):

@@ -15,7 +15,7 @@ from dropbox.exceptions import ApiError
 from dropbox.files import ThumbnailSize
 
 from storages.backends.dropbox import DropBoxStorage, DropBoxStorageException
-from teams.models import TagObject
+from teams.models import TagObject, TagThrough
 
 
 logger = logging.getLogger('django.server')

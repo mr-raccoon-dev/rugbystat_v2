@@ -21,6 +21,7 @@ from matches.views import (import_seasons,
 from teams.views import (import_teams,
                          PersonCreateView, PersonUpdateView,
                          TeamUpdateView, TeamSeasonView,
+                         TagAutocomplete,
                          TeamAutocomplete, TeamSeasonAutocomplete,
                          PersonSeasonAutocomplete,
                          TeamBySeasonAutocomplete, PersonBySeasonAutocomplete)
@@ -47,6 +48,8 @@ urlpatterns = [
     url(r'^import-seasons/', import_seasons, name='import_seasons'),
     url(r'^dropbox-webhook/', import_from_dropbox),
 
+    url(r'^autocomplete-tags/$', TagAutocomplete.as_view(),
+        name='autocomplete-tags'),
     url(r'^autocomplete-tournaments/$', TournamentAutocomplete.as_view(),
         name='autocomplete-tournaments'),
     url(r'^autocomplete-seasons/$', SeasonAutocomplete.as_view(),
@@ -59,7 +62,7 @@ urlpatterns = [
         name='autocomplete-personseasons'),
     url(r'^autocomplete-teambyseasons/$', TeamBySeasonAutocomplete.as_view(),
         name='autocomplete-teamseasons'),
-    url(r'^autocomplete-personbyseasons/$', PersonBySeasonAutocomplete.as_view(),
+    url(r'^autocomplete-personbyseasons/$', PersonBySeasonAutocomplete.as_view(),  # noqa
         name='autocomplete-personseasons'),
 
     url(r'^teams/$', views.teams_view, name='teams'),
