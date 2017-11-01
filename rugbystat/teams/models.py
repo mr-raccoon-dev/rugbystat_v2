@@ -83,10 +83,10 @@ class Team(TagObject):
     )
     year_prefix = models.CharField(
         max_length=64, verbose_name=_('Префикс к году образования'),
-        blank=True, null=True,)
+        strip=False, blank=True, null=True,)
     disband_year_prefix = models.CharField(
         max_length=64, verbose_name=_('Префикс к году распада'),
-        blank=True, null=True,)
+        strip=False, blank=True, null=True,)
     parent = models.ForeignKey(
         'self', verbose_name=_('Команда-родитель'),
         related_name='ancestors', blank=True, null=True)

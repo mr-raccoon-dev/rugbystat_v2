@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from dal import autocomplete
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
