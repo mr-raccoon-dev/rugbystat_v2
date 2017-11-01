@@ -74,6 +74,7 @@ class SeasonCreateView(CreateView):
 class SeasonYearView(YearArchiveView):
     model = Season
     date_field = 'date_end'
+    ordering = ('tourn', 'date_start')
     make_object_list = True
 
 

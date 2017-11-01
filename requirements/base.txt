@@ -7,6 +7,8 @@ django-admin-sortable2==0.6.13
 # psycopg2==2.6.2
 dj-database-url==0.4.1
 
+django-allauth=0.34.0
+
 # Models
 django-model-utils==2.6
 django-moderation==0.4.0

@@ -40,6 +40,7 @@ router.register(r'issues', SourceObjectViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^accounts/',include('allauth.urls')),
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/', include('authentication.urls')),
     url(r'^django-rq/', include('django_rq.urls')),

@@ -16,6 +16,10 @@ INSTALLED_APPS = (
     'django.contrib.sites',
 
     # Third party apps
+    'allauth',                   # social app login
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
     'rest_framework',
     'rest_framework.authtoken',  # token authentication
     'django_rq',                 # asynchronous queuing
@@ -159,6 +163,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Logging
 from .logging import *
+
+# Social login
+from .social import *
 
 # Custom user app
 AUTH_USER_MODEL = 'users.User'
