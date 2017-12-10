@@ -14,13 +14,13 @@ var searchManager = {
     },
     process_list: function(data) {
         $.each(data.results, function(iter, item) {
-            $('#results').append('<div class="search-item"><a data-team-id="' + item.id + '" href="#">' + item.short_name + ' (' + item.operational_years + ')</a></div>');
+            $('#results').append('<div class="search-item"><a href="/teams/' + item.id + '/">' + item.short_name + ' (' + item.operational_years + ')</a></div>');
         });
 
-        $('#results a').click(function(e) {
-            e.preventDefault();
-            searchManager.get_team(this);
-        });
+        // $('#results a').click(function(e) {
+        //     e.preventDefault();
+        //     searchManager.get_team(this);
+        // });
 
     },
 
