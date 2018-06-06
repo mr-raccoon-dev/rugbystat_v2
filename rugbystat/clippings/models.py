@@ -235,6 +235,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
 
         # Move file inside dropbox folder to another path in the same dir
         if self.title != self._original_state['title']:
+            # TODO: any dir
             to_path = os.path.join(os.path.dirname(self.dropbox.name),
                                    self.title)
             self.move_dropbox(to_path)

@@ -10,7 +10,7 @@ from .models import Tournament, Season, Group, Match
 
 
 @admin.register(Tournament)
-class TournamentAdmin(SortableAdminMixin, NoModerationAdmin):
+class TournamentAdmin(SortableAdminMixin, admin.ModelAdmin):
     pass
 
 
@@ -42,7 +42,7 @@ class SeasonAdmin(NoModerationAdmin):
 
 
 @admin.register(Group)
-class GroupAdmin(NoModerationAdmin):
+class GroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'date_start', 'date_end', 'season')
     list_select_related = ('season', )
     list_filter = (('season__name', DropdownFilter), DateEndListFilter,)
