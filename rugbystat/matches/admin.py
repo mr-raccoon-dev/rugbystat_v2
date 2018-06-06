@@ -25,6 +25,15 @@ class GroupInline(admin.TabularInline):
     model = Group
     extra = 1
 
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        field = super(GroupInline, self).formfield_for_manytomany(
+            db_field, request, **kwargs
+        )
+        # get only the teams from THAT season
+        field.queryset = field.queryset.filter(
+            season=request.resolver_match.args[0]
+        )
+        return field
 
 @admin.register(Season)
 class SeasonAdmin(NoModerationAdmin):
