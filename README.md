@@ -68,3 +68,14 @@ Deployment is handled via Travis. When builds pass Travis will automatically dep
 ```bash
 travis encrypt $(heroku auth:token) --add deploy.api_key
 ```
+
+# Use staging DB locally
+
+```bash
+mysqldump -u rugbystat -h rugbystat.mysql.pythonanywhere-services.com 'rugbystat$staging_db' --compatible=postgres > rugbystat`date +%Y-%m-%d`.sql
+
+cat rugbystat*.sql | docker exec -i rugbystat_v2_db_1 mysql -u root --password=123 rugbystat
+
+use rugbystat;
+source /var/lib/mysql/rugbystat.sql
+```
