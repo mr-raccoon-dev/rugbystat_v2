@@ -18,6 +18,8 @@ include/
 lib/
 local/
 .idea/
+.vscode/
+.mysql/
 
 *.log
 pip-log.txt
