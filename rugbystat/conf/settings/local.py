@@ -10,10 +10,10 @@ for config in TEMPLATES:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rugbystat$staging_db',
+        'NAME': 'rugbystat',
         'USER': 'root',
         'PASSWORD': '123',
-        'HOST': 'localhost',
+        'HOST': 'db',
     }
 }
 

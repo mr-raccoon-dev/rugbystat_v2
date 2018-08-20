@@ -6,6 +6,7 @@ django-admin-sortable2==0.6.13
 # For the persistence stores
 # psycopg2==2.6.2
 dj-database-url==0.4.1
+mysqlclient
 
 django-allauth==0.34.0
 
@@ -26,7 +27,6 @@ django-widget-tweaks==1.4.1
 
 # Static and Media Storage
 django-storages==1.6.5
-
 # Static files
 whitenoise==3.2.2
 

@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.6.27
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: "rugbystat"
+      MYSQL_ROOT_PASSWORD: 123
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./.mysql:/var/lib/mysql
+
+  web:
+    build:
+      context: .
+      dockerfile: ./docker/local/Dockerfile
+    environment:
+      SOCIAL_AUTH_FACEBOOK_KEY: 178850782667092
+      SOCIAL_AUTH_FACEBOOK_SECRET: 7ad6ff12a238a07ca2473bf24e2fcb78
+    command: /start.sh
+    volumes:
+      - ./rugbystat:/app
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"

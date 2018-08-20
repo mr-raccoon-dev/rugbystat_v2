@@ -13,3 +13,5 @@ mkdocs==0.16.1
 # Command Utils
 Fabric==1.13.1
 pycrypto==2.6.1
+
+Werkzeug
