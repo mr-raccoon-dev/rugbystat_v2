@@ -37,7 +37,10 @@ def clippings_view(request):
     null = counter[None]
 
     filters = {params_mapper.get(k, k): v for k,v in request.GET.items() if v}
-    qs = Document.objects.not_deleted().filter(**filters)
+    if filters:
+        qs = Document.objects.not_deleted().filter(**filters)
+    else:
+        qs = Document.objects.none()
     return render(request, 'documents.html', 
                   {
                       'form': form,
