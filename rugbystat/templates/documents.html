@@ -80,7 +80,23 @@
         </tr>
       </thead>
       <tbody>
-        
+        {% for doc in qs %}
+        <tr class="document-row">
+          <td>{{ doc.title }}</td>
+          <td>{{ doc.description | linebreaksbr | default_if_none:"" }}</td>
+          <td>
+            {% if doc.month %}{{doc.month}}/{% endif %}{{doc.year}}
+          </td>
+          <td>
+            {% if doc.is_image %}
+            <a class="dropbox-link" target="_blank" href="{{doc.dropbox_path}}">
+              <img src="{{doc.dropbox_thumb}}"/></a>
+            {% else %}
+              <a href="{{doc.dropbox_path}}">Нет превью</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>

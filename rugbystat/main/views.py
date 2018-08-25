@@ -23,16 +23,26 @@ def persons_view(request):
 
 
 def clippings_view(request):
+    params_mapper = {
+        'source_type': 'source__kind'
+    }
     form = ClippingsForm()
-    qs = Document.objects.values_list('source__kind', flat=True)
+    count_qs = Document.objects.values_list('source__kind', flat=True)
     # qs = dict(
     #     Document.objects.values_list('source__kind')
     #     .annotate(Count('id')).order_by()
     # )
-    counter = Counter(qs)
+    counter = Counter(count_qs)
     total = sum(counter.values())
     null = counter[None]
-    return render(request, 'documents.html', {'form': form,
-                                              'total': counter,
-                                              'null': null,
-                                              'sum_total': total})
+
+    filters = {params_mapper.get(k, k): v for k,v in request.GET.items() if v}
+    qs = Document.objects.not_deleted().filter(**filters)
+    return render(request, 'documents.html', 
+                  {
+                      'form': form,
+                      'total': counter,
+                      'null': null,
+                      'sum_total': total,
+                      'qs': qs,
+                  })

@@ -1,5 +1,15 @@
 $().ready(function() {
 
+    $('select.form-control').on('change', function () {
+        var val = $(this).val();
+        var name = $(this).attr('name');
+        window.history.pushState(
+            {}, "",
+            updateQueryStringParameter(window.location.href, name, val)
+        );
+    });
+
+
 var searchDocsManager = {
     get_list: function(page) {
         var year = $("#id_year").val(),
