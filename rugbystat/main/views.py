@@ -26,7 +26,7 @@ def clippings_view(request):
     params_mapper = {
         'source_type': 'source__kind'
     }
-    form = ClippingsForm()
+    form = ClippingsForm(request.GET)
     count_qs = Document.objects.values_list('source__kind', flat=True)
     # qs = dict(
     #     Document.objects.values_list('source__kind')
