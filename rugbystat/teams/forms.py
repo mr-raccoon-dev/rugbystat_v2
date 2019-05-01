@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, formset_factory
 from django.utils.translation import ugettext_lazy as _
 from moderation.forms import BaseModeratedObjectForm
 
@@ -46,7 +46,7 @@ class TeamSeasonForm(BaseModeratedObjectForm):
     class Meta:
         model = TeamSeason
         fields = ('name', 'year', 'team', 'season', 'story',
-                  'played', 'wins', 'draws', 'losses', 'points', 'score')
+                  'place', 'played', 'wins', 'draws', 'losses', 'points', 'score')
 
         widgets = {
             'team': ModelSelect2Bootstrap(url='autocomplete-teams'),
@@ -54,6 +54,9 @@ class TeamSeasonForm(BaseModeratedObjectForm):
                                             forward=['year'])
         }
 
+
+TeamSeasonFormSet = inlineformset_factory(Season, TeamSeason,
+                                          form=TeamSeasonForm, extra=1)
 
 class PersonForm(BaseModeratedObjectForm):
     """Edit Person attributes"""

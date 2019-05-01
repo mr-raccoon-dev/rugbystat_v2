@@ -171,11 +171,11 @@ class TeamSeason(models.Model):
         unique_together = (('team', 'year', 'season'),)
 
     def __str__(self):
-        return "{}".format(self.name)
+        return "{}: {}".format(self.name, self.season)
 
     def save(self, **kwargs):
         if not self.name:
-            self.name = "{}: {}".format(self.team, self.season)
+            self.name = "{}".format(self.team)
         if not self.year:
             self.year = self.season.date_end.year
         super(TeamSeason, self).save(**kwargs)

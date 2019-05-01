@@ -29,7 +29,7 @@ class StadiumAdmin(admin.ModelAdmin):
 
 
 @admin.register(Team)
-class TeamAdmin(NoModerationAdmin):
+class TeamAdmin(admin.ModelAdmin):
     list_display = ('short_name', 'city', )
     list_select_related = ('city', )
     list_filter = (
