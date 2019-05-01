@@ -3,6 +3,8 @@
 {% load widget_tweaks %}
 {% load markdownx %}
 
+{% block title %}{{ block.super }} | {{object.name}} {{ object.city.name }}{% endblock title %}
+
 {% block stylesheets %}
 
 {{ block.super }}

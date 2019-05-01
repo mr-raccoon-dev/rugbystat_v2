@@ -4,6 +4,8 @@
 {% load widget_tweaks %}
 {% load markdownx %}
 
+{% block title %}{{ block.super }} | {{ object.name }}{% endblock title %}
+
 {% block stylesheets %}
 {{ block.super }}
   <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">

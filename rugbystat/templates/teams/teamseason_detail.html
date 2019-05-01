@@ -3,6 +3,8 @@
 {% load staticfiles %}
 {% load widget_tweaks %}
 
+{% block title %}{{ block.super }} | {{ object.season }} | {{ object.team }}{% endblock title %}
+
 {% block content %}
 
 <h2 id="name"><a href="{{ object.team.get_absolute_url }}">{{ object.team }}</a></h2>
