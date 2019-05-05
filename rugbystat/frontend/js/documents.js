@@ -27,8 +27,6 @@ var searchDocsManager = {
             query_params['kind'] = source_type;
         };
 
-        // console.log(query_params);
-
         if(window.GETPAGE == true){
             $.getJSON({
                 url: documentListUrl,

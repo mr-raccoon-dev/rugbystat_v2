@@ -106,4 +106,8 @@
             type="button">Добавить</button>
   </div>
 
+{% if object.documents %}
+  {% include '_documents.html' %}
+{% endif %}
+
 {% endblock content %}

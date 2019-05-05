@@ -85,7 +85,7 @@
           <td>{{ doc.title }}</td>
           <td>{{ doc.description | linebreaksbr | default_if_none:"" }}</td>
           <td>
-            {% if doc.month %}{{doc.month}}/{% endif %}{{doc.year}}
+            {% if doc.month %}{{doc.month}}/{% endif %}{{doc.year | default_if_none:""}}
           </td>
           <td>
             {% if doc.is_image %}
