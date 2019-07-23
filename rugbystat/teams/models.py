@@ -117,6 +117,29 @@ class Team(TagObject):
         return reverse('teams_detail', kwargs={'pk': self.pk})
 
 
+class TeamName(models.Model):
+    """Representation of a separate name a team beared."""
+
+    name = models.CharField(verbose_name=_('Базовое название'), max_length=127)
+    team = models.ForeignKey(Team, verbose_name=_('Команда'), related_name='names')
+    from_day = models.DateField(verbose_name=_('Дата начала'))
+    to_day = models.DateField(verbose_name=_('Дата окончания'), blank=True, null=True)
+    is_known = models.BooleanField(verbose_name=_('Подтверждено'), default=True)
+
+    class Meta:
+        ordering = ('team', 'from_day', )
+
+
+    def __str__(self):
+        years = '...'
+        if self.is_known:
+            if not self.to_day:
+                years = "с {:%Y}".format(self.from_day)
+            else:
+                years = "{:%Y}-{:%Y}".format(self.from_day, self.to_day)
+        return "{} ({})".format(self.name, years)
+
+
 class TeamSeason(models.Model):
     """Representation of each tournament a team played"""
 

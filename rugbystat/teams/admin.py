@@ -3,7 +3,7 @@ from markdownx.admin import MarkdownxModelAdmin
 
 from main.filters import DropdownFilter
 # from .forms import TeamSeasonForm
-from .models import (Person, PersonSeason, Team, TeamSeason, Stadium, City,
+from .models import (Person, PersonSeason, Team, TeamName, TeamSeason, Stadium, City,
                      TagObject, )
 from .moderator import NoModerationAdmin
 
@@ -28,6 +28,11 @@ class StadiumAdmin(admin.ModelAdmin):
     )
 
 
+class TeamNameInline(admin.TabularInline):
+    model = TeamName
+    extra = 1
+
+
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     list_display = ('short_name', 'city', )
@@ -37,6 +42,16 @@ class TeamAdmin(admin.ModelAdmin):
         ('year', DropdownFilter),
     )
     search_fields = ('short_name', )
+    inlines = (
+        TeamNameInline,
+    )
+
+
+@admin.register(TeamName)
+class TeamNameAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'team')
+    list_select_related = ('team', )
+    search_fields = ('__str__', )
 
 
 @admin.register(TeamSeason)

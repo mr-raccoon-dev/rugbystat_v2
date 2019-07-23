@@ -202,6 +202,9 @@ class Document(TitleDescriptionModel, TimeStampedModel):
         super(Document, self).__init__(*args, **kwargs)
         self.client = self.dropbox.storage.client
         self._original_state = self._as_dict()
+        # TODO: store dimensions in db
+        # self.client.files_get_metadata(self.dropbox.path)
+        # meta.media_info.get_metadata().dimensions.width
 
     def _as_dict(self):
         return dict([(f.name, getattr(self, f.name))

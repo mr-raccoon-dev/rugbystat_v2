@@ -16,7 +16,7 @@ class TeamViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (TeamFullTextFilter,
                        filters.SearchFilter,
                        filters.DjangoFilterBackend,)
-    search_fields = ('^short_name', '^city__name')
+    search_fields = ('^short_name', '^city__name', '^names__name')
     filter_fields = ('year', 'short_name',)
     page_size_query_param = 'limit'
 
