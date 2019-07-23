@@ -52,8 +52,8 @@ class SeasonAdmin(NoModerationAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'date_start', 'date_end', 'season')
-    list_select_related = ('season', )
+    list_display = ('name', 'date_start', 'date_end', 'city', 'season')
+    list_select_related = ('season', 'city', )
     list_filter = (('season__name', DropdownFilter), DateEndListFilter,)
     form = GroupForm
     filter_horizontal = ['teams']
