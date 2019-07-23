@@ -16,22 +16,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='teamseason',
             name='draws',
-            field=models.PositiveSmallIntegerField(blank=True, null=True, validators=django.core.validators.MaxValueValidator(100), verbose_name='Н'),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, validators=[django.core.validators.MaxValueValidator(100)], verbose_name='Н'),
         ),
         migrations.AddField(
             model_name='teamseason',
             name='losses',
-            field=models.PositiveSmallIntegerField(blank=True, null=True, validators=django.core.validators.MaxValueValidator(100), verbose_name='П'),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, validators=[django.core.validators.MaxValueValidator(100)], verbose_name='П'),
         ),
         migrations.AddField(
             model_name='teamseason',
             name='played',
-            field=models.PositiveSmallIntegerField(blank=True, null=True, validators=django.core.validators.MaxValueValidator(100), verbose_name='И'),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, validators=[django.core.validators.MaxValueValidator(100)], verbose_name='И'),
         ),
         migrations.AddField(
             model_name='teamseason',
             name='points',
-            field=models.PositiveSmallIntegerField(blank=True, null=True, validators=django.core.validators.MaxValueValidator(100), verbose_name='О'),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, validators=[django.core.validators.MaxValueValidator(100)], verbose_name='О'),
         ),
         migrations.AddField(
             model_name='teamseason',
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='teamseason',
             name='wins',
-            field=models.PositiveSmallIntegerField(blank=True, null=True, validators=django.core.validators.MaxValueValidator(100), verbose_name='В'),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, validators=[django.core.validators.MaxValueValidator(100)], verbose_name='В'),
         ),
         migrations.AlterField(
             model_name='teamseason',

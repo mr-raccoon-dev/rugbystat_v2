@@ -1,3 +1,31 @@
+seasons order - Year DESC, tournament DESС
+seasons columns - add place
+
+Team name in season still contains years
+tournament groups are not displayed
+
+how to display group without table? e.g. "preliminary round"
+
+TeamName 
+
+ДСК Кутаиси (...-...)
+Строитель Кутаиси (...-...)
+Мшенебели Кутаиси (...-...)
+
+team, name, from_day, to_day
+
+
+team._type - CLUB, YOUTH, NATION, FOREIGN - only clubs in search-linked
+
+Tournament groups... group must have day_start, day_finish, city. group is the same as the season - table, matches...
+
+
+
+Tournament cups
+
+
+why Season description doesn't render markdown?
+
 Import TeamRoster - messages framework; display only for admin
 Add PersonSeason from TeamSeason - send to back, save, title 
 

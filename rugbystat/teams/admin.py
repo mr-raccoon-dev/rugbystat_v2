@@ -51,7 +51,7 @@ class TeamSeasonAdmin(NoModerationAdmin):
         ('year', DropdownFilter),
         ('season__name', DropdownFilter),
     )
-    # raw_id_fields = ('team', 'season')
+    raw_id_fields = ('team', 'season')
     fieldsets = (
         (
             None,
@@ -68,7 +68,7 @@ class TeamSeasonAdmin(NoModerationAdmin):
         (
             None,
             {
-                'fields': ('played', 'wins', 'draws', 'losses', 'points',
+                'fields': ('place', 'played', 'wins', 'draws', 'losses', 'points',
                            'score')
             }
         ),

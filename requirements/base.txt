@@ -1,5 +1,5 @@
 # Django
-Django==1.10
+Django==1.11
 django-extensions==1.7.5
 django-admin-sortable2==0.6.13
 
@@ -9,13 +9,13 @@ dj-database-url==0.4.1
 mysqlclient
 
 # Models
-django-model-utils==2.6
-django-moderation==0.4.0
+django-model-utils==3.2.0
+django-moderation==0.5.0
 django-autocomplete-light==3.2.9
 
 # Rest apis
 djangorestframework==3.5.3
-django-filter==1.0.1
+django-filter==1.1
 
 django-allauth==0.34.0
 django-markdownx==2.0.21
@@ -30,16 +30,17 @@ django-storages==1.6.5
 whitenoise==3.2.2
 
 # Media files
+Pillow<6.0
 boto==2.45.0
 django_unique_upload==0.2.1
-dropbox==8.3.1
+dropbox==8.0.0
 git+https://github.com/andres-torres-marroquin/django-dropbox/
 
 # Image manipulation
-django-versatileimagefield==1.6.2
+django-versatileimagefield==1.10
 
 # For asynchronous queuing
-django-rq==0.9.4
+django-rq==2.1.0
 redislite==3.0.296
 diskcache==2.3.0
 

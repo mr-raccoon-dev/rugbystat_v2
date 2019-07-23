@@ -31,3 +31,5 @@ site
 
 bower_components/
 static_root/
+
+rugbystat*.sql

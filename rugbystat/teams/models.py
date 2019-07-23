@@ -175,7 +175,7 @@ class TeamSeason(models.Model):
 
     def save(self, **kwargs):
         if not self.name:
-            self.name = "{}".format(self.team)
+            self.name = "{}".format(self.team.short_name)
         if not self.year:
             self.year = self.season.date_end.year
         super(TeamSeason, self).save(**kwargs)

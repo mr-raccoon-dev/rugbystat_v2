@@ -2,7 +2,7 @@
 -r test.txt
 
 # Debugging
-django-debug-toolbar==1.8
+django-debug-toolbar==2.0
 ipdb
 pudb
 pdbpp
