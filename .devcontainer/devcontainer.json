@@ -1,0 +1,12 @@
+// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+{
+	"name": "Python 3",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "web",
+	"workspaceFolder": "/workspace",
+	"postCreateCommand": "python --version",
+
+	"extensions": [
+		"ms-python.python"
+	],
+}
