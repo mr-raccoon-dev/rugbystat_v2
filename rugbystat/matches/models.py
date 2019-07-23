@@ -97,6 +97,9 @@ class Group(models.Model):
         Season, verbose_name=_("Розыгрыш"), related_name='groups')
     date_start = models.DateField(verbose_name=_("Дата начала"))
     date_end = models.DateField(verbose_name=_("Дата окончания"))
+    city = models.ForeignKey(
+        'teams.City', verbose_name=_("Город"), related_name='groups',
+        blank=True, null=True)
     comment = models.TextField(verbose_name=_("Комментарий"), blank=True, )
     teams = models.ManyToManyField('teams.TeamSeason', related_name='groups',
                                    blank=True)
