@@ -1,6 +1,6 @@
 from django import forms
 
-from utils.parsers import parse_season
+from utils.parsers import parse_season, parse_table
 from utils.widgets import ModelSelect2Bootstrap
 from .models import Season, Group, Match
 
@@ -19,7 +19,7 @@ class SeasonForm(forms.ModelForm):
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ['name', 'comment', 'season', 'date_start', 'date_end', 'teams']  # noqa
+        fields = ['name', 'comment', 'season', 'date_start', 'date_end', 'city', 'teams']
         widgets = {
             'teams': ModelSelect2Bootstrap(url='autocomplete-teamseasons')
         }
@@ -41,7 +41,7 @@ class MatchForm(forms.ModelForm):
 
 
 class ImportForm(forms.Form):
-    input = forms.CharField(
+    raw = forms.CharField(
         strip=False,
         widget=forms.Textarea(attrs={'cols': 80, 'rows': 10})
     )
@@ -52,4 +52,10 @@ class ImportForm(forms.Form):
 
     def clean(self):
         data = super(ImportForm, self).clean()
-        self.season = parse_season(data['input'], self.request)
+        self.season = parse_season(data['raw'], self.request)
+
+
+class TableImportForm(ImportForm):
+    def clean(self):
+        data = super(ImportForm, self).clean()
+        self.table_data = parse_table(data['raw'], self.request)

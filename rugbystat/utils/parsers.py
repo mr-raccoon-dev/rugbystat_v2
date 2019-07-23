@@ -6,62 +6,63 @@ from difflib import SequenceMatcher as SM
 from django.contrib.messages import success
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
 
 from matches.models import Season, Tournament
 from teams.models import Team, City, Person, PersonSeason
 
-logger = logging.getLogger('django.request')
+logger = logging.getLogger("django.request")
 POSITIONS = {
-    '15': PersonSeason.FB,
-    '14-11': PersonSeason.BACK,
-    '10': PersonSeason.FH,
-    '9': PersonSeason.SH,
-    '6-8': PersonSeason.BACKROW,
-    '4-5': PersonSeason.LOCK,
-    '1-3': PersonSeason.FIRST_ROW,
-    '14': PersonSeason.WINGER,
-    '13': PersonSeason.CENTER,
-    '12': PersonSeason.CENTER,
-    '12-13': PersonSeason.CENTER,
-    '11': PersonSeason.WINGER,
-    '9-10': PersonSeason.HALF,
-    '8': PersonSeason.BACKROW,
-    '7': PersonSeason.BACKROW,
-    '6': PersonSeason.BACKROW,
-    '5': PersonSeason.LOCK,
-    '4': PersonSeason.LOCK,
-    '4/5': PersonSeason.LOCK,
-    '3': PersonSeason.PROP,
-    '2': PersonSeason.HOOKER,
-    '1': PersonSeason.PROP,
-    '1/3': PersonSeason.PROP,
-    '1-8': PersonSeason.FORWARD,
-    '15-9': PersonSeason.BACK,
+    "15": PersonSeason.FB,
+    "14-11": PersonSeason.BACK,
+    "10": PersonSeason.FH,
+    "9": PersonSeason.SH,
+    "6-8": PersonSeason.BACKROW,
+    "4-5": PersonSeason.LOCK,
+    "1-3": PersonSeason.FIRST_ROW,
+    "14": PersonSeason.WINGER,
+    "13": PersonSeason.CENTER,
+    "12": PersonSeason.CENTER,
+    "12-13": PersonSeason.CENTER,
+    "11": PersonSeason.WINGER,
+    "9-10": PersonSeason.HALF,
+    "8": PersonSeason.BACKROW,
+    "7": PersonSeason.BACKROW,
+    "6": PersonSeason.BACKROW,
+    "5": PersonSeason.LOCK,
+    "4": PersonSeason.LOCK,
+    "4/5": PersonSeason.LOCK,
+    "3": PersonSeason.PROP,
+    "2": PersonSeason.HOOKER,
+    "1": PersonSeason.PROP,
+    "1/3": PersonSeason.PROP,
+    "1-8": PersonSeason.FORWARD,
+    "15-9": PersonSeason.BACK,
 }
 MONTHS_MAP = {
-    'январ': '01',
-    'феврал': '02',
-    'март': '03',
-    'апрел': '04',
-    'мая': '05',
-    'мае': '05',
-    'июн': '06',
-    'июл': '07',
-    'август': '08',
-    'сентябр': '09',
-    'октябр': '10',
-    'ноябр': '11',
-    'декабр': '12'
+    "январ": "01",
+    "феврал": "02",
+    "март": "03",
+    "апрел": "04",
+    "мая": "05",
+    "мае": "05",
+    "июн": "06",
+    "июл": "07",
+    "август": "08",
+    "сентябр": "09",
+    "октябр": "10",
+    "ноябр": "11",
+    "декабр": "12",
 }
+
+TEAM_NAME = re.compile("[а-я]+\s+", re.I)
 
 
 def parse_rosters(request, data):
-    input_ = data['input'].replace('\r\n', ' ').replace(' / ', ';')
+    input_ = data["input"].replace("\r\n", " ").replace(" / ", ";")
     positions = input_.strip().split(";")
     for position in positions:
         # split number from names
-        esc = r'(\d{1,2}-*\d{0,2}).(.*)'
+        esc = r"(\d{1,2}-*\d{0,2}).(.*)"
         try:
             print("Checking {}".format(position))
             number, players = re.findall(esc, position)[0]
@@ -71,7 +72,7 @@ def parse_rosters(request, data):
             logger.warning(msg)
         else:
             role = POSITIONS.get(number, PersonSeason.PLAYER)
-            for player in players.split(','):
+            for player in players.split(","):
                 # find person
                 try:
                     first_name, name = player.split()
@@ -91,8 +92,11 @@ def parse_rosters(request, data):
 
                 # get_or_create PersonSeason for number
                 obj, created = PersonSeason.objects.get_or_create(
-                    role=role, person=person, season_id=data['season'],
-                    team_id=data['team'], year=data['year']
+                    role=role,
+                    person=person,
+                    season_id=data["season"],
+                    team_id=data["team"],
+                    year=data["year"],
                 )
                 if created:
                     success(request, "Created {}".format(obj))
@@ -107,8 +111,9 @@ def find_best_match(queryset, name, first_name, all=False):
     If None found, try to look for all objects.
     If again None found - create one.
     """
-    ratios = [SM(None, str(obj), "{} {}".format(first_name, name)).ratio()
-              for obj in queryset]
+    ratios = [
+        SM(None, str(obj), "{} {}".format(first_name, name)).ratio() for obj in queryset
+    ]
 
     if ratios and max(ratios) > 0.6:
         found = queryset[ratios.index(max(ratios))]
@@ -122,11 +127,11 @@ def find_best_match(queryset, name, first_name, all=False):
 
 def parse_teams(data):
     previous_team = None
-    for line in data.split('\n'):
+    for line in data.split("\n"):
         if len(line) < 4:
             previous_team.save()
             break
-        if line[:4] == '<li>':
+        if line[:4] == "<li>":
             if not previous_team:
                 previous_team = init_team(line)
             else:
@@ -139,8 +144,8 @@ def parse_teams(data):
 
 def init_date(prefix_year):
     try:
-        year = int(prefix_year.strip().split(' ')[-1])
-        prefix = prefix_year[:prefix_year.find(str(year))]
+        year = int(prefix_year.strip().split(" ")[-1])
+        prefix = prefix_year[: prefix_year.find(str(year))]
     except Exception:
         prefix = prefix_year
         year = None
@@ -148,30 +153,38 @@ def init_date(prefix_year):
 
 
 def init_team(line):
-    expr = '<li>(.+) \(([^-]*)-*([^-]*)\)(.*)'
+    expr = "<li>(.+) \(([^-]*)-*([^-]*)\)(.*)"
     team_and_city, year_create, year_disband, story = re.findall(expr, line)[0]
-    city = team_and_city.split(' ')[-1]
-    name = team_and_city[:team_and_city.find(city)].strip().strip('<b>')
+    city = team_and_city.split(" ")[-1]
+    name = team_and_city[: team_and_city.find(city)].strip().strip("<b>")
 
     city_instance, _ = City.objects.get_or_create(name=city)
 
     prefix_create, create = init_date(year_create)
     prefix_disband, disband = init_date(year_disband)
 
-    team = Team(name=name, story=story, city=city_instance,
-                year=create or None, year_prefix=prefix_create,
-                disband_year=disband or None,
-                disband_year_prefix=prefix_disband)
+    team = Team(
+        name=name,
+        story=story,
+        city=city_instance,
+        year=create or None,
+        year_prefix=prefix_create,
+        disband_year=disband or None,
+        disband_year_prefix=prefix_disband,
+    )
     return team
 
 
 def parse_season(data, request):
-    YEAR = re.compile(r"""(^\D*)    # all but digits - tournament name
+    YEAR = re.compile(
+        r"""(^\D*)    # all but digits - tournament name
                       ([\d/-]{4,9}) # '1975' or '1975/77' or '1999/2001'
-                      *$            # 0 or once""", re.X)
+                      *$            # 0 or once""",
+        re.X,
+    )
 
     season = Season()
-    first, *rest = data.split('\n')
+    first, *rest = data.split("\n")
     # first line denotes title
     title, year = re.match(YEAR, first.strip()).group(1, 2)
     season.name = title.strip()
@@ -210,10 +223,10 @@ def find_dates(txt, year):
     """
     Parse "с 5 февраля по 10 мая" to datetime objects
     """
-    months = r'({})'.format('|'.join(MONTHS_MAP.keys()))
-    esc1 = r' (\d+(?= {}))'.format(months)     # (с ... по ...)
-    esc2 = r'(\d+-\d+(?= {}))'.format(months)  # (1-10 ...)
-    esc3 = r'[в|в конце|в начале] {}'.format(months)  # в октябре...
+    months = r"({})".format("|".join(MONTHS_MAP.keys()))
+    esc1 = r" (\d+(?= {}))".format(months)  # (с ... по ...)
+    esc2 = r"(\d+-\d+(?= {}))".format(months)  # (1-10 ...)
+    esc3 = r"[в|в конце|в начале] {}".format(months)  # в октябре...
 
     patterns = [esc1, esc2, esc3]
     dates = [re.findall(pattern, txt) for pattern in patterns]
@@ -223,38 +236,88 @@ def find_dates(txt, year):
             date_start, date_end = dates[0]
             day, month = date_start
             date_start = datetime.datetime.strptime(
-                '{}/{}/{}'.format(day, MONTHS_MAP[month], year),
-                '%d/%m/%Y'
+                "{}/{}/{}".format(day, MONTHS_MAP[month], year), "%d/%m/%Y"
             )
             day, month = date_end
             date_end = datetime.datetime.strptime(
-                '{}/{}/{}'.format(day, MONTHS_MAP[month], year),
-                '%d/%m/%Y'
+                "{}/{}/{}".format(day, MONTHS_MAP[month], year), "%d/%m/%Y"
             )
         except (IndexError, ValueError):
             # either ('12-15', 'мая') or 'октябр'
             try:
                 days, month = dates[1][0]
-                day_start, day_end = days.split('-')
+                day_start, day_end = days.split("-")
                 date_start = datetime.datetime.strptime(
-                    '{}/{}/{}'.format(day_start, MONTHS_MAP[month], year),
-                    '%d/%m/%Y'
+                    "{}/{}/{}".format(day_start, MONTHS_MAP[month], year), "%d/%m/%Y"
                 )
                 date_end = datetime.datetime.strptime(
-                    '{}/{}/{}'.format(day_end, MONTHS_MAP[month], year),
-                    '%d/%m/%Y'
+                    "{}/{}/{}".format(day_end, MONTHS_MAP[month], year), "%d/%m/%Y"
                 )
             except (IndexError, ValueError):
                 # 'октябр'
                 month = dates[2][0]
                 date_start = datetime.datetime.strptime(
-                    '{}/{}/{}'.format('05', MONTHS_MAP[month], year),
-                    '%d/%m/%Y'
+                    "{}/{}/{}".format("05", MONTHS_MAP[month], year), "%d/%m/%Y"
                 )
                 date_end = datetime.datetime.strptime(
-                    '{}/{}/{}'.format('25', MONTHS_MAP[month], year),
-                    '%d/%m/%Y'
+                    "{}/{}/{}".format("25", MONTHS_MAP[month], year), "%d/%m/%Y"
                 )
         return date_start, date_end
     else:
         return None, None
+
+
+def parse_table(data, request):
+    team_seasons, matches = {}, {}
+
+    for line in data.split("\n"):
+        if line.startswith("-"):
+            continue
+        season = parse_line(line.strip())
+    print(season)
+    return team_seasons, matches
+
+
+def parse_line(line):
+    """
+    line may be any representation in table:
+
+    1. Динамо                     xxxxx  22:6    поб   13:3   20:0    поб
+    5. "Спартак" Ленинград      6:18   0:6    0:3    0:8   xxxxx  20:8   1 0 4  26-43  2    
+    1. "СТАКЛЕС" Каунас            6  0  2  164:72   12 *
+    1. Крылья Советов Москва
+    . Скра
+    2. Политехник Киев
+    3. МАИ Москва (?)
+    .. РАФ Елгава
+
+    """
+    place, rest = line.split(".", 1)
+    nameparts = TEAM_NAME.findall(rest)
+
+    if nameparts:
+        # we got a team:
+        # ['Спартак', 'Ленинград']
+        # ['СТАКЛЕС', 'Каунас']
+        # ['Крылья', 'Советов', 'Москва']
+        # ['Скра']
+        qs = Team.objects.filter(name__icontains=nameparts[0])
+        match = find_team_name_match(qs, nameparts)
+        if match:
+            return match, rest
+
+
+def find_team_name_match(queryset, nameparts):
+    """
+    Find the most suitable instance by SequenceMatcher from queryset.
+    """
+    ratios = [
+        SM(None, "{} {}".format(obj.name, obj.city.name), " ".join(nameparts)).ratio()
+        for obj in queryset
+    ]
+
+    if ratios and max(ratios) > 0.6:
+        found = queryset[ratios.index(max(ratios))]
+    else:
+        found = None
+    return found
