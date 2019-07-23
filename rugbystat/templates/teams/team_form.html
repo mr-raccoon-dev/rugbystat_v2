@@ -137,7 +137,7 @@
     <td>{{ season.losses|default:"-" }}</td>
     <td>{{ season.score|default:"-" }}</td>
     <td>{{ season.points|default:"-" }}</td>
-    <td> {{ season.story }} </td>
+    <td> {{ season.story | markdown }} </td>
   </tr>
 {% endfor %}
 </tbody></table>

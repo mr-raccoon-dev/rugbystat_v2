@@ -1,4 +1,3 @@
-seasons order - Year DESC, tournament DESС
 seasons columns - add place
 
 Team name in season still contains years
@@ -19,21 +18,22 @@ team._type - CLUB, YOUTH, NATION, FOREIGN - only clubs in search-linked
 
 Tournament groups... group must have day_start, day_finish, city. group is the same as the season - table, matches...
 
+Season must display each group with matches. TeamSeason - only those team participated in.
 
 
 Tournament cups
 
-
-why Season description doesn't render markdown?
+next/previous tournament (like next year)
 
 Import TeamRoster - messages framework; display only for admin
 Add PersonSeason from TeamSeason - send to back, save, title 
 
 Match.get_absolute_url
-Match save form
+Match save form form
+form displays teams short name, not season name
 Match.form - what if no ref? Ref must be MatchDetail attribute?
 
-MatchDetails
+MatchDetails view
 
 Document.dimensions
 
