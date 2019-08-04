@@ -1,12 +1,9 @@
-Team name in season still contains years (django-moderation?)
 tournament groups are not displayed
 
 how to display group without table? e.g. "preliminary round"
 group must have type? "round-robin" (table), "cup" (stages?), "misc" (bunch of games)
 
 team._type - CLUB, YOUTH, NATION, FOREIGN - only clubs in search-linked
-
-Tournament groups... group must have day_start, day_finish, city. group is the same as the season - table, matches...
 
 Season must display each group with matches. TeamSeason - only those team participated in.
 

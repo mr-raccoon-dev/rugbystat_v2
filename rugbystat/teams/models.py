@@ -1,3 +1,5 @@
+import datetime as dt
+
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -116,6 +118,12 @@ class Team(TagObject):
     def get_absolute_url(self):
         return reverse('teams_detail', kwargs={'pk': self.pk})
 
+    def get_name_for(self, year, month=1, day=1):
+        """Return name which team born in a given year."""
+        default = self.short_name
+        from_db = self.names.filter(from_day__gte=dt.date(year, month, day)).first()
+        return from_db or default
+
 
 class TeamName(models.Model):
     """Representation of a separate name a team beared."""
@@ -128,7 +136,6 @@ class TeamName(models.Model):
 
     class Meta:
         ordering = ('team', 'from_day', )
-
 
     def __str__(self):
         years = '...'
@@ -197,10 +204,10 @@ class TeamSeason(models.Model):
         return "{}: {}".format(self.name, self.season)
 
     def save(self, **kwargs):
-        if not self.name:
-            self.name = "{}".format(self.team.short_name)
         if not self.year:
             self.year = self.season.date_end.year
+        if not self.name:
+            self.name = self.team.get_name_for(self.year)
         super(TeamSeason, self).save(**kwargs)
 
     def get_absolute_url(self):
