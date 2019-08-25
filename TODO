@@ -1,23 +1,12 @@
-tournament groups are not displayed
+team._type - CLUB, YOUTH, NATION, FOREIGN - only clubs in search-linked, but every has a page
 
-how to display group without table? e.g. "preliminary round"
-group must have type? "round-robin" (table), "cup" (stages?), "misc" (bunch of games)
-
-team._type - CLUB, YOUTH, NATION, FOREIGN - only clubs in search-linked
-
-Season must display each group with matches. TeamSeason - only those team participated in.
-
-
-Tournament cups
-
-next/previous tournament (like next year)
+Match.date is_verified - or smth...
 
 Import TeamRoster - messages framework; display only for admin
 Add PersonSeason from TeamSeason - send to back, save, title 
 
 Match.get_absolute_url
-Match save form form
-form displays teams short name, not season name
+match form displays teams short name, not season name
 Match.form - what if no ref? Ref must be MatchDetail attribute?
 
 MatchDetails view
@@ -25,10 +14,6 @@ MatchDetails view
 Document.dimensions
 
 Remove moderation from django admin
-
-TeamSeasonForm - must be somehow linked to final Table, which links to Season
-
-- Everything is kept in Table model (???) or Table is just a collection of TeamSeasons???: season(FK -> Season), team(FK -> TeamSeason), rank, total_teams, team_name, matches, wins, draws, losses, scored_for, scored_against, scored_diff, points
 
 PersonAddForm - add modal with success/errors messages
 PersonSeasonForm - validation before closing
@@ -54,3 +39,21 @@ Person.story - WYSIWYG-widget and safe
 Team.story - WYSIWYG-widget and safe
 
 DocumentEditForm?
+
+1984 год:
+├ чемпионат ссср
+├┼ группа а
+│├ группа б
+│├ матчи за 5-8 места
+│├ матчи за 1-4 места
+├ кубок ссср
+├┼ 1/32
+│├ 1/16
+│├ ...
+
+при этом
+
+Локомотив Тбилиси:
+1984 - чемпионат ссср: 6 из 24
+1984 - кубок ссср: обладатель (финалист) - TeamSeason
+
