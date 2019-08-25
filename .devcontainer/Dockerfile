@@ -36,10 +36,10 @@ COPY requirements/ /workspace/requirements/
 RUN pip install -r /workspace/requirements/local.txt
 
 # Copy the entrypoint.sh and start.sh and make them executable
-COPY docker/local/entrypoint.sh docker/local/start.sh /
-RUN chmod +x /entrypoint.sh /start.sh
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 
 # All subsequent commands will be run from the /workspace folder
 WORKDIR /workspace
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh", "python", "manage.py", "runserver", "0.0.0.0:1488"]

@@ -19,7 +19,7 @@ services:
     environment:
       SOCIAL_AUTH_FACEBOOK_KEY: 178850782667092
       SOCIAL_AUTH_FACEBOOK_SECRET: 7ad6ff12a238a07ca2473bf24e2fcb78
-    command: /start.sh
+      DJANGO_SETTINGS_MODULE: conf.settings.local
     volumes:
       - ../rugbystat:/workspace
     depends_on:
