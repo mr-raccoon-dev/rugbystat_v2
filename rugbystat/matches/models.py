@@ -93,9 +93,21 @@ class Season(TagObject):
 class Group(models.Model):
     """Stage of a Season: preliminary round, group A/group B, etc."""
 
+    ROUND = 'round-robin'
+    KNOCKOUT = 'knockout'
+    MISC = 'misc'
+    TYPES = (
+        (ROUND, ROUND),
+        (KNOCKOUT, KNOCKOUT),
+        (MISC, MISC)
+    )
+
     name = models.CharField(verbose_name=_("Название"), max_length=127, blank=True)
     season = models.ForeignKey(
-        Season, verbose_name=_("Розыгрыш"), related_name="groups"
+        Season, verbose_name=_("Розыгрыш"), related_name="groups",
+    )
+    round_type = models.CharField(
+        verbose_name=_("Тип игр"), max_length=127, choices=TYPES, default=ROUND,
     )
     date_start = models.DateField(verbose_name=_("Дата начала"))
     date_end = models.DateField(verbose_name=_("Дата окончания"))
@@ -116,6 +128,24 @@ class Group(models.Model):
 
     def __str__(self):
         return "{0.date_start.year} {0.name}".format(self)
+
+    def get_table(self):
+        """
+        Return list of GroupSeason-s sorted by place
+        """
+        return self.standings.order_by("order")
+
+    @property
+    def is_round_robin(self):
+        return self.round_type == self.ROUND
+
+    def matches(self):
+        """Return all matches of the season which belong to the group."""
+        teams = self.teams.values_list('team', flat=True)
+        qs = self.season.matches.filter(home__in=teams, away__in=teams)
+        qs = qs.exclude(date__lt=self.date_start)
+        qs = qs.exclude(date__gt=self.date_end)
+        return qs
 
 
 class Match(TagObject):
