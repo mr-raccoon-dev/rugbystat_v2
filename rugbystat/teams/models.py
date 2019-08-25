@@ -71,6 +71,19 @@ class Stadium(models.Model):
 
 
 class Team(TagObject):
+    CLUB = 'club'
+    YOUTH = 'youth'
+    NATION = 'nation'
+    FOREIGN = 'foreign'
+    TYPES = (
+        (CLUB, CLUB),
+        (YOUTH, YOUTH),
+        (NATION, NATION),
+        (FOREIGN, FOREIGN),
+    )
+    team_type = models.CharField(
+        max_length=32, verbose_name=_('Короткое название'), choices=TYPES, default=CLUB,
+    )
     short_name = models.CharField(
         max_length=32, verbose_name=_('Короткое название'), blank=True)
     city = models.ForeignKey(
