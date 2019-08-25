@@ -2,6 +2,7 @@
 
 {% load staticfiles %}
 {% load widget_tweaks %}
+{% load markdownx %}
 
 {% block title %}{{ block.super }} | {{ object.season }} | {{ object.team }}{% endblock title %}
 
@@ -13,7 +14,6 @@
 <article>{{ object.story | markdown }}</article>
 
 {% include 'matches/match_list.html' with matches=object.get_matches %}
-{% include 'matches/season_table.html' with object=object.season %}
 
 <h3>Состав</h3>
 <ul>

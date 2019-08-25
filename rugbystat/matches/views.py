@@ -99,3 +99,15 @@ class TournamentListView(ListView):
 class TournamentDetailView(DetailView):
     """List of all Tournament Seasons"""
     model = Tournament
+
+
+class SeasonDetailView(DetailView):
+    """Detail of one tournament Season"""
+    model = Season
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        qs = Season.objects.filter(tourn=self.object.tourn)
+        ctx['prev'] = qs.filter(date_end__lt=self.object.date_end).last()
+        ctx['next'] = qs.filter(date_end__gt=self.object.date_end).first()
+        return ctx

@@ -1,4 +1,3 @@
-<h3>Матчи</h3>
 <ul>
 {% for match in matches %}
   <li>{{ match.date|default:"???" }} <a href="{{ match.get_absolute_url }}">{{ match }}</a></li>

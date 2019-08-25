@@ -19,6 +19,11 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/locales/bootstrap-datepicker.ru.js"></script>
   <script type="text/javascript" src="{% static 'js/matches.js' %}"></script>
+  <script type="text/javascript">
+    var matchListUrl = "{% url 'match-list' %}",
+        season = {{ object.pk }};
+  </script>
+
 {% endblock js %}
 
 {% block content %}
@@ -27,11 +32,24 @@
 
 <article>{{ object.story }}</article>
 
-{% include 'matches/season_table.html' with object=object %}
-{% include 'matches/match_list.html' with matches=object.matches.all %}
+{% for group in object.groups.all %}
+{% include 'matches/season_table.html' with object=group %}
+{% endfor %}
 
 <form role="form" id="addMatch" class="addForm" style="display: none;">
 {% csrf_token %}
+
+<div id="formErrors">
+  {% if form.errors %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
+      <div class="fieldError">
+          {{ field.errors }}
+      </div>
+      {% endfor %}
+  {% endif %}
+  </div>
+  
 <h3>Добавить матч</h3>
 <div class="form-inputs">
   <input type="hidden" 
@@ -106,8 +124,27 @@
             type="button">Добавить</button>
   </div>
 
+{% include '_modal.html' with modal_id="moderationModal" %}
+
 {% if object.documents %}
   {% include '_documents.html' %}
 {% endif %}
+
+<div>
+  <ul class="pagination">
+    {% if prev %}
+      <li>
+        <a href="{{ prev.get_absolute_url }}">
+          ❮ {{ prev }}</a>
+      </li>
+    {% endif %}
+    {% if next %}
+      <li>
+        <a href="{{ next.get_absolute_url }}">
+          {{ next }} ❯</a>
+      </li>
+    {% endif %}
+  </ul>
+</div>
 
 {% endblock content %}
