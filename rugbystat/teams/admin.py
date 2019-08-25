@@ -3,8 +3,10 @@ from markdownx.admin import MarkdownxModelAdmin
 
 from main.filters import DropdownFilter
 # from .forms import TeamSeasonForm
-from .models import (Person, PersonSeason, Team, TeamName, TeamSeason, Stadium, City,
-                     TagObject, )
+from .models import (
+    Person, PersonSeason, Team, TeamName, TeamSeason, GroupSeason,
+    Stadium, City, TagObject,
+)
 from .moderator import NoModerationAdmin
 
 
@@ -78,6 +80,46 @@ class TeamSeasonAdmin(NoModerationAdmin):
             None,
             {
                 'fields': ('team', 'season', )
+            }
+        ),
+        (
+            None,
+            {
+                'fields': ('place', 'played', 'wins', 'draws', 'losses', 'points',
+                           'score')
+            }
+        ),
+        (
+            None,
+            {
+                'fields': ('story',)
+            }
+        ),
+    )
+
+
+@admin.register(GroupSeason)
+class GroupSeasonAdmin(admin.ModelAdmin):
+    search_fields = ('team__name', )
+    list_display = ('__str__', 'group', 'team')
+    list_select_related = ('group', 'team')
+    list_filter = (
+        ('team__name', DropdownFilter),
+        ('year', DropdownFilter),
+        ('group__name', DropdownFilter),
+    )
+    raw_id_fields = ('team', 'group')
+    fieldsets = (
+        (
+            None,
+            {
+                'fields': ('name', 'year', )
+            }
+        ),
+        (
+            None,
+            {
+                'fields': ('team', 'group', )
             }
         ),
         (

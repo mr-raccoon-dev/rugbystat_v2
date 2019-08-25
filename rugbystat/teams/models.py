@@ -147,23 +147,7 @@ class TeamName(models.Model):
         return "{} ({})".format(self.name, years)
 
 
-class TeamSeason(models.Model):
-    """Representation of each tournament a team played"""
-
-    name = models.CharField(verbose_name=_('Базовое название'),
-                            max_length=127, blank=True)
-    year = models.PositiveSmallIntegerField(
-        verbose_name=_('Год'), blank=True, null=True,
-        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
-    )
-    # both `name` and `year` serves only for simpler repr and sql query
-    team = models.ForeignKey(
-        Team, verbose_name=_('Команда'), related_name='seasons',
-    )
-    season = models.ForeignKey(
-        'matches.Season', verbose_name=_('Турнир'),
-        related_name='standings'
-    )
+class TableRowFields(models.Model):
     place = models.CharField(
         verbose_name=_('Место'), max_length=2, blank=True,
     )
@@ -193,6 +177,66 @@ class TeamSeason(models.Model):
     order = models.PositiveSmallIntegerField(
         verbose_name=_('Сортировка'), null=True, blank=True,
         validators=(MaxValueValidator(40),),
+    )
+
+    class Meta:
+        abstract = True
+
+
+class GroupSeason(TableRowFields):
+    """Representation of each group in a tournament played"""
+
+    name = models.CharField(verbose_name=_('Название команды в группе'),
+                            max_length=127, blank=True)
+    year = models.PositiveSmallIntegerField(
+        verbose_name=_('Год'), blank=True, null=True,
+        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
+    )
+    # both `name` and `year` serves only for simpler repr and sql query
+    team = models.ForeignKey(
+        Team, verbose_name=_('Команда'), related_name='groups',
+    )
+    group = models.ForeignKey(
+        'matches.Group', verbose_name=_('Группа'),
+        related_name='standings'
+    )
+    story = models.TextField(verbose_name=_('История'), blank=True, )
+
+    class Meta:
+        ordering = ('-year', 'team', 'order')
+        unique_together = (('team', 'group'),)
+
+    def __str__(self):
+        return "{}: {}".format(self.group, self.name)
+
+    def save(self, **kwargs):
+        if not self.year:
+            self.year = self.group.date_end.year
+        if not self.name:
+            self.name = self.team.get_name_for(self.year)
+        super(GroupSeason, self).save(**kwargs)
+
+    def get_absolute_url(self):
+        if self.team:
+            return self.group.teams.filter(team=self.team).first().get_absolute_url()
+
+
+class TeamSeason(TableRowFields):
+    """Representation of each tournament a team played"""
+
+    name = models.CharField(verbose_name=_('Название команды в турнире'),
+                            max_length=127, blank=True)
+    year = models.PositiveSmallIntegerField(
+        verbose_name=_('Год'), blank=True, null=True,
+        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
+    )
+    # both `name` and `year` serves only for simpler repr and sql query
+    team = models.ForeignKey(
+        Team, verbose_name=_('Команда'), related_name='seasons',
+    )
+    season = models.ForeignKey(
+        'matches.Season', verbose_name=_('Турнир'),
+        related_name='standings'
     )
     story = models.TextField(verbose_name=_('История'), blank=True, )
 
