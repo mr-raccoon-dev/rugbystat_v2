@@ -41,7 +41,9 @@
 <div id="results"></div>
 
 <div class="input-group">
-  <button class="btn btn-default" id="showPersonForm" type="button">Добавить(*)</button>
+  {% if request.user.is_superuser %}
+  <button class="btn btn-default" id="showPersonForm" type="button">Добавить</button>
+  {% endif %}
 </div>
 
 {% url 'persons_new' as action_url %}

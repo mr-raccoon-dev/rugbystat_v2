@@ -41,7 +41,9 @@
 <div id="results"></div>
 
 <div class="pull-right">
-  <button class="btn btn-default" id="showTeamForm" type="button">Редактировать(*)</button>
+  {% if user.is_authenticated %}
+  <button class="btn btn-default" id="showTeamForm" type="button">Редактировать</button>
+  {% endif %}
 </div>
 
 <h2 id="name" class="editable">{{ object.name }} {{ object.city.name }} ({{ object.operational_years }})</h2>
@@ -116,7 +118,9 @@
 </div>
 
   <div class="pull-right">
-    <button class="btn btn-default" id="showTeamSeasonForm" type="button">Добавить сезон(*)</button>
+    {% if user.is_authenticated %}
+    <button class="btn btn-default" id="showTeamSeasonForm" type="button">Добавить сезон</button>
+    {% endif %}
   </div>
 
 {% if object.seasons.all %}
@@ -147,7 +151,7 @@
     <td>{{ season.losses|default:"-" }}</td>
     <td>{{ season.score|default:"-" }}</td>
     <td>{{ season.points|default:"-" }}</td>
-    <td> {{ season.story | markdown }} </td>
+    <td>{{ season.story | markdown }}</td>
   </tr>
 {% endfor %}
 </tbody></table>

@@ -56,7 +56,9 @@
 </div>
 
   <div class="pull-right">
-    <button class="btn btn-default" id="showPersonForm" type="button">Редактировать(*)</button>
+    {% if user.is_authenticated %}
+    <button class="btn btn-default" id="showPersonForm" type="button">Редактировать</button>
+    {% endif %}
   </div>
 <h2 id="name" class="editable">{{ object.full_name }}</h2>
 
