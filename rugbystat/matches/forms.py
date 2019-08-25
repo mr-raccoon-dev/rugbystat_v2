@@ -1,7 +1,7 @@
 from django import forms
 
 from utils.parsers import parse_season, parse_table
-from utils.widgets import ModelSelect2Bootstrap
+from utils.widgets import ModelSelect2Bootstrap, ModelSelect2MultiBootstrap
 from .models import Season, Group, Match
 
 __author__ = 'krnr'
@@ -19,9 +19,13 @@ class SeasonForm(forms.ModelForm):
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ['name', 'comment', 'season', 'date_start', 'date_end', 'city', 'teams']
+        fields = ['name', 'comment', 'season', 'round_type', 'date_start', 
+                  'date_end', 'city', 'teams']
         widgets = {
-            'teams': ModelSelect2Bootstrap(url='autocomplete-teamseasons')
+            'city': ModelSelect2Bootstrap(url='autocomplete-cities'),
+            'season': ModelSelect2Bootstrap(url='autocomplete-seasons'),
+            'teams': ModelSelect2MultiBootstrap(url='autocomplete-teamseasons',
+                                                forward=['season']),
         }
 
 
