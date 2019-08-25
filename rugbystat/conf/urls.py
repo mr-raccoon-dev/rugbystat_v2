@@ -21,11 +21,12 @@ from matches.views import (import_seasons,
 from teams.views import (import_teams,
                          PersonCreateView, PersonUpdateView,
                          TeamUpdateView, TeamSeasonView,
-                         TagAutocomplete,
+                         TagAutocomplete, CityAutocomplete,
                          TeamAutocomplete, TeamSeasonAutocomplete,
                          PersonSeasonAutocomplete,
                          TeamBySeasonAutocomplete, PersonBySeasonAutocomplete)
 from teams.viewsets import TeamViewSet, PersonViewSet, PersonSeasonViewSet
+from matches.viewsets import MatchViewSet
 from users.viewsets import UserViewSet
 
 router = DefaultRouter()
@@ -37,6 +38,7 @@ router.register(r'teams/(?P<team_id>\d+)/documents', DocumentViewSet)
 router.register(r'documents', DocumentViewSet)
 router.register(r'sources', SourceViewSet)
 router.register(r'issues', SourceObjectViewSet)
+router.register(r'matches', MatchViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -51,6 +53,8 @@ urlpatterns = [
 
     url(r'^autocomplete-tags/$', TagAutocomplete.as_view(),
         name='autocomplete-tags'),
+    url(r'^autocomplete-cities/$', CityAutocomplete.as_view(),
+        name='autocomplete-cities'),
     url(r'^autocomplete-tournaments/$', TournamentAutocomplete.as_view(),
         name='autocomplete-tournaments'),
     url(r'^autocomplete-seasons/$', SeasonAutocomplete.as_view(),
