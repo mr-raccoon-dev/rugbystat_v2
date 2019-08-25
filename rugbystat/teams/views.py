@@ -1,3 +1,6 @@
+import operator
+from functools import reduce
+
 from dal import autocomplete
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
@@ -46,10 +49,7 @@ class CityAutocomplete(autocomplete.Select2QuerySetView):
 
 class TeamAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        # if not self.request.user.is_authenticated():
-        #     return Team.objects.none()
-
-        qs = Team.objects.all()
+        qs = Team.objects.filter()
 
         year = self.forwarded.get('year', None)
         if year:
@@ -57,10 +57,18 @@ class TeamAutocomplete(autocomplete.Select2QuerySetView):
                            Q(year__lte=year, disband_year__isnull=True))
 
         if self.q:
-            qs = qs.filter(Q(short_name__icontains=self.q) |
-                           Q(city__name__icontains=self.q))
+            for search_term in self.q.split(' '):
+                queries = [
+                    Q(**{lookup: search_term})
+                    for lookup in (
+                        'short_name__istartswith',
+                        'names__name__istartswith',
+                        'city__name__istartswith',
+                    )
+                ]
+                qs = qs.filter(reduce(operator.or_, queries))
 
-        return qs
+        return qs.distinct()
 
 
 class TeamSeasonAutocomplete(autocomplete.Select2QuerySetView):

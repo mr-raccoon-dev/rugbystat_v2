@@ -42,4 +42,4 @@ RUN chmod +x /entrypoint.sh
 # All subsequent commands will be run from the /workspace folder
 WORKDIR /workspace
 
-ENTRYPOINT ["/entrypoint.sh", "python", "manage.py", "runserver", "0.0.0.0:1488"]
+ENTRYPOINT ["/entrypoint.sh", "python", "manage.py", "runserver", "0.0.0.0:8000"]

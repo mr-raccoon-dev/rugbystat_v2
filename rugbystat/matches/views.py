@@ -35,7 +35,8 @@ class SeasonAutocomplete(autocomplete.Select2QuerySetView):
                            Q(date_start__year=year))
 
         if self.q:
-            qs = qs.filter(name__icontains=self.q)
+            for search_term in self.q.split(' '):
+                qs = qs.filter(name__icontains=search_term)
 
         return qs
 
