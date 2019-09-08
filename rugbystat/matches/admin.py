@@ -49,6 +49,10 @@ class SeasonAdmin(NoModerationAdmin):
         TeamSeasonInline,
     ]
 
+    def add_view(self, request, form_url='', extra_context=None):
+        self.inlines = (TeamSeasonInline, )
+        return super().add_view(request, form_url, extra_context)
+
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
