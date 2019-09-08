@@ -1,6 +1,4 @@
-team._type - CLUB, YOUTH, NATION, FOREIGN - only clubs in search-linked, but every has a page
-
-Match.date is_verified - or smth...
+Doc version has same tags and attrs
 
 Import TeamRoster - messages framework; display only for admin
 Add PersonSeason from TeamSeason - send to back, save, title 

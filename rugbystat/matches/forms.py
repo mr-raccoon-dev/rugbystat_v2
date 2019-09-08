@@ -37,6 +37,7 @@ class MatchForm(forms.ModelForm):
         fields = ('name', 'tourn_season', 'date', 'home', 'away', 'home_score',
                   'away_score', 'home_halfscore', 'away_halfscore', 'story')
         widgets = {
+            'tourn_season': ModelSelect2Bootstrap(url='autocomplete-seasons'),
             'home': ModelSelect2Bootstrap(url='autocomplete-teamseasons',
                                           forward=['tourn_season']),
             'away': ModelSelect2Bootstrap(url='autocomplete-teamseasons',

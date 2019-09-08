@@ -150,6 +150,11 @@ class Group(models.Model):
 
 class Match(TagObject):
     date = models.DateField(verbose_name="Дата матча", blank=True, null=True)
+    date_unknown = models.CharField(
+        verbose_name="Дата, если неизвестна",
+        max_length=64, blank=True, null=True,
+    )
+    display_name = models.CharField(verbose_name="Отображение", max_length=255)
     tourn_season = models.ForeignKey(
         Season, verbose_name=_("Турнир"), related_name="matches", blank=True, null=True
     )
@@ -171,7 +176,7 @@ class Match(TagObject):
     )
 
     def __str__(self):
-        return self._get_name_from_score()
+        return self.name
 
     def _get_name_from_score(self):
         home_score = "??" if self.home_score is None else self.home_score
@@ -202,7 +207,12 @@ class Match(TagObject):
 
     def save(self, **kwargs):
         if not self.pk:
-            self.name = self._get_name_from_score()
+            line = self._get_name_from_score()
+            self.display_name = line
+            date = ""
+            if self.date:
+                date = self.date.strftime("%Y-%m-%d")
+            self.name = "{} {}".format(date, line)
         super(Match, self).save(**kwargs)
 
     def get_absolute_url(self):

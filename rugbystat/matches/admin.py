@@ -77,6 +77,8 @@ class GroupAdmin(admin.ModelAdmin):
 @admin.register(Match)
 class MatchAdmin(NoModerationAdmin, MarkdownxModelAdmin):
     form = MatchForm
+    list_display = ('__str__', 'date', 'date_unknown', 'tourn_season')
+    list_select_related = ('tourn_season', )
     fieldsets = (
         (None, {'fields': ('name',)}),
         (None, {'fields': (('tourn_season', 'date'), )}),
