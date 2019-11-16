@@ -30,7 +30,7 @@ SOCIALACCOUNT_PROVIDERS = {
         'EXCHANGE_TOKEN': True,
         'LOCALE_FUNC': lambda request: 'ru_RU',
         'VERIFIED_EMAIL': False,
-        'VERSION': 'v2.10'
+        'VERSION': 'v5.0'
     }
 }
 
