@@ -134,7 +134,9 @@ class Team(TagObject):
     def get_name_for(self, year, month=1, day=1):
         """Return name which team born in a given year."""
         default = self.short_name
-        from_db = self.names.filter(from_day__gte=dt.date(year, month, day)).first()
+        from_db = self.names.reverse().filter(
+            from_day__lte=dt.date(year, month, day)
+        ).values_list('name', flat=True).first()
         return from_db or default
 
 

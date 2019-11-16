@@ -178,6 +178,17 @@ class Match(TagObject):
     def __str__(self):
         return self.name
 
+    def _get_names_for_date(self):
+        """Return teams names for a match date"""
+        if self.date:
+            home = self.home.get_name_for(self.date.year, self.date.month, self.date.day)
+            away = self.away.get_name_for(self.date.year, self.date.month, self.date.day)
+        else:
+            home = self.home.short_name
+            away = self.away.short_name
+        return home, away
+        
+
     def _get_name_from_score(self):
         home_score = "??" if self.home_score is None else self.home_score
         away_score = "??" if self.away_score is None else self.away_score
@@ -189,9 +200,8 @@ class Match(TagObject):
             away_score = "в"
             home_score = "п"
 
-        name = "{} - {} - {}:{}".format(
-            self.home.short_name, self.away.short_name, home_score, away_score
-        )
+        teams_names = self._get_names_for_date()
+        name = "{} - {} - {}:{}".format(*teams_names, home_score, away_score)
 
         # add halftime
         home_halfscore = (
@@ -204,15 +214,19 @@ class Match(TagObject):
             name = "{} ({}:{})".format(name, home_halfscore, away_halfscore)
 
         return name
+    
+    def update_match_name(self):
+        date = ""
+        if self.date:
+            date = self.date.strftime("%Y-%m-%d")
 
+        self.display_name = self._get_name_from_score()
+        self.name = "{} {}".format(date, self.display_name)
+        return self
+    
     def save(self, **kwargs):
         if not self.pk:
-            line = self._get_name_from_score()
-            self.display_name = line
-            date = ""
-            if self.date:
-                date = self.date.strftime("%Y-%m-%d")
-            self.name = "{} {}".format(date, line)
+            self.update_match_name()
         super(Match, self).save(**kwargs)
 
     def get_absolute_url(self):

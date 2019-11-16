@@ -56,7 +56,7 @@ class SeasonAdmin(NoModerationAdmin):
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'date_start', 'date_end', 'city', 'season')
+    list_display = ('pk', 'name', 'date_start', 'date_end', 'city', 'season')
     list_select_related = ('season', 'city', )
     list_filter = (('season__name', DropdownFilter), DateEndListFilter,)
     form = GroupForm
@@ -76,6 +76,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 @admin.register(Match)
 class MatchAdmin(NoModerationAdmin, MarkdownxModelAdmin):
+    change_form_template = 'admin/matches/match_changeform.html'
     form = MatchForm
     list_display = ('__str__', 'date', 'date_unknown', 'tourn_season')
     list_select_related = ('tourn_season', )
@@ -86,3 +87,9 @@ class MatchAdmin(NoModerationAdmin, MarkdownxModelAdmin):
         (None, {'fields': (('home_score', 'away_score',),
                            ('home_halfscore', 'away_halfscore',), )}),
     )
+
+    def response_change(self, request, obj):
+        """Check for custom button request."""
+        if 'update-name' in request.POST:
+            obj.update_match_name().save()
+        return super().response_change(request, obj)
