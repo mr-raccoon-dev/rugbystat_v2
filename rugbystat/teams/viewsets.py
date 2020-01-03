@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, mixins, filters
 
 from .filters import TeamFullTextFilter
@@ -15,7 +16,7 @@ class TeamViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TeamSerializer
     filter_backends = (TeamFullTextFilter,
                        filters.SearchFilter,
-                       filters.DjangoFilterBackend,)
+                       DjangoFilterBackend,)
     search_fields = ('^short_name', '^city__name', '^names__name')
     filter_fields = ('year', 'short_name',)
     page_size_query_param = 'limit'
@@ -26,8 +27,7 @@ class PersonViewSet(mixins.CreateModelMixin,
                     viewsets.ReadOnlyModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
-    filter_backends = (filters.SearchFilter,
-                       filters.DjangoFilterBackend,)
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend,)
     search_fields = ('^name', '^first_name',)
     filter_fields = ('year_birth', 'name',)
 

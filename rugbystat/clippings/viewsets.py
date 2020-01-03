@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
 from clippings.filters import SourceObjectFilter
 
@@ -27,7 +28,7 @@ class DocumentViewSet(viewsets.ReadOnlyModelViewSet):
 class SourceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Source.objects.prefetch_related('instances__scans')
     serializer_class = SourceSerializer
-    filter_backends = (filters.SearchFilter, filters.DjangoFilterBackend)
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
     search_fields = ('^title', )
     filter_fields = ('title', 'kind')
 
@@ -35,7 +36,7 @@ class SourceViewSet(viewsets.ReadOnlyModelViewSet):
 class SourceObjectViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SourceObject.objects.prefetch_related('scans')
     serializer_class = SourceObjectSerializer
-    filter_backends = (filters.SearchFilter, filters.DjangoFilterBackend)
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
     filter_class = SourceObjectFilter
     search_fields = ('^source__title', '^edition')
     filter_fields = ('year', 'source',)
