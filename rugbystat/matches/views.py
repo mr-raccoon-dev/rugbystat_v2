@@ -77,16 +77,6 @@ class SeasonYearView(YearArchiveView):
     make_object_list = True
 
 
-class SeasonDetailView(DetailView):
-    """List of all matches and table"""
-    model = Season
-
-    def get_context_data(self, **kwargs):
-        ctx = super(SeasonDetailView, self).get_context_data(**kwargs)
-        ctx['match_form'] = MatchForm(initial={'tourn_season': ctx['object']})
-        return ctx
-
-
 class TournamentListView(ListView):
     """Base list of all Tournaments"""
     model = Tournament
@@ -108,6 +98,8 @@ class SeasonDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        ctx['match_form'] = MatchForm(initial={'tourn_season': ctx['object']})
+
         qs = Season.objects.filter(tourn=self.object.tourn)
         ctx['prev'] = qs.filter(date_end__lt=self.object.date_end).last()
         ctx['next'] = qs.filter(date_end__gt=self.object.date_end).first()
