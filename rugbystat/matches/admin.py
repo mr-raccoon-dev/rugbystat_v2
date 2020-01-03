@@ -2,7 +2,9 @@ from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 from markdownx.admin import MarkdownxModelAdmin
 
-from main.filters import DropdownFilter, DateEndListFilter
+from main.admin import CrossLinkMixin
+from main.filters import DropdownFilter, DateEndListFilter, DateListFilter
+from teams.admin import GroupSeasonInline
 from teams.models import TeamSeason
 from teams.moderator import NoModerationAdmin
 from .forms import GroupForm, MatchForm
@@ -10,8 +12,13 @@ from .models import Tournament, Season, Group, Match
 
 
 @admin.register(Tournament)
-class TournamentAdmin(SortableAdminMixin, admin.ModelAdmin):
-    pass
+class TournamentAdmin(SortableAdminMixin, CrossLinkMixin, admin.ModelAdmin):
+    readonly_fields = ('seasons_links', )
+    fields = ('name', 'story') + readonly_fields
+
+    def seasons_links(self, obj):
+        return self._get_admin_links(obj.seasons.all())
+    seasons_links.short_description = 'Seasons'
 
 
 class TeamSeasonInline(admin.TabularInline):
@@ -29,14 +36,15 @@ class GroupInline(admin.TabularInline):
         field = super(GroupInline, self).formfield_for_manytomany(
             db_field, request, **kwargs
         )
-        # get only the teams from THAT season
+        # get only teams from THAT season
         field.queryset = field.queryset.filter(
             season=request.resolver_match.args[0]
         )
         return field
 
+
 @admin.register(Season)
-class SeasonAdmin(NoModerationAdmin):
+class SeasonAdmin(CrossLinkMixin, NoModerationAdmin):
     list_display = ('name', 'date_start', 'date_end', 'story')
     list_filter = (
         ('tourn__name', DropdownFilter),
@@ -44,6 +52,7 @@ class SeasonAdmin(NoModerationAdmin):
     )
     list_select_related = ('tourn', )
     search_fields = ('name', )
+    readonly_fields = ('groups_links', 'teams_links')
     inlines = [
         GroupInline,
         TeamSeasonInline,
@@ -53,6 +62,14 @@ class SeasonAdmin(NoModerationAdmin):
         self.inlines = (TeamSeasonInline, )
         return super().add_view(request, form_url, extra_context)
 
+    def groups_links(self, obj):
+        return self._get_admin_links(obj.groups.all())
+    groups_links.short_description = 'Groups'
+
+    def teams_links(self, obj):
+        return self._get_admin_links(obj.standings.all())
+    teams_links.short_description = 'Teams'
+
 
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
@@ -61,6 +78,7 @@ class GroupAdmin(admin.ModelAdmin):
     list_filter = (('season__name', DropdownFilter), DateEndListFilter,)
     form = GroupForm
     filter_horizontal = ['teams']
+    inlines = [GroupSeasonInline]
 
     def get_form(self, request, obj=None, **kwargs):
         self.instance = obj  # Capture instance before the form gets generated
@@ -80,6 +98,7 @@ class MatchAdmin(NoModerationAdmin, MarkdownxModelAdmin):
     form = MatchForm
     list_display = ('__str__', 'date', 'date_unknown', 'tourn_season')
     list_select_related = ('tourn_season', )
+    list_filter = (('tourn_season__name', DropdownFilter), DateListFilter,)
     fieldsets = (
         (None, {'fields': ('name',)}),
         (None, {'fields': (('tourn_season', 'date'), )}),
