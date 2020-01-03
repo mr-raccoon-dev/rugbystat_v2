@@ -1,3 +1,4 @@
+from adminsortable2.admin import SortableInlineAdminMixin
 from django.contrib import admin
 from markdownx.admin import MarkdownxModelAdmin
 
@@ -136,6 +137,20 @@ class GroupSeasonAdmin(admin.ModelAdmin):
             }
         ),
     )
+
+
+class GroupSeasonInline(SortableInlineAdminMixin, admin.TabularInline):
+    model = GroupSeason
+    extra = 1
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+        if db_field.name == 'team':
+            # get only teams from THAT season
+            field.queryset = field.queryset.filter(
+                groups__group_id__in=[request.resolver_match.args[0]]
+            )
+        return field
 
 
 class PersonSeasonInline(admin.TabularInline):

@@ -218,7 +218,7 @@ class GroupSeason(TableRowFields):
     story = models.TextField(verbose_name=_('История'), blank=True, )
 
     class Meta:
-        ordering = ('-year', 'team', 'order')
+        ordering = ('order', '-year', 'team',)
         unique_together = (('team', 'group'),)
 
     def __str__(self):
