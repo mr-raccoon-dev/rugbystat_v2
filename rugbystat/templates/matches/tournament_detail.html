@@ -10,10 +10,11 @@
 
 <ul>
   {% for season in object.seasons.all %}
-    <li> <a class="link" 
-            href="{{ season.get_absolute_url }}">
-            {{ season }}
-         </a>
+    <li>
+      <a class="link"
+         href="{{ season.get_absolute_url }}">
+           {{ season }}
+      </a>
     </li>
   {% endfor %}
 </ul>

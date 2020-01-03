@@ -35,33 +35,35 @@
 </ul>
 {% endif %}
 
+{% if not user.is_anonymous %}
+
 <form method="post">
-    {% csrf_token %}
+  {% csrf_token %}
 
-<div class="form-inputs formset_row">
-  <div class="form-group has-error">
-    <div class="col-sm-4">
-      {% render_field person_form.person class+="form-control" %}
-      <span class="help-block">{{ person_form.person.label }}</span>
+  <div class="form-inputs formset_row">
+    <div class="form-group has-error">
+      <div class="col-sm-4">
+        {% render_field person_form.person class+="form-control" %}
+        <span class="help-block">{{ person_form.person.label }}</span>
+      </div>
+      <div class="col-sm-2">
+        {% render_field person_form.role class+="form-control" %}
+        <span class="help-block">{{ person_form.role.label }}</span>
+      </div>
     </div>
-    <div class="col-sm-2">
-      {% render_field person_form.role class+="form-control" %}
-      <span class="help-block">{{ person_form.role.label }}</span>
-    </div>
+      <div class="col-sm-6">
+        {% render_field person_form.story class+="form-control" rows="2" %}
+        <span class="help-block">{{ person_form.story.label }}</span>
+      </div>
   </div>
-    <div class="col-sm-6">
-      {% render_field person_form.story class+="form-control" rows="2" %}
-      <span class="help-block">{{ person_form.story.label }}</span>
-    </div>
-</div>
 
-    {{ person_form.media }}
+  {{ person_form.media }}
 
-    {% if person_form.non_form_errors %}
-        {% for error in person_form.non_form_errors %}
-            {{ error|escape }}
-        {% endfor %}
-    {% endif %}
+  {% if person_form.non_form_errors %}
+    {% for error in person_form.non_form_errors %}
+      {{ error|escape }}
+    {% endfor %}
+  {% endif %}
 </form>
 
 {% if user.is_superuser %}
@@ -75,6 +77,7 @@
     <input class="btn btn-default" type="submit" value="Submit" />
   </form>
 </div>
+{% endif %}
 {% endif %}
 
 {% endblock content %}

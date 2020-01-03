@@ -30,12 +30,13 @@
 
 <h2 id="name"><a href="{{ object.tourn.get_absolute_url }}">{{ object.name }}</a></h2>
 
-<article>{{ object.story }}</article>
+<article>{{ object.story | markdown }}</article>
 
 {% for group in object.groups.all %}
 {% include 'matches/season_table.html' with object=group %}
 {% endfor %}
 
+{% if not user.is_anonymous %}
 <form role="form" id="addMatch" class="addForm" style="display: none;">
 {% csrf_token %}
 
@@ -123,6 +124,7 @@
             id="showMatchForm" 
             type="button">Добавить</button>
   </div>
+{% endif %}
 
 {% include '_modal.html' with modal_id="moderationModal" %}
 
