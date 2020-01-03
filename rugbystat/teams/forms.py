@@ -2,7 +2,6 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import inlineformset_factory, formset_factory
 from django.utils.translation import ugettext_lazy as _
-from moderation.forms import BaseModeratedObjectForm
 
 from clippings.models import Document
 from matches.models import Season
@@ -22,7 +21,7 @@ class TagThroughForm(forms.ModelForm):
         }
 
 
-class TeamForm(BaseModeratedObjectForm):
+class TeamForm(forms.ModelForm):
     """Edit Team attributes"""
 
     class Meta:
@@ -40,7 +39,7 @@ class TeamForm(BaseModeratedObjectForm):
         return self.cleaned_data
 
 
-class TeamSeasonForm(BaseModeratedObjectForm):
+class TeamSeasonForm(forms.ModelForm):
     """Edit TeamSeason attributes"""
 
     class Meta:
@@ -58,7 +57,7 @@ class TeamSeasonForm(BaseModeratedObjectForm):
 TeamSeasonFormSet = inlineformset_factory(Season, TeamSeason,
                                           form=TeamSeasonForm, extra=1)
 
-class PersonForm(BaseModeratedObjectForm):
+class PersonForm(forms.ModelForm):
     """Edit Person attributes"""
     name = forms.CharField(max_length=32, label=_('Фамилия'))
 
@@ -81,7 +80,7 @@ class PersonForm(BaseModeratedObjectForm):
         return self.cleaned_data
 
 
-class PersonSeasonForm(BaseModeratedObjectForm):
+class PersonSeasonForm(forms.ModelForm):
     """Edit PersonSeason attributes"""
     story = forms.CharField(label=_('Комментарии'), widget=forms.Textarea)
 

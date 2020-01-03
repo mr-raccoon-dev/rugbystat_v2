@@ -8,7 +8,6 @@ from .models import (
     Person, PersonSeason, Team, TeamName, TeamSeason, GroupSeason,
     Stadium, City, TagObject,
 )
-from .moderator import NoModerationAdmin
 
 
 @admin.register(TagObject)
@@ -58,7 +57,7 @@ class TeamNameAdmin(admin.ModelAdmin):
 
 
 @admin.register(TeamSeason)
-class TeamSeasonAdmin(NoModerationAdmin):
+class TeamSeasonAdmin(admin.ModelAdmin):
     # form = TeamSeasonForm
 
     search_fields = ('team__name', )
@@ -160,7 +159,7 @@ class PersonSeasonInline(admin.TabularInline):
 
 
 @admin.register(Person)
-class PersonAdmin(MarkdownxModelAdmin, NoModerationAdmin):
+class PersonAdmin(MarkdownxModelAdmin):
     search_fields = ('name', 'first_name', )
     list_filter = (
         ('year_birth', DropdownFilter),
@@ -193,7 +192,7 @@ class PersonAdmin(MarkdownxModelAdmin, NoModerationAdmin):
 
 
 @admin.register(PersonSeason)
-class PersonSeasonAdmin(NoModerationAdmin):
+class PersonSeasonAdmin(admin.ModelAdmin):
     search_fields = ('person__name', 'person__first_name', )
     list_display = ('__str__', 'role', 'team', 'season')
     list_select_related = ('person', 'team', 'season')

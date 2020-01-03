@@ -6,7 +6,6 @@ from main.admin import CrossLinkMixin
 from main.filters import DropdownFilter, DateEndListFilter, DateListFilter
 from teams.admin import GroupSeasonInline
 from teams.models import TeamSeason
-from teams.moderator import NoModerationAdmin
 from .forms import GroupForm, MatchForm
 from .models import Tournament, Season, Group, Match
 
@@ -44,7 +43,7 @@ class GroupInline(admin.TabularInline):
 
 
 @admin.register(Season)
-class SeasonAdmin(CrossLinkMixin, NoModerationAdmin):
+class SeasonAdmin(CrossLinkMixin, admin.ModelAdmin):
     list_display = ('name', 'date_start', 'date_end', 'story')
     list_filter = (
         ('tourn__name', DropdownFilter),
@@ -93,7 +92,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 
 @admin.register(Match)
-class MatchAdmin(NoModerationAdmin, MarkdownxModelAdmin):
+class MatchAdmin(MarkdownxModelAdmin):
     change_form_template = 'admin/matches/match_changeform.html'
     form = MatchForm
     list_display = ('__str__', 'date', 'date_unknown', 'tourn_season')

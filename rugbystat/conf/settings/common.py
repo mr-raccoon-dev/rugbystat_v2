@@ -28,7 +28,6 @@ INSTALLED_APPS = (
     'django_extensions',
     'widget_tweaks',
     'adminsortable2',
-    'moderation',
     'markdownx',
 
     # Your apps
