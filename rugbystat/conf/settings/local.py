@@ -9,11 +9,8 @@ for config in TEMPLATES:
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rugbystat',
-        'USER': 'root',
-        'PASSWORD': '123',
-        'HOST': 'db',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR , 'rugbystat.sqlite.db'),
     }
 }
 
