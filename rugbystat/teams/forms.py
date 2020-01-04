@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from clippings.models import Document
 from matches.models import Season
 from utils.widgets import ModelSelect2Bootstrap
-from utils.parsers import parse_rosters, parse_teams
+from utils.parsers import parse_alphabet, parse_rosters, parse_teams
 from .models import Team, TeamSeason, Person, PersonSeason
 
 __author__ = 'krnr'
@@ -138,4 +138,5 @@ class ImportRosterForm(forms.Form):
 
     def clean(self):
         data = super(ImportRosterForm, self).clean()
-        parse_rosters(self.request, data)
+        # parse_rosters(self.request, data)
+        parse_alphabet(self.request, data)

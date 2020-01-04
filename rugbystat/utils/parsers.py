@@ -1,11 +1,14 @@
 import datetime
+import functools as ft
 import logging
+import operator
 import re
 from difflib import SequenceMatcher as SM
 
 from django.contrib.messages import success
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 
 from matches.models import Season, Tournament
 from teams.models import Team, City, Person, PersonSeason
@@ -102,6 +105,109 @@ def parse_rosters(request, data):
                     success(request, "Created {}".format(obj))
                 else:
                     success(request, "Found {}".format(obj))
+
+
+def parse_alphabet(request, data):
+    importer = LineImporter()
+    importer.run(data["input"].split('\r\n'))
+
+
+class LineImporter:
+    pattern = re.compile(r"(?P<name>(?:[А-Я][а-я.]*\s*){1,3})(?P<year>\(\d+\) )?— (?P<teams>(([A-Яа-я ]+) (?P<seasons>\((\d+,*\s*)+\)),*\s*)+)(.*)")
+    teams_re = re.compile("(\S+ \S+) (?P<seasons>\((\d+,*\s*)+\)),*\s*")
+
+    def __init__(self, *args, **kwargs):
+        self.p = Person()
+        self.m2m = []
+        self.seasons = {
+            "1933": Season.objects.get(name="Товарищеские матчи 1933"),
+            "1934": Season.objects.get(name="Товарищеские матчи 1934"),
+            "1935": Season.objects.get(name="Чемпионат Москвы 1935 (о)"),
+            "1936": Season.objects.get(name="Кубок СССР 1936"),
+            "1937": Season.objects.get(name="Матч городов 1937"),
+            "1938": Season.objects.get(name="Чемпионат СССР 1938"),
+            "1939": Season.objects.get(name="Чемпионат СССР 1939"),
+            "1940": Season.objects.get(name="Чемпионат Москвы 1940"),
+            "1946": Season.objects.get(name="Чемпионат Москвы 1946"),
+            "1947": Season.objects.get(name="Матч городов 1947"),
+            "1949": Season.objects.get(name="Матч городов 1949"),
+        }
+
+    def restart(self):
+        self.p = Person()
+        self.m2m = []
+    
+    def run(self, inpt):
+        for line in inpt:
+            self.process_line(line)
+            PersonSeason.objects.bulk_create(self.m2m)
+            self.restart()
+    
+    def process_line(self, line):
+        matches = self.pattern.findall(line)
+        name, year, teams, last, last_name, seasons, last_season, occupation = matches[0]
+        self.create_person(name.strip(), year, occupation)
+        self.parse_seasons(teams, last, last_name, seasons, last_season)
+
+    def create_person(self, name, year, occupation):
+        if " " in name:
+            name = name.replace('.', ' ').strip().split(' ')
+            self.p.name = name[0]
+            self.p.first_name = name[1]
+            if len(name) > 2:
+                self.p.middle_name = name[2]
+        else:
+            self.p.name = name
+
+        if year:
+            self.p.year_birth = year[1:5]
+        
+        if occupation:
+            self.p.story = occupation
+        
+        self.p.save()
+
+    def parse_seasons(self, teams, last, last_name, last_seasons, last_season):
+        if last == teams:
+            self.create_seasons(last_name, last_seasons)
+        else:
+            for team, seasons, _ in self.parse_teams(teams):
+                self.create_seasons(team, seasons)
+
+    def parse_teams(self, teams):
+        return self.teams_re.findall(teams)
+
+    def create_seasons(self, team, seasons):
+        # '(1936)'
+        # '(1937, 1938)'
+        team_instance = self.get_team_instance(team)
+        if not team_instance:
+            logger.warning(f"No team found for {team}")
+        for season in seasons[1:-1].split(','):
+            self.m2m.append(PersonSeason(person=self.p,
+                    season_id=self.seasons[season.strip()].pk,
+                    team_id=team_instance.id,
+                    year=season.strip(),
+                ))
+
+    def get_team_instance(self, name):
+        qs = Team.objects.filter(year__lt=1950)
+        for element in name.split():
+            qs = reduce_qs(qs, element.strip())
+        return qs.first()
+
+
+def reduce_qs(qs, search_term): 
+    queries = [
+        Q(**{lookup: search_term})
+        for lookup in (
+            'name__icontains',
+            'short_name__icontains',
+            'names__name__icontains',
+            'city__name__istartswith',
+            )
+        ]
+    return qs.filter(ft.reduce(operator.or_, queries))
 
 
 def find_best_match(queryset, name, first_name, all=False):
