@@ -161,8 +161,11 @@ class PersonSeasonInline(admin.TabularInline):
 @admin.register(Person)
 class PersonAdmin(MarkdownxModelAdmin):
     search_fields = ('name', 'first_name', )
+    list_editable = ('year_birth', 'year_death', 'is_dead')
+    list_display = ('__str__', 'dob', 'dod', ) + list_editable
     list_filter = (
         ('year_birth', DropdownFilter),
+        'is_dead',
     )
     fieldsets = (
         (
@@ -197,8 +200,9 @@ class PersonSeasonAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'role', 'team', 'season')
     list_select_related = ('person', 'team', 'season')
     list_filter = (
-        ('person__name', DropdownFilter),
         ('year', DropdownFilter),
+        ('person__name', DropdownFilter),
         ('team__name', DropdownFilter),
+        ('season__name', DropdownFilter),
     )
     raw_id_fields = ('team', 'person', 'season')
