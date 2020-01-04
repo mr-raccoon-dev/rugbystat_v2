@@ -29,6 +29,7 @@ class DocumentAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'title', 'source', 'kind', 'preview'
     )
+    list_select_related = ('source', )
     list_filter = (
         ('year', DropdownFilter),
         ('source__title', DropdownFilter),
@@ -90,3 +91,8 @@ class DocumentAdmin(admin.ModelAdmin):
         messages.success(request,
                          '{0} documents were updated'.format(updated))
     set_source_action.short_description = u'Update source'
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        for version in form.instance.versions.all():
+            version.tag.add(*form.instance.tag.all())

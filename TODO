@@ -1,6 +1,3 @@
-
-Doc version has same tags and attrs
-
 Import TeamRoster - messages framework; display only for admin
 Add PersonSeason from TeamSeason - send to back, save, title 
 
@@ -11,8 +8,6 @@ Match.form - what if no ref? Ref must be MatchDetail attribute?
 MatchDetails view
 
 Document.dimensions
-
-Remove moderation from django admin
 
 PersonAddForm - add modal with success/errors messages
 PersonSeasonForm - validation before closing
