@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     'versatileimagefield',       # image manipulation
     'django_dropbox',
     'django_extensions',
+    'django_filters',
     'widget_tweaks',
     'adminsortable2',
     'markdownx',
