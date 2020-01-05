@@ -1,11 +1,10 @@
 Import TeamRoster - messages framework; display only for admin
 Add PersonSeason from TeamSeason - send to back, save, title 
 
-Match.get_absolute_url
+http://rugbystat.pythonanywhere.com/teams/3/ - добавить сезон
+
 match form displays teams short name, not season name
 Match.form - what if no ref? Ref must be MatchDetail attribute?
-
-MatchDetails view
 
 Document.dimensions
 
