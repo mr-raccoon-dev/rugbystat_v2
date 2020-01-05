@@ -29,6 +29,13 @@
 
 <div class="form-group">
   <label class="control-label" for="focusedInput">Персоны</label>
+
+  <div class="letters">
+    {% for liter in initial_letters %}
+      <a href="#" class="letter">{{ liter }}</a>
+    {% endfor %}
+  </div>  
+  
   <div class="input-group">
     <input type="text" class="form-control" id="person-input" />
     <span class="input-group-btn">

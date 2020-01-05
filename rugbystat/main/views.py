@@ -19,7 +19,12 @@ def teams_view(request):
 
 def persons_view(request):
     form = PersonForm()
-    return render(request, "persons.html", {"form": form})
+    return render(
+        request, "persons.html", {
+            "form": form,
+            "initial_letters": "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЮЭЯ",
+            }
+        )
 
 
 def clippings_view(request):

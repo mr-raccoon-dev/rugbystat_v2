@@ -13,8 +13,11 @@ var searchManager = {
         $("#results").html('');
         var q = $("#person-input").val();
 
+        query_params = {'search': q, 'limit': 100};
+
         $.getJSON({
-            url: personListUrl + '?limit=100&search=' + q,
+            url: personListUrl,
+            data: query_params,
             success: function(data) {
                 searchManager.process_list(data);
             }
@@ -24,7 +27,7 @@ var searchManager = {
     process_list: function(data) {
         $.each(data.results, function(iter, item) {
             $('#results').append('<div class="search-item"><a href="/persons/' + item.id + '/">' 
-                + item.__str__ + '</a></div>');
+                + item.full_name + '</a></div>');
         });
 
     },
@@ -32,6 +35,17 @@ var searchManager = {
 };
 
 var timeout;
+
+$('a.letter').on('click', function (e) {
+    e.preventDefault();
+    var val = $(this).text();
+    $("#person-input").val(val);
+    window.history.pushState(
+        {}, "",
+        updateQueryStringParameter(window.location.href, 'search', val)
+    );
+    searchManager.get_list();
+});
 
 $('#person-input').keypress(function() {
     if(timeout) { 
