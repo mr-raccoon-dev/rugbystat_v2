@@ -5,6 +5,7 @@
 {% block title %}{{ block.super }} || Турниры{% endblock title %}
 {% block content %}
 
+<div class="col-sm-6">
 <h2 id="name">Турниры</h2>
 
 <ul>
@@ -16,7 +17,9 @@
     </li>
   {% endfor %}
 </ul>
+</div>
 
+<div class="col-sm-6">
 <h2 id="name">Годы</h2>
 
 <ul>
@@ -28,5 +31,6 @@
     </li>
   {% endfor %}
 </ul>
+</div>
 
 {% endblock content %}
