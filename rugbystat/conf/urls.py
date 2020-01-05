@@ -16,6 +16,7 @@ from clippings.viewsets import (DocumentViewSet,
 from main import views
 from matches.views import (import_seasons,
                            SeasonCreateView, SeasonDetailView, SeasonYearView,
+                           MatchDetailView,
                            TournamentListView, TournamentDetailView,
                            TournamentAutocomplete, SeasonAutocomplete)
 from teams.views import (import_teams,
@@ -25,13 +26,14 @@ from teams.views import (import_teams,
                          TeamAutocomplete, TeamSeasonAutocomplete,
                          PersonSeasonAutocomplete,
                          TeamBySeasonAutocomplete, PersonBySeasonAutocomplete)
-from teams.viewsets import TeamViewSet, PersonViewSet, PersonSeasonViewSet
+from teams.viewsets import TeamViewSet, TeamSeasonViewSet, PersonViewSet, PersonSeasonViewSet
 from matches.viewsets import MatchViewSet
 from users.viewsets import UserViewSet
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
 router.register(r'teams', TeamViewSet)
+router.register(r'teams-seasons', TeamSeasonViewSet)
 router.register(r'persons', PersonViewSet)
 router.register(r'personseasons', PersonSeasonViewSet)
 router.register(r'teams/(?P<team_id>\d+)/documents', DocumentViewSet)
@@ -78,6 +80,8 @@ urlpatterns = [
     url(r'^tournaments/$', TournamentListView.as_view(), name='tournaments'),
     url(r'^tournaments/(?P<pk>\d+)/$', TournamentDetailView.as_view(),
         name='tournament_detail'),
+    url(r'^tournaments/(?P<tourn_pk>\d+)/(?P<lap>[\d\-]{4,7})/(?P<season_pk>\d+)/matches/(?P<pk>\d+)/',
+        MatchDetailView.as_view(), name='match_detail'),
     url(r'^tournaments/(?P<tourn_pk>\d+)/(?P<lap>[\d\-]{4,7})/(?P<pk>\d+)/',
         SeasonDetailView.as_view(), name='season_detail'),
     url(r'^seasons/(?P<year>\d{4})/$', SeasonYearView.as_view(),
