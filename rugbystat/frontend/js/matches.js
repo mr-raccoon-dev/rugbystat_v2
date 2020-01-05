@@ -35,7 +35,9 @@ $('#submitMatchForm').click(function() {
       json = {};
 
   var json = objectifyForm(dataArray);
-  json['season'] = season;
+  if (json['story'] == null) {
+    json['story'] = ''
+  };
 
   $.ajax({
       url: matchListUrl,

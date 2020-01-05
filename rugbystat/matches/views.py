@@ -6,7 +6,7 @@ from django.views.generic import (CreateView, ListView, DetailView,
                                   YearArchiveView)
 
 from .forms import ImportForm, SeasonForm, MatchForm
-from .models import Tournament, Season
+from .models import Tournament, Season, Match
 
 
 class TournamentAutocomplete(autocomplete.Select2QuerySetView):
@@ -104,3 +104,8 @@ class SeasonDetailView(DetailView):
         ctx['prev'] = qs.filter(date_end__lt=self.object.date_end).last()
         ctx['next'] = qs.filter(date_end__gt=self.object.date_end).first()
         return ctx
+
+
+class MatchDetailView(DetailView):
+    """Details of one Match"""
+    model = Match

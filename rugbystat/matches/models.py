@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from teams.models import TagObject, Team
+from teams.models import TagObject, Team, TeamSeason
 # from teams.models import Stadium, Person
 
 
@@ -149,6 +149,9 @@ class Group(models.Model):
 
 
 class Match(TagObject):
+
+    _delimiter = '—'
+
     date = models.DateField(verbose_name="Дата матча", blank=True, null=True)
     date_unknown = models.CharField(
         verbose_name="Дата, если неизвестна",
@@ -201,7 +204,8 @@ class Match(TagObject):
             home_score = "п"
 
         teams_names = self._get_names_for_date()
-        name = "{} - {} - {}:{}".format(*teams_names, home_score, away_score)
+        teams_names = f" {self._delimiter} ".join(teams_names)
+        name = "{} {} {}:{}".format(teams_names, self._delimiter, home_score, away_score)
 
         # add halftime
         home_halfscore = (
@@ -230,5 +234,28 @@ class Match(TagObject):
         super(Match, self).save(**kwargs)
 
     def get_absolute_url(self):
-        # TODO
-        return ""
+        lap = self.tourn_season._get_lap().replace("/", "-")
+        return reverse(
+            "match_detail",
+            kwargs={
+                "tourn_pk": self.tourn_season.tourn_id,
+                "lap": lap,
+                "season_pk": self.tourn_season_id,
+                "pk": self.pk,
+            },
+        )
+
+    def get_display_with_links(self):
+        home, away, score = self.display_name.split(self._delimiter)
+
+        ts_qs = TeamSeason.objects.filter(
+            season=self.tourn_season,
+            team__in=[self.home, self.away]
+        )
+        ts_instances = {ts.team_id: ts for ts in ts_qs}
+        
+        home_link = ts_instances[self.home_id].get_absolute_url()
+        away_link = ts_instances[self.away_id].get_absolute_url()
+        h_href = f'<a href="{home_link}">{home.strip()}</a>'
+        a_href = f'<a href="{away_link}">{away.strip()}</a>'
+        return f" {self._delimiter} ".join([h_href, a_href, score.strip()])

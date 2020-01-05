@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% load markdownx %}
+
+{% block title %}{{ block.super }} | {{ object.name }}{% endblock title %}
+
+{% block stylesheets %}
+{{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/modal.css' %}">
+  <!-- Include Bootstrap Datepicker -->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.min.css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker3.min.css" />
+{% endblock stylesheets %}
+
+{% block js %}
+{{ block.super }}
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/locales/bootstrap-datepicker.ru.js"></script>
+  <script type="text/javascript" src="{% static 'js/matches.js' %}"></script>
+  <script type="text/javascript">
+    var matchListUrl = "{% url 'match-list' %}",
+        season = {{ object.pk }};
+  </script>
+
+{% endblock js %}
+
+{% block content %}
+
+<h2 id="name"><a href="{{ object.tourn_season.get_absolute_url }}">{{ object.tourn_season }}</a></h2>
+
+{{ object.date }}
+{{ object.get_display_with_links | safe }}
+
+<article>{{ object.story | markdown }}</article>
+
+{% if object.documents %}
+  {% include '_documents.html' %}
+{% endif %}
+
+{% endblock content %}
