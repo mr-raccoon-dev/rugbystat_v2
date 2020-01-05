@@ -21,6 +21,7 @@
   <script type="text/javascript" src="{% static 'js/teams.js' %}"></script>
   <script type="text/javascript">
     var teamListUrl = "{% url 'team-list' %}",
+        teamSeasonListUrl = "{% url 'teamseason-list' %}",
         teamUpdate = "{% url 'teams_detail' pk=object.pk %}",
         team = {{ object.pk }};
   </script>
@@ -117,11 +118,115 @@
   <div>{{ object.story | markdown }}</div>
 </div>
 
-  <div class="pull-right">
-    {% if user.is_authenticated %}
-    <button class="btn btn-default" id="showTeamSeasonForm" type="button">Добавить сезон</button>
+<form role="form" id="addSeason" class="addForm" style="display: none;">
+  {% csrf_token %}
+  
+  <div id="formErrors">
+    {% if form.errors %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <div class="fieldError">
+            {{ field.errors }}
+        </div>
+        {% endfor %}
     {% endif %}
+    </div>
+
+{% if user.is_authenticated %}
+
+  <h3>Добавить сезон</h3>
+  <div class="form-inputs">
+    <input type="hidden" 
+           name="team" 
+           id="id_team" 
+           value="{{ season_form.team.value }}">
+  
+    <div>
+      <div class="col-sm-3 text-center">
+        <span class="help-block">{{ season_form.season.label }}</span>
+      </div>
+      <div class="col-sm-2 text-center">
+        <span class="help-block">{{ season_form.name.label }}</span>
+      </div>
+      <div class="col-sm-1 text-center has-error">
+        <span class="help-block">{{ season_form.place.label }}</span>
+      </div>
+      <div class="col-sm-1 text-center has-error">
+        <span class="help-block">{{ season_form.played.label }}</span>
+      </div>
+      <div class="col-sm-1 text-center has-error">
+        <span class="help-block">{{ season_form.wins.label }}</span>
+      </div>
+      <div class="col-sm-1 text-center">
+        <span class="help-block">{{ season_form.draws.label }}</span>
+      </div>
+      <div class="col-sm-1 text-center">
+        <span class="help-block">{{ season_form.losses.label }}</span>
+      </div>
+      <div class="col-sm-1 text-center">
+        <span class="help-block">{{ season_form.points.label }}</span>
+      </div>
+      <div class="col-sm-1 text-center">
+        <span class="help-block">{{ season_form.score.label }}</span>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-sm-3">
+        {% render_field season_form.season class+="form-control" %}
+      </div>
+      <div class="col-sm-2">
+        {% render_field season_form.name class+="form-control" %}
+      </div>
+      <div class="col-sm-1">
+        {% render_field season_form.place class+="form-control" %}
+      </div>
+      <div class="col-sm-1">
+        {% render_field season_form.played class+="form-control" %}
+      </div>
+      <div class="col-sm-1">
+        {% render_field season_form.wins class+="form-control" %}
+      </div>
+      <div class="col-sm-1">
+        {% render_field season_form.draws class+="form-control" %}
+      </div>
+      <div class="col-sm-1">
+        {% render_field season_form.losses class+="form-control" %}
+      </div>
+      <div class="col-sm-1">
+        {% render_field season_form.points class+="form-control" %}
+      </div>
+      <div class="col-sm-1">
+        {% render_field season_form.score class+="form-control" %}
+      </div>
+    </div>
+  
+    <div class="form-group row">
+      <div class="col-sm-12">
+        {% render_field season_form.story class+="form-control" rows="2" %}
+        <span class="help-block">Произвольная информация о сезоне</span>
+      </div>
+    </div>
   </div>
+  
+  {{ season_form.media }}
+  
+    <div class="pull-right">
+      <button class="btn btn-default submitForm" 
+              id="submitSeasonForm" 
+              type="button">Сохранить</button>
+      <button class="btn btn-secondary cancelForm" 
+              id="cancelSeasonForm" 
+              type="button">Отмена</button>
+    </div>
+  </form>
+  
+    <div class="pull-right">
+      <button class="btn btn-default showForm" 
+              id="showTeamSeasonForm" 
+              type="button">Добавить сезон</button>
+    </div>
+  
+{% endif %}
 
 {% if object.seasons.all %}
 <h3>Сезоны</h3>

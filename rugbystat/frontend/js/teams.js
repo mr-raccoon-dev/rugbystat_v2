@@ -92,6 +92,19 @@ var searchManager = {
 
 var timeout;
 
+function objectifyForm(formArray) {
+    var returnArray = {};
+    for (var i = 0; i < formArray.length; i++){
+      var val = formArray[i]['value'];
+      if (val === "") {
+        val = null
+      };
+      returnArray[formArray[i]['name']] = val;
+    }
+    return returnArray;
+  };
+  
+  
 $('#team-input').keypress(function() {
     if(timeout) { 
         clearTimeout(timeout);
@@ -116,7 +129,37 @@ $('#cancelTeamForm').click(function() {
 });
 
 
+$('#showTeamSeasonForm').click(function() {
+    $(this).hide();
+    $('form#addSeason').show();
+});
 
+$('#cancelSeasonForm').click(function() {
+    $('button#showTeamSeasonForm').show();
+    $('form#addSeason').hide();
+});
+
+$('#submitSeasonForm').click(function() {
+    var dataArray = $('#addSeason').serializeArray(),
+        json = {};
+  
+    var json = objectifyForm(dataArray);
+    
+    $.ajax({
+        url: teamSeasonListUrl,
+        type: 'POST',
+        data: JSON.stringify(json),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function () {
+          $('.showForm').show();
+          $('.addForm').hide();
+          $('#moderationModal').modal('toggle');
+        },
+    });
+  });
+  
+  
 // function yHandler() {
 //     if(document.body.scrollHeight - window.innerHeight - 50 < window.scrollY) {
 //         window.PAGE += 1;

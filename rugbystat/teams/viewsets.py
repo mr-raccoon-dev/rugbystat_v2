@@ -2,8 +2,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, mixins, filters
 
 from .filters import TeamFullTextFilter
-from .models import Team, Person, PersonSeason
-from .serializers import (TeamSerializer,
+from .models import Team, TeamSeason, Person, PersonSeason
+from .serializers import (TeamSerializer, TeamSeasonSerializer,
                           PersonSerializer, PersonSeasonSerializer)
 
 __author__ = 'krnr'
@@ -22,13 +22,25 @@ class TeamViewSet(viewsets.ReadOnlyModelViewSet):
     page_size_query_param = 'limit'
 
 
+class TeamSeasonViewSet(mixins.CreateModelMixin,
+                        mixins.UpdateModelMixin,
+                        viewsets.ReadOnlyModelViewSet):
+    queryset = TeamSeason.objects.all()
+    serializer_class = TeamSeasonSerializer
+    filter_backends = (filters.SearchFilter,
+                       DjangoFilterBackend,)
+    search_fields = ('name', '^season__name',)
+    filter_fields = ('year', )
+    page_size_query_param = 'limit'
+
+
 class PersonViewSet(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin,
                     viewsets.ReadOnlyModelViewSet):
-    queryset = Person.objects.all()
+    queryset = Person.objects.order_by('name')
     serializer_class = PersonSerializer
     filter_backends = (filters.SearchFilter, DjangoFilterBackend,)
-    search_fields = ('^name', '^first_name',)
+    search_fields = ('^name', )
     filter_fields = ('year_birth', 'name',)
 
 

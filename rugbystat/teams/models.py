@@ -282,7 +282,7 @@ class TeamSeason(TableRowFields):
             team=self.team
         ).select_related(
             'person__tagobject_ptr'
-        ).order_by('role')
+        ).order_by('role', 'person__name')
 
     def get_matches(self):
         """

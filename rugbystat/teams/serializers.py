@@ -3,7 +3,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from rest_framework.exceptions import ValidationError
 
 from clippings.serializers import DocumentSerializer
-from .models import Team, City, Person, PersonSeason
+from .models import Team, TeamSeason, City, Person, PersonSeason
 
 __author__ = 'krnr'
 
@@ -30,6 +30,14 @@ class TeamSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'name', 'short_name', 'story', 'city',
                   'year', 'disband_year', 'operational_years',
                   'parent', 'documents')
+
+
+class TeamSeasonSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = TeamSeason
+        fields = ('id', 'name', 'year', 'team', 'season', 'story',
+                  'place', 'played', 'wins', 'draws', 'losses', 'points', 'score')
 
 
 class PersonSeasonSerializer(serializers.ModelSerializer):

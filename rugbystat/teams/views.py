@@ -10,7 +10,7 @@ from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.edit import FormMixin
 
-from .forms import (ImportForm, PersonForm, PersonSeasonForm, TeamForm,
+from .forms import (ImportForm, PersonForm, PersonSeasonForm, TeamForm, TeamSeasonForm,
                     PersonRosterForm, ImportRosterForm)
 from .models import Person, PersonSeason, Team, TeamSeason, TagObject, City
 
@@ -134,6 +134,12 @@ class PersonBySeasonAutocomplete(autocomplete.Select2QuerySetView):
 class TeamUpdateView(UpdateView):
     model = Team
     form_class = TeamForm
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        form = TeamSeasonForm(initial={'team': self.object})
+        kwargs['season_form'] = form
+        return kwargs
 
 
 class TeamSeasonView(FormMixin, DetailView):

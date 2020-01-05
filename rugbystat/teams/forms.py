@@ -49,8 +49,7 @@ class TeamSeasonForm(forms.ModelForm):
 
         widgets = {
             'team': ModelSelect2Bootstrap(url='autocomplete-teams'),
-            'season': ModelSelect2Bootstrap(url='autocomplete-seasons',
-                                            forward=['year'])
+            'season': ModelSelect2Bootstrap(url='autocomplete-seasons')
         }
 
 
@@ -82,7 +81,7 @@ class PersonForm(forms.ModelForm):
 
 class PersonSeasonForm(forms.ModelForm):
     """Edit PersonSeason attributes"""
-    story = forms.CharField(label=_('Комментарии'), widget=forms.Textarea)
+    story = forms.CharField(label=_('Комментарии'), widget=forms.Textarea, required=False)
 
     class Meta:
         model = PersonSeason
@@ -138,5 +137,5 @@ class ImportRosterForm(forms.Form):
 
     def clean(self):
         data = super(ImportRosterForm, self).clean()
-        # parse_rosters(self.request, data)
-        parse_alphabet(self.request, data)
+        parse_rosters(self.request, data)
+        # parse_alphabet(self.request, data)
