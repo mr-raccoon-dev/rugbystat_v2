@@ -226,7 +226,7 @@ class Match(TagObject):
     
     def update_match_name(self):
         date = self.date_unknown
-        if self.date:
+        if self.date and not date:
             date = self.date.strftime("%Y-%m-%d")
 
         self.display_name = self._get_name_from_score()
