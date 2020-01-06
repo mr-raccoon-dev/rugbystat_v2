@@ -508,7 +508,7 @@ SELECT tt.tagobject_ptr_id as team_id, t.name as base_name, tn.name as given, c.
  INNER JOIN teams_tagobject t ON t.id=tt.tagobject_ptr_id
   LEFT OUTER JOIN teams_teamname tn ON tt.tagobject_ptr_id=tn.team_id
   LEFT OUTER JOIN teams_city c on c.id=tt.city_id
- WHERE (base_name LIKE '{lookup}%' OR given LIKE '{lookup}%');"""
+ WHERE (t.name LIKE '{lookup}%' OR tn.name LIKE '{lookup}%');"""
     
     if year:
         condition = f" AND tt.year <= {year} AND tt.disband_year >= {year};"
