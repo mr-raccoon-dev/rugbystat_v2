@@ -100,7 +100,7 @@ class MatchAdmin(MarkdownxModelAdmin):
     list_filter = (('tourn_season__name', DropdownFilter), DateListFilter,)
     fieldsets = (
         (None, {'fields': ('name', 'display_name')}),
-        (None, {'fields': (('tourn_season', 'date'), )}),
+        (None, {'fields': (('tourn_season', 'date', 'date_unknown'), )}),
         (None, {'fields': ('home', 'away', )}),
         (None, {'fields': (('home_score', 'away_score',),
                            ('home_halfscore', 'away_halfscore',), )}),

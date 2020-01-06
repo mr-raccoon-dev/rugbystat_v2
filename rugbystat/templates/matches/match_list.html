@@ -1,5 +1,5 @@
 <ul>
 {% for match in matches %}
-  <li>{{ match.date|default:"???" }} <a href="{{ match.get_absolute_url }}">{{ match.display_name }}</a></li>
+  <li>{{ match.get_date }} <a href="{{ match.get_absolute_url }}">{{ match.display_name }}</a></li>
 {% endfor %}
 </ul>

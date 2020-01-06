@@ -1,3 +1,4 @@
+from babel.dates import format_date
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -145,7 +146,7 @@ class Group(models.Model):
         qs = self.season.matches.filter(home__in=teams, away__in=teams)
         qs = qs.exclude(date__lt=self.date_start)
         qs = qs.exclude(date__gt=self.date_end)
-        return qs
+        return qs.order_by('date', 'pk')
 
 
 class Match(TagObject):
@@ -157,7 +158,7 @@ class Match(TagObject):
         verbose_name="Дата, если неизвестна",
         max_length=64, blank=True, null=True,
     )
-    display_name = models.CharField(verbose_name="Отображение", max_length=255)
+    display_name = models.CharField(verbose_name="Отображение", max_length=255, blank=True)
     tourn_season = models.ForeignKey(
         Season, verbose_name=_("Турнир"), related_name="matches", blank=True, null=True
     )
@@ -181,6 +182,11 @@ class Match(TagObject):
     def __str__(self):
         return self.name
 
+    def save(self, **kwargs):
+        if not self.pk:
+            self.update_match_name()
+        super(Match, self).save(**kwargs)
+
     def _get_names_for_date(self):
         """Return teams names for a match date"""
         if self.date:
@@ -190,7 +196,6 @@ class Match(TagObject):
             home = self.home.short_name
             away = self.away.short_name
         return home, away
-        
 
     def _get_name_from_score(self):
         home_score = "??" if self.home_score is None else self.home_score
@@ -220,7 +225,7 @@ class Match(TagObject):
         return name
     
     def update_match_name(self):
-        date = ""
+        date = self.date_unknown
         if self.date:
             date = self.date.strftime("%Y-%m-%d")
 
@@ -228,11 +233,6 @@ class Match(TagObject):
         self.name = "{} {}".format(date, self.display_name)
         return self
     
-    def save(self, **kwargs):
-        if not self.pk:
-            self.update_match_name()
-        super(Match, self).save(**kwargs)
-
     def get_absolute_url(self):
         lap = self.tourn_season._get_lap().replace("/", "-")
         return reverse(
@@ -259,3 +259,11 @@ class Match(TagObject):
         h_href = f'<a href="{home_link}">{home.strip()}</a>'
         a_href = f'<a href="{away_link}">{away.strip()}</a>'
         return f" {self._delimiter} ".join([h_href, a_href, score.strip()])
+
+    def get_date(self):
+        """Unknown field always has priority."""
+        if self.date_unknown:
+            date = f"{self.date_unknown}."
+        else:
+            date = format_date(self.date, format='long', locale='ru').replace(' г.', '.')
+        return date

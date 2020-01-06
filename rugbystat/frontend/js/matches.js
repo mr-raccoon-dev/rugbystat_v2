@@ -53,5 +53,4 @@ $('#submitMatchForm').click(function() {
   });
 });
 
-
 });

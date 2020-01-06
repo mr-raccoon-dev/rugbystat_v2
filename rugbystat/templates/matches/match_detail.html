@@ -28,10 +28,14 @@
 
 {% block content %}
 
-<h2 id="name"><a href="{{ object.tourn_season.get_absolute_url }}">{{ object.tourn_season }}</a></h2>
+<h3 id="name"><a href="{{ object.tourn_season.get_absolute_url }}">{{ object.tourn_season }}</a></h3>
 
-{{ object.date }}
-{{ object.get_display_with_links | safe }}
+<div class="date">
+  {{ object.get_date }}
+</div>
+<div class="main-line">
+  {{ object.get_display_with_links | safe }}
+</div>
 
 <article>{{ object.story | markdown }}</article>
 
