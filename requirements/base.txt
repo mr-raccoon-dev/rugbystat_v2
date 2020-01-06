@@ -44,6 +44,7 @@ diskcache==2.3.0
 
 # Time zones support
 pytz==2016.10
+babel==2.8.0
 
 # Other libs
 fuzzywuzzy[speedup] == 0.17.0

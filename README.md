@@ -72,6 +72,12 @@ travis encrypt $(heroku auth:token) --add deploy.api_key
 # Use staging DB locally
 
 ```bash
+mysqldump -u rugbystat -h rugbystat.mysql.pythonanywhere-services.com 'rugbystat$staging_db' --skip-extended-insert --compact > rugbystat`date +%Y-%m-%d`.sql
+cd ~
+./mysql2sqlite ~/Downloads/rugbystat2020-01-05.sql | sqlite3 ~/Projects/rugbystat_v2/rugbystat/rugbystat.sqlite.db
+
+# or
+
 mysqldump -u rugbystat -h rugbystat.mysql.pythonanywhere-services.com 'rugbystat$staging_db' --compatible=postgres > rugbystat`date +%Y-%m-%d`.sql
 
 cat rugbystat*.sql | docker exec -i rugbystat_v2_db_1 mysql -u root --password=123 rugbystat
@@ -79,3 +85,12 @@ cat rugbystat*.sql | docker exec -i rugbystat_v2_db_1 mysql -u root --password=1
 use rugbystat;
 source /var/lib/mysql/rugbystat.sql
 ```
+
+# Flow
+
+- add TeamSeason (displayed on team's page)
+- add Group (represents table)
+- add GroupSeason for round-robin (represents table row)
+- ...or Group.teams to display knockout matches
+- add match...
+
