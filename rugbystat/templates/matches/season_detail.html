@@ -32,6 +32,30 @@
 
 <article>{{ object.story | markdown }}</article>
 
+{% if user.is_authenticated %}
+<form role="form" id="parseTable" class="addForm"
+      method="POST" action="{% url 'import_table' %}">
+  {% csrf_token %}
+<div class="form-inputs">
+  <div class="form-group row">
+    <input type="hidden" 
+      name="season" 
+      id="id_season" 
+      value="{{ object.pk }}">
+
+    <div class="col-sm-12">
+      {% render_field import_form.raw class+="form-control" %}
+    </div>
+  </div>
+  <div class="pull-right">
+    <input class="btn btn-default submitForm" 
+            id="submitImportForm" 
+            type="submit"/>
+  </div>
+</div>
+</form>
+{% endif %}
+
 {% for group in object.groups.all %}
 {% include 'matches/season_table.html' with object=group %}
 {% empty %}
@@ -43,15 +67,15 @@
 {% csrf_token %}
 
 <div id="formErrors">
-  {% if form.errors %}
-      {{ form.non_field_errors }}
-      {% for field in form %}
+  {% if match_form.errors %}
+    {{ match_form.non_field_errors }}
+    {% for field in match_form %}
       <div class="fieldError">
           {{ field.errors }}
       </div>
-      {% endfor %}
+    {% endfor %}
   {% endif %}
-  </div>
+</div>
   
 <h3>Добавить матч</h3>
 <div class="form-inputs">

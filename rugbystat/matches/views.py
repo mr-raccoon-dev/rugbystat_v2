@@ -1,10 +1,12 @@
 from dal import autocomplete
 from django.core.urlresolvers import reverse_lazy
 from django.db.models import Q
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.generic import (CreateView, ListView, DetailView,
                                   YearArchiveView)
 
+from matches.models import Group
+from matches.forms import TableImportForm, GroupImportForm
 from .forms import ImportForm, SeasonForm, MatchForm
 from .models import Tournament, Season, Match
 
@@ -64,6 +66,27 @@ def import_seasons(request):
                   })
 
 
+def import_table(request):
+    if request.method == 'POST':
+        if 'group' in request.POST:
+            cls = GroupImportForm
+        else:
+            cls = TableImportForm
+        form = cls(request.POST, request=request)
+        if form.is_valid():
+            print('OK')
+            seasons, matches = form.table_data
+            for season in seasons:
+                season.save()
+            for match in matches:
+                match.save()
+            return redirect(form.season)
+        else:
+            print(form.errors)
+    return render(request, 'import.html', {'form': form})
+
+
+
 class SeasonCreateView(CreateView):
     model = Season
     form_class = SeasonForm
@@ -99,6 +122,7 @@ class SeasonDetailView(DetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['match_form'] = MatchForm(initial={'tourn_season': ctx['object']})
+        ctx['import_form'] = TableImportForm(initial={'season': ctx['object']})
 
         qs = Season.objects.filter(tourn=self.object.tourn)
         ctx['prev'] = qs.filter(date_end__lt=self.object.date_end).last()

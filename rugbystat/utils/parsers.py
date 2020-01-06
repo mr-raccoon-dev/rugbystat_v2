@@ -1,17 +1,23 @@
+import copy
 import datetime
 import functools as ft
+import itertools as it
 import logging
 import operator
 import re
+from collections import namedtuple
 from difflib import SequenceMatcher as SM
 
 from django.contrib.messages import success
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db import connection
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
+from fuzzywuzzy import fuzz
 
-from matches.models import Season, Tournament
-from teams.models import Team, City, Person, PersonSeason
+from matches.models import Group, Season, Tournament
+from teams.models import City, Person, PersonSeason, Team, TeamName, TeamSeason, GroupSeason
 
 logger = logging.getLogger("django.request")
 POSITIONS = {
@@ -184,11 +190,14 @@ class LineImporter:
         if not team_instance:
             logger.warning(f"No team found for {team}")
         for season in seasons[1:-1].split(','):
-            self.m2m.append(PersonSeason(person=self.p,
+            self.m2m.append(
+                PersonSeason(
+                    person=self.p,
                     season_id=self.seasons[season.strip()].pk,
                     team_id=team_instance.id,
                     year=season.strip(),
-                ))
+                )
+            )
 
     def get_team_instance(self, name):
         qs = Team.objects.filter(year__lt=1950)
@@ -205,8 +214,8 @@ def reduce_qs(qs, search_term):
             'short_name__icontains',
             'names__name__icontains',
             'city__name__istartswith',
-            )
-        ]
+        )
+    ]
     return qs.filter(ft.reduce(operator.or_, queries))
 
 
@@ -373,18 +382,43 @@ def find_dates(txt, year):
         return None, None
 
 
-def parse_table(data, request):
+def parse_table(data, season, group):
     team_seasons, matches = {}, {}
 
-    for line in data.split("\n"):
-        if line.startswith("-"):
-            continue
-        season = parse_line(line.strip())
-    print(season)
+    parser = SimpleTable.build(data).find_columns().find_teams(season.date_start.year)
+    print(vars(parser))
+    team_seasons = parser.build_teams(season.pk, group.pk)
     return team_seasons, matches
 
 
-def parse_line(line):
+class TableRow:
+    def __init__(self, **kwargs):
+        self.place = kwargs.get('place', '')
+        self.name = kwargs.get('name')
+        self.wins = kwargs.get('w')
+        self.draws = kwargs.get('d')
+        self.losses = kwargs.get('l')
+        self.score = kwargs.get('score', '')
+        self.points = kwargs.get('points')
+        self.team_id = kwargs.get('team_id')
+
+    def __repr__(self):
+        return f"TableRow(place={self.place}, name={self.name}, team_id={self.team_id})"
+    
+    def __str__(self):
+        return f"{self.place}. {self.name} ({self.team_id})"
+
+    def build(self, season=None, group=None):
+        if season:
+            cls = TeamSeason
+            kwargs = {'season_id': season}
+        if group:
+            cls = GroupSeason
+            kwargs = {'group_id': group}
+        return cls(**vars(self), **kwargs)
+
+
+class SimpleTable:
     """
     line may be any representation in table:
 
@@ -398,32 +432,100 @@ def parse_line(line):
     .. РАФ Елгава
 
     """
-    place, rest = line.split(".", 1)
-    nameparts = TEAM_NAME.findall(rest)
 
-    if nameparts:
-        # we got a team:
-        # ['Спартак', 'Ленинград']
-        # ['СТАКЛЕС', 'Каунас']
-        # ['Крылья', 'Советов', 'Москва']
-        # ['Скра']
-        qs = Team.objects.filter(name__icontains=nameparts[0])
-        match = find_team_name_match(qs, nameparts)
-        if match:
-            return match, rest
+    def __init__(self, lines):
+        self._lines = lines
+        self._teams = []
+        self._column_marks = []
+        self._column_parts = []
+
+    @classmethod
+    def build(cls, txt):
+        _list = []
+        for line in txt.split("\n"):
+            if line.startswith("-") or not line.strip():
+                continue
+            _list.append(line.strip())
+        return cls(_list).find_columns()
+
+    def find_columns(self):
+        """Every line must be approx the same width, we need to define columns."""
+        lens = []
+        for line in self._lines:
+            marks = self._mark_columns(line)
+            self._column_marks.append(marks)
+            lens.append(len(marks))
+
+        longest_marks = self._column_marks[lens.index(max(lens))]
+        for line in self._lines:
+            self._column_parts.append(self._split_line(line, longest_marks))
+        return self
+
+    @staticmethod
+    def _mark_columns(line):
+        previous_idx = -100
+        bounds = []
+        for idx, letter in enumerate(line):
+            if letter == ' ':
+                if previous_idx + 1 == idx:
+                    # consecutive whitespace found
+                    if bounds and bounds[-1] == previous_idx:
+                        bounds[-1] += 1
+                    else:
+                        bounds.append(idx)
+                previous_idx = idx
+        return bounds
+
+    @staticmethod
+    def _split_line(line, marks):
+        if marks:
+            start, end = it.tee(marks)
+            next(end)
+            return [line[i:j].strip() for i, j in it.zip_longest(start, end)]
+
+    def find_teams(self, year=None):
+        for line, marks in zip(self._lines, self._column_marks):
+            if marks:
+                line = line[:marks[0]]
+            place, team = line.split(".", 1)
+            team = team.strip().replace('"', '')
+            team_id = find_team_name_match(team.strip(), year)
+            row = TableRow(place=place.strip(), name=team, team_id=team_id)
+            self._teams.append(row)
+        return self
+
+    def build_teams(self, season=None, group=None):
+        return [t.build(season, group) for t in self._teams]
 
 
-def find_team_name_match(queryset, nameparts):
+def find_team_name_match(search_name, year=None):
     """
-    Find the most suitable instance by SequenceMatcher from queryset.
+    Find the most suitable instance by base name and given names.
     """
+    sql = """
+SELECT tt.tagobject_ptr_id as team_id, t.name as base_name, tn.name as given, c.name as city
+  FROM teams_team tt
+ INNER JOIN teams_tagobject t ON t.id=tt.tagobject_ptr_id
+  LEFT OUTER JOIN teams_teamname tn ON tt.tagobject_ptr_id=tn.team_id
+  LEFT OUTER JOIN teams_city c on c.id=tt.city_id
+ WHERE (base_name LIKE '{lookup}%' OR given LIKE '{lookup}%');"""
+    
+    if year:
+        condition = f" AND tt.year <= {year} AND tt.disband_year >= {year};"
+        sql = sql[:-1] + condition
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql.format(lookup=search_name[:3]))
+        res = cursor.fetchall()
+        print(res)
+
     ratios = [
-        SM(None, "{} {}".format(obj.name, obj.city.name), " ".join(nameparts)).ratio()
-        for obj in queryset
+        fuzz.token_set_ratio(search_name, f"{obj[2] or obj[1]} {obj[3]}")
+        for obj in res
     ]
 
-    if ratios and max(ratios) > 0.6:
-        found = queryset[ratios.index(max(ratios))]
+    if ratios and max(ratios) > 60:
+        found = res[ratios.index(max(ratios))][0]
     else:
         found = None
     return found

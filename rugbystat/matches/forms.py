@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 from django import forms
 
 from utils.parsers import parse_season, parse_table
@@ -61,6 +63,22 @@ class ImportForm(forms.Form):
 
 
 class TableImportForm(ImportForm):
+    season = forms.IntegerField(widget=forms.HiddenInput())
+
     def clean(self):
-        data = super(ImportForm, self).clean()
-        self.table_data = parse_table(data['raw'], self.request)
+        data = super(forms.Form, self).clean()
+        season_id = self.request.POST['season']
+        group = namedtuple('FakeGroup', 'pk')(None)
+        self.season = Season.objects.get(pk=season_id)
+        self.table_data = parse_table(data['raw'], self.season, group)
+
+
+class GroupImportForm(ImportForm):
+    group = forms.IntegerField(widget=forms.HiddenInput())
+
+    def clean(self):
+        data = super(forms.Form, self).clean()
+        group_id = self.request.POST['group']
+        group = Group.objects.get(pk=group_id)
+        self.season = group.season
+        self.table_data = parse_table(data['raw'], self.season, group)

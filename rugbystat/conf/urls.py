@@ -14,7 +14,7 @@ from clippings.viewsets import (DocumentViewSet,
                                 SourceViewSet,
                                 SourceObjectViewSet)
 from main import views
-from matches.views import (import_seasons,
+from matches.views import (import_seasons, import_table,
                            SeasonCreateView, SeasonDetailView, SeasonYearView,
                            MatchDetailView,
                            TournamentListView, TournamentDetailView,
@@ -51,6 +51,7 @@ urlpatterns = [
     url(r'^markdownx/', include('markdownx.urls')),
     url(r'^import-teams/', import_teams),
     url(r'^import-seasons/', import_seasons, name='import_seasons'),
+    url(r'^import-table/', import_table, name='import_table'),
     url(r'^dropbox-webhook/', import_from_dropbox),
 
     url(r'^autocomplete-tags/$', TagAutocomplete.as_view(),
