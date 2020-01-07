@@ -409,6 +409,7 @@ class TableRow:
         return f"{self.place}. {self.name} ({self.team_id})"
 
     def build(self, season=None, group=None):
+        """Return Django model instance."""
         if season:
             cls = TeamSeason
             kwargs = {'season_id': season}
@@ -502,25 +503,40 @@ def find_team_name_match(search_name, year=None):
     """
     Find the most suitable instance by base name and given names.
     """
-    sql = """
-SELECT tt.tagobject_ptr_id as team_id, t.name as base_name, tn.name as given, c.name as city
+    condition = ""
+    if year:
+        condition += f" AND year <= {year} AND disband_year >= {year}"
+
+    base_name = """SELECT tt.tagobject_ptr_id as team_id, t.name as team_name, c.name as city, tt.year, tt.disband_year
   FROM teams_team tt
  INNER JOIN teams_tagobject t ON t.id=tt.tagobject_ptr_id
-  LEFT OUTER JOIN teams_teamname tn ON tt.tagobject_ptr_id=tn.team_id
   LEFT OUTER JOIN teams_city c on c.id=tt.city_id
- WHERE (t.name LIKE '{lookup}%' OR tn.name LIKE '{lookup}%');"""
-    
-    if year:
-        condition = f" AND tt.year <= {year} AND tt.disband_year >= {year};"
-        sql = sql[:-1] + condition
+ WHERE t.name LIKE '{name}%'{condition}"""
 
     with connection.cursor() as cursor:
-        cursor.execute(sql.format(lookup=search_name[:3]))
+        sqlite_ver = "strftime('%Y', from_day) as year, strftime('%Y', to_day) as disband_year"
+        extract_years = "extract(year from from_day) as year, extract(year from to_day) as disband_year"
+        if cursor.db.client_class.executable_name == 'sqlite3':
+            extract_years = sqlite_ver
+
+        given_names = (
+            f"SELECT team_id, teams_teamname.name as team_name, c.name as city, {extract_years}" + """
+  FROM teams_teamname
+ INNER JOIN teams_team tt ON tt.tagobject_ptr_id=teams_teamname.team_id
+ INNER JOIN teams_city c ON c.id = tt.city_id
+ WHERE teams_teamname.name LIKE '{name}%'{condition}""")
+
+        sql = f"""SELECT * FROM (
+ {base_name}
+  UNION ALL
+ {given_names}
+) as u;"""
+        sql = sql.format(name=search_name[:3], condition=condition)
+        cursor.execute(sql)
         res = cursor.fetchall()
-        print(res)
 
     ratios = [
-        fuzz.token_set_ratio(search_name, f"{obj[2] or obj[1]} {obj[3]}")
+        fuzz.token_set_ratio(search_name, f"{obj[1]} {obj[2]}")
         for obj in res
     ]
 

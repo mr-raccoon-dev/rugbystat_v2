@@ -76,6 +76,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
+        'rugbystat': {
+            'handlers': ['applogfile', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
         'rq.worker': {
             'handlers': ['rq_console'],
             'level': 'DEBUG'

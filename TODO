@@ -1,13 +1,12 @@
 Import TeamRoster - messages framework; display only for admin
 
-check custom sql!
+which thumb results in LookupError?
 
 http://rugbystat.pythonanywhere.com/teams/3/ - добавить сезон
 http://rugbystat.pythonanywhere.com/admin/matches/group/3/change/ - team for group season queryset
 person add season - all but season
 
 match form displays teams short name, not season name
-Match.form - what if no ref? Ref must be MatchDetail attribute?
 
 Document.dimensions
 
@@ -31,8 +30,6 @@ All forms appear and sent only via logged in users
 If user is unauthenticated - show him popup with login button
 
 ImportForm for batch adding PersonSeason for a team roster
-Person.story - WYSIWYG-widget and safe
-Team.story - WYSIWYG-widget and safe
 
 DocumentEditForm?
 

@@ -1,5 +1,8 @@
+import logging
+
 from dal import autocomplete
 from django.core.urlresolvers import reverse_lazy
+from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views.generic import (CreateView, ListView, DetailView,
@@ -9,6 +12,8 @@ from matches.models import Group
 from matches.forms import TableImportForm, GroupImportForm
 from .forms import ImportForm, SeasonForm, MatchForm
 from .models import Tournament, Season, Match
+
+logger = logging.getLogger('rugbystat')
 
 
 class TournamentAutocomplete(autocomplete.Select2QuerySetView):
@@ -77,9 +82,17 @@ def import_table(request):
             print('OK')
             seasons, matches = form.table_data
             for season in seasons:
-                season.save()
+                try:
+                    season.save()
+                except IntegrityError:
+                    logger.error(f'Cant save {vars(season)}')
+
             for match in matches:
-                match.save()
+                try:
+                    match.save()
+                except IntegrityError:
+                    logger.error(f'Cant save {vars(match)}')
+
             return redirect(form.season)
         else:
             print(form.errors)
