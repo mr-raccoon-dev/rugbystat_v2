@@ -1,23 +1,19 @@
-import copy
 import datetime
 import functools as ft
 import itertools as it
 import logging
 import operator
 import re
-from collections import namedtuple
 from difflib import SequenceMatcher as SM
 
 from django.contrib.messages import success
 from django.contrib import messages
-from django.core.exceptions import ValidationError
 from django.db import connection
-from django.db.models import Q, Value
-from django.db.models.functions import Concat
+from django.db.models import Q
 from fuzzywuzzy import fuzz
 
-from matches.models import Group, Season, Tournament
-from teams.models import City, Person, PersonSeason, Team, TeamName, TeamSeason, GroupSeason
+from matches.models import Season, Tournament
+from teams.models import City, Person, PersonSeason, Team, TeamSeason, GroupSeason
 
 logger = logging.getLogger("django.request")
 POSITIONS = {
@@ -120,7 +116,7 @@ def parse_alphabet(request, data):
 
 class LineImporter:
     pattern = re.compile(r"(?P<name>(?:[А-Я][а-я.]*\s*){1,3})(?P<year>\(\d+\) )?— (?P<teams>(([A-Яа-я ]+) (?P<seasons>\((\d+,*\s*)+\)),*\s*)+)(.*)")
-    teams_re = re.compile("(\S+ \S+) (?P<seasons>\((\d+,*\s*)+\)),*\s*")
+    teams_re = re.compile(r"(\S+ \S+) (?P<seasons>\((\d+,*\s*)+\)),*\s*")
 
     def __init__(self, *args, **kwargs):
         self.p = Person()
@@ -268,7 +264,7 @@ def init_date(prefix_year):
 
 
 def init_team(line):
-    expr = "<li>(.+) \(([^-]*)-*([^-]*)\)(.*)"
+    expr = r"<li>(.+) \(([^-]*)-*([^-]*)\)(.*)"
     team_and_city, year_create, year_disband, story = re.findall(expr, line)[0]
     city = team_and_city.split(" ")[-1]
     name = team_and_city[: team_and_city.find(city)].strip().strip("<b>")
@@ -383,12 +379,10 @@ def find_dates(txt, year):
 
 
 def parse_table(data, season, group):
-    team_seasons, matches = {}, {}
-
-    parser = SimpleTable.build(data).find_columns().find_teams(season.date_start.year)
+    parser = SimpleTable.build(data).find_teams(season.date_start.year).find_matches()
     print(vars(parser))
     team_seasons = parser.build_teams(season.pk, group.pk)
-    return team_seasons, matches
+    return team_seasons, parser.matches
 
 
 class TableRow:
@@ -419,6 +413,57 @@ class TableRow:
         return cls(**vars(self), **kwargs)
 
 
+class Match:
+    def __init__(self, *args, **kwargs):
+        self.home_id = kwargs.get('home_id')
+        self.away_id = kwargs.get('away_id')
+        self.home_score = kwargs.get('home_score')
+        self.away_score = kwargs.get('away_score')
+        self.tourn_season_id = kwargs.get('tourn_season_id')
+    
+    def __repr__(self):
+        return (
+            f"Match(home_id={self.home_id}, "
+            + f"away_id={self.away_id}, "
+            + f"home_score={self.home_score}, "
+            + f"away_score={self.away_score}, "
+            + f"tourn_season_id={self.tourn_season_id})"
+        )
+    
+    def __str__(self):
+        return f"{self.away_id} v {self.away_id} - {self.home_score}:{self.away_score}"
+
+    def __eq__(self, other):
+        return (
+            self.home_id == other.away_id
+            and self.away_id == other.home_id
+            and self.home_score == other.away_score
+            and self.away_score == other.home_score
+        )
+
+    @classmethod
+    def from_string(cls, home, away, string):
+        home_score, away_score = None, None
+        if ':' in string:
+            home_score, away_score = string.split(':')
+        if string in {'поб', 'побед', 'выиг'}:
+            home_score, away_score = 1, 0
+        if string in {'пор', 'пораж', 'проиг'}:
+            home_score, away_score = 0, 1
+        if string in {'нич', 'ничья'}:
+            home_score, away_score = 1, 1
+        return cls(
+            home_id=home.team_id,
+            away_id=away.team_id,
+            home_score=home_score,
+            away_score=away_score,
+        )
+
+
+EDGE = "xxxxx"
+EDGE_RU = "ххххх"
+
+
 class SimpleTable:
     """
     line may be any representation in table:
@@ -437,6 +482,7 @@ class SimpleTable:
     def __init__(self, lines):
         self._lines = lines
         self._teams = []
+        self._matches = {}
         self._column_marks = []
         self._column_parts = []
 
@@ -480,7 +526,7 @@ class SimpleTable:
     @staticmethod
     def _split_line(line, marks):
         if marks:
-            start, end = it.tee(marks)
+            start, end = it.tee(marks)  
             next(end)
             return [line[i:j].strip() for i, j in it.zip_longest(start, end)]
 
@@ -495,8 +541,65 @@ class SimpleTable:
             self._teams.append(row)
         return self
 
+    def find_matches(self):
+        total = len(self._teams)
+        for team_idx in range(0, total):
+            start_idx = 0
+            parts = self._column_parts[team_idx]
+            if parts[team_idx] in {EDGE, EDGE_RU}:
+                self._parse_matches(total, parts, team_idx)
+                start_idx = total
+            # parse games part: ['12 1 1', 'xxx-xx', '25']
+            self._parse_standings(parts, start_idx, team_idx)
+        return self
+
+    def _parse_matches(self, num_teams, match_parts, team_idx):
+        for match_idx in range(team_idx, num_teams):
+            match_str = match_parts[match_idx]
+            if match_str and match_str not in {EDGE, EDGE_RU}:
+                match = Match.from_string(
+                    self._teams[team_idx],
+                    self._teams[match_idx],
+                    match_str,
+                )
+                self._matches[(team_idx, match_idx)] = match
+
+    def _parse_standings(self, match_parts, start_idx, team_idx):
+        first = match_parts[start_idx]
+        to_parse = match_parts[start_idx+1:]
+        team = self._teams[team_idx]
+        if ' ' in first:
+            w_d_l = first.split()
+            w_d_l.extend(to_parse)
+            to_parse = w_d_l
+        else:
+            to_parse.insert(0, first)
+
+        if len(to_parse) >= 3:
+            team.wins = to_parse[0]
+            team.draws = to_parse[1]
+            team.losses = to_parse[2]
+            to_parse = to_parse[3:]
+
+        if len(to_parse) == 1:
+            team.points = to_parse[0]
+
     def build_teams(self, season=None, group=None):
         return [t.build(season, group) for t in self._teams]
+
+    @property
+    def matches(self):
+        two_legged = True
+        to_return = []
+        for (i, j), match in self._matches.items():
+            if j > i:
+                if match == self._matches.get((j, i)):
+                    two_legged = False
+                to_return.append(match)
+            if two_legged:
+                if i > j:
+                    to_return.append(match)
+        return to_return
 
 
 def find_team_name_match(search_name, year=None):

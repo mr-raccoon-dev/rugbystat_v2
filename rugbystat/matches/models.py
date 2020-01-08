@@ -207,6 +207,9 @@ class Match(TagObject):
         if away_score == 1:
             away_score = "в"
             home_score = "п"
+        if home_score == 1 and away_score == 1:
+            away_score = "н"
+            home_score = "н"
 
         teams_names = self._get_names_for_date()
         teams_names = f" {self._delimiter} ".join(teams_names)
@@ -223,7 +226,7 @@ class Match(TagObject):
             name = "{} ({}:{})".format(name, home_halfscore, away_halfscore)
 
         return name
-    
+
     def update_match_name(self):
         date = self.date_unknown
         if self.date and not date:
@@ -232,7 +235,7 @@ class Match(TagObject):
         self.display_name = self._get_name_from_score()
         self.name = "{} {}".format(date, self.display_name)
         return self
-    
+
     def get_absolute_url(self):
         lap = self.tourn_season._get_lap().replace("/", "-")
         return reverse(
@@ -253,7 +256,7 @@ class Match(TagObject):
             team__in=[self.home, self.away]
         )
         ts_instances = {ts.team_id: ts for ts in ts_qs}
-        
+
         home_link = ts_instances[self.home_id].get_absolute_url()
         away_link = ts_instances[self.away_id].get_absolute_url()
         h_href = f'<a href="{home_link}">{home.strip()}</a>'

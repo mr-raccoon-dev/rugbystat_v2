@@ -104,6 +104,7 @@ class MatchAdmin(MarkdownxModelAdmin):
         (None, {'fields': ('home', 'away', )}),
         (None, {'fields': (('home_score', 'away_score',),
                            ('home_halfscore', 'away_halfscore',), )}),
+        (None, {'fields': ('story', )}),
     )
 
     def response_change(self, request, obj):

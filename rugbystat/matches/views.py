@@ -8,8 +8,8 @@ from django.shortcuts import redirect, render
 from django.views.generic import (CreateView, ListView, DetailView,
                                   YearArchiveView)
 
-from matches.models import Group
 from matches.forms import TableImportForm, GroupImportForm
+
 from .forms import ImportForm, SeasonForm, MatchForm
 from .models import Tournament, Season, Match
 
@@ -97,7 +97,6 @@ def import_table(request):
         else:
             print(form.errors)
     return render(request, 'import.html', {'form': form})
-
 
 
 class SeasonCreateView(CreateView):
