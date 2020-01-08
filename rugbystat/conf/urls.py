@@ -94,7 +94,7 @@ urlpatterns = [
     url(r'^persons/new/', PersonCreateView.as_view(), name='persons_new'),
 
     url(r'^clippings/', views.clippings_view, name='clippings'),
-    url(r'^$', views.main_view),
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('tournaments'), permanent=False)),
 
     # the 'api-root' from django rest-frameworks default router
     # http://www.django-rest-framework.org/api-guide/routers/#defaultrouter

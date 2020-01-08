@@ -31,6 +31,22 @@ class Tournament(TagObject):
     def get_absolute_url(self):
         return reverse("tournament_detail", kwargs={"pk": self.pk})
 
+    def get_name_with_seasons(self):
+        """Iterate on all related seasons to find first and last.
+
+        E.g. Чемпионат СССР (1936-1991)"""
+        all_seasons = list(self.seasons.all())
+        try:
+            first = all_seasons[0]
+            last = all_seasons[-1]
+
+            years = first.date_start.year
+            if last.date_end.year != years:
+                years = f'{years}-{last.date_end.year}'
+        except IndexError:
+            years = "-"
+
+        return f'{self.name} ({years})'
 
 class Season(TagObject):
     """Each specific drawing of a Tournament"""

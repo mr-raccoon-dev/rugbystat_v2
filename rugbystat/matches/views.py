@@ -115,6 +115,7 @@ class SeasonYearView(YearArchiveView):
 class TournamentListView(ListView):
     """Base list of all Tournaments"""
     model = Tournament
+    queryset = Tournament.objects.prefetch_related('seasons')
 
     def get_context_data(self, **kwargs):
         ctx = super(TournamentListView, self).get_context_data(**kwargs)

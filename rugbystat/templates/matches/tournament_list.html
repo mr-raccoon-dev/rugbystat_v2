@@ -12,7 +12,7 @@
   {% for obj in object_list %}
     <li> <a class="link" 
             href="{{ obj.get_absolute_url }}">
-            {{ obj.name }}
+            {{ obj.get_name_with_seasons }}
          </a>
     </li>
   {% endfor %}
