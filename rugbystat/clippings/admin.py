@@ -1,7 +1,9 @@
 from django.contrib import admin, messages
 
+from main.admin import CrossLinkMixin
 from main.filters import DropdownFilter
 from teams.forms import TagThroughForm
+
 from .forms import SourceForm
 from .models import Source, SourceObject, Document
 
@@ -25,7 +27,7 @@ class TagInline(admin.TabularInline):
 
 
 @admin.register(Document)
-class DocumentAdmin(admin.ModelAdmin):
+class DocumentAdmin(CrossLinkMixin, admin.ModelAdmin):
     list_display = (
         'id', 'title', 'source', 'kind', 'preview'
     )
@@ -43,7 +45,7 @@ class DocumentAdmin(admin.ModelAdmin):
     action_form = SourceForm
     actions = ['set_source_action']
 
-    readonly_fields = ('preview', 'versions', 'tag')
+    readonly_fields = ('preview', 'versions', 'tag_links')
     # filter_horizontal = ('versions', )
     fieldsets = (
         (None, {
@@ -63,7 +65,7 @@ class DocumentAdmin(admin.ModelAdmin):
             }
         ),
         (None, {
-            'fields': ('versions', 'tag')
+            'fields': ('versions', 'tag_links')
             }
         ),
         (None, {
@@ -83,6 +85,10 @@ class DocumentAdmin(admin.ModelAdmin):
             return '<img src="{}"/>'.format(obj.dropbox_thumb)
         return '-'
     preview.allow_tags = True
+
+    def tag_links(self, obj):
+        return self._get_admin_links(obj.tag.all())
+    tag_links.short_description = 'Tags'
 
     def set_source_action(self, request, queryset):
         source = request.POST['source']
