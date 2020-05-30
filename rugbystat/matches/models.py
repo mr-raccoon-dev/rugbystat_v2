@@ -48,6 +48,7 @@ class Tournament(TagObject):
 
         return f'{self.name} ({years})'
 
+
 class Season(TagObject):
     """Each specific drawing of a Tournament"""
 
@@ -195,12 +196,16 @@ class Match(TagObject):
         verbose_name=_("1 тайм гостей"), blank=True, null=True
     )
 
+    # в случае потасовки на поле возможно поражение ОБЕИМ командам
+    technical = models.BooleanField(verbose_name=_("Технический результат"), default=False)
+    tech_home_loss = models.BooleanField(verbose_name=_("Поражение хозяевам"), default=False)
+    tech_away_loss = models.BooleanField(verbose_name=_("Поражение гостям"), default=False)
+
     def __str__(self):
         return self.name
 
     def save(self, **kwargs):
-        if not self.pk:
-            self.update_match_name()
+        self.update_match_name()
         super(Match, self).save(**kwargs)
 
     def _get_names_for_date(self):
@@ -213,20 +218,25 @@ class Match(TagObject):
             away = self.away.short_name
         return home, away
 
-    def _get_name_from_score(self):
-        home_score = "??" if self.home_score is None else self.home_score
-        away_score = "??" if self.away_score is None else self.away_score
+    def _get_score(self):
+        if self.technical:
+            home_score = "+" if self.tech_away_loss else "-"
+            away_score = "+" if self.tech_home_loss else "-"
+        elif self.tech_home_loss:
+            home_score, away_score = "п", "в"
+        elif self.tech_away_loss:
+            home_score, away_score = "в", "п"
+        else:
+            home_score = "??" if self.home_score is None else self.home_score
+            away_score = "??" if self.away_score is None else self.away_score
 
-        if home_score == 1:
-            home_score = "в"
-            away_score = "п"
-        if away_score == 1:
-            away_score = "в"
-            home_score = "п"
+        # TODO: deal with draws without putting 1s into score!
         if home_score == 1 and away_score == 1:
-            away_score = "н"
-            home_score = "н"
+            home_score, away_score = "н", "н"
+        return home_score, away_score
 
+    def _get_name_from_score(self):
+        home_score, away_score = self._get_score()
         teams_names = self._get_names_for_date()
         teams_names = f" {self._delimiter} ".join(teams_names)
         name = "{} {} {}:{}".format(teams_names, self._delimiter, home_score, away_score)

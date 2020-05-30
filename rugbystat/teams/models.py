@@ -260,7 +260,7 @@ class TeamSeason(TableRowFields):
         unique_together = (('team', 'year', 'season'),)
 
     def __str__(self):
-        return "{}: {}".format(self.name, self.season)
+        return self.name
 
     def save(self, **kwargs):
         if not self.year:
