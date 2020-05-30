@@ -1,8 +1,8 @@
-<h3>Документы</h3>
 <table class="table table-striped table-hover" id="documents-table">
   <thead>
     <tr>
       <th>Заголовок</th>
+      <th>Источник</th>
       <th>Описание</th>
       <th>Месяц/Год</th>
       <th>Ссылка</th>
@@ -10,11 +10,17 @@
   </thead>
   <tbody>
     
-  {% for doc in object.documents %}
+  {% for doc in queryset %}
   <tr class="document-row">
     <td> {{ doc.title }} </td>
-    <td> {{ doc.description | default_if_none:""}} </td>
-    <td> {{ doc.date | default_if_none:"" }} </td>
+    <td> {{ doc.source_title | default_if_none:"???" }} </td>
+    <td>{{ doc.description | default_if_none:"" | linebreaksbr }}</td>
+    <td>
+      {% if doc.date %}{{doc.date}}
+      {% elif doc.month %}{{doc.month}}/{{doc.year | default_if_none:""}}
+      {% else %}{{doc.year | default_if_none:""}}
+      {% endif %}
+    </td>
     <td> {% if doc.is_image %}
       <a class="dropbox-link" 
          href="{{ doc.dropbox_path }}">

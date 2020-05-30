@@ -139,6 +139,8 @@ class TeamUpdateView(UpdateView):
         kwargs = super().get_context_data(**kwargs)
         form = TeamSeasonForm(initial={'team': self.object})
         kwargs['season_form'] = form
+        kwargs['seasons'] = self.object.seasons.select_related('season')
+        kwargs['documents'] = self.object.documents.with_source_title()
         return kwargs
 
 
@@ -193,4 +195,6 @@ class PersonUpdateView(UpdateView):
         kwargs = super(PersonUpdateView, self).get_context_data(**kwargs)
         form = PersonSeasonForm(initial={'person': self.object.pk})
         kwargs['season_form'] = form
+        kwargs['seasons'] = self.object.seasons.select_related('season', 'team')
+        kwargs['documents'] = self.object.documents.with_source_title()
         return kwargs

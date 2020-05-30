@@ -1,5 +1,4 @@
 {% load widget_tweaks %}
-{% load table %}
 
 <h3>{{ object.name }}</h3>
 
@@ -52,12 +51,7 @@
          {{ team.name }}
       </a>
     </td>
-    <td>{{ team.played|table }}</td>
-    <td>{{ team.wins|table }}</td>
-    <td>{{ team.draws|table }}</td>
-    <td>{{ team.losses|table }}</td>
-    <td>{{ team.score|table }}</td>
-    <td>{{ team.points|table }}</td>
+    {% include 'matches/table_row.html' with team=team %}
   </tr>
   {% endfor %}
 </tbody></table>

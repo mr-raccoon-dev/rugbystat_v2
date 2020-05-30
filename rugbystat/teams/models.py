@@ -232,8 +232,8 @@ class GroupSeason(TableRowFields):
         super(GroupSeason, self).save(**kwargs)
 
     def get_absolute_url(self):
-        if self.team:
-            return self.group.teams.filter(team=self.team).first().get_absolute_url()
+        if self.team_id:
+            return self.group.teams.filter(team_id=self.team_id).first().get_absolute_url()
 
 
 class TeamSeason(TableRowFields):

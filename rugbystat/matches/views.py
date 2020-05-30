@@ -136,6 +136,7 @@ class SeasonDetailView(DetailView):
         ctx = super().get_context_data(**kwargs)
         ctx['match_form'] = MatchForm(initial={'tourn_season': ctx['object']})
         ctx['import_form'] = TableImportForm(initial={'season': ctx['object']})
+        ctx['documents'] = self.object.documents.with_source_title()
 
         qs = Season.objects.filter(tourn=self.object.tourn)
         ctx['prev'] = qs.filter(date_end__lt=self.object.date_end).last()
@@ -146,3 +147,8 @@ class SeasonDetailView(DetailView):
 class MatchDetailView(DetailView):
     """Details of one Match"""
     model = Match
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['documents'] = self.object.documents.with_source_title()
+        return ctx

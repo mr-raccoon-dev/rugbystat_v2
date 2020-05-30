@@ -154,8 +154,9 @@
 
 {% include '_modal.html' with modal_id="moderationModal" %}
 
-{% if object.documents %}
-  {% include '_documents.html' %}
+{% if documents %}
+<h3>Документы</h3>
+  {% include '_documents.html' with queryset=documents %}
 {% endif %}
 
 <div>

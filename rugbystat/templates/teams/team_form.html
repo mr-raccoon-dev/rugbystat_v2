@@ -243,27 +243,22 @@
   </tr>
 </thead>
 <tbody>
-{% for season in object.seasons.all %}
+{% for season in seasons %}
   <tr class="document-row">
     <td> 
       <a class="link" href="{{ season.get_absolute_url }}">
          {{ season.season }}
       </a>
     </td>
-    <td>{{ season.played|default:"-" }}</td>
-    <td>{{ season.wins|default:"-" }}</td>
-    <td>{{ season.draws|default:"-" }}</td>
-    <td>{{ season.losses|default:"-" }}</td>
-    <td>{{ season.score|default:"-" }}</td>
-    <td>{{ season.points|default:"-" }}</td>
-    <td>{{ season.story | markdown }}</td>
+    {% include 'matches/table_row.html' with team=season %}
   </tr>
 {% endfor %}
 </tbody></table>
 {% endif %}
 
-{% if object.documents %}
-  {% include '_documents.html' %}
+{% if documents %}
+<h3>Документы</h3>
+  {% include '_documents.html' with queryset=documents %}
 {% endif %}
 
 {% include '_modal.html' with modal_id="moderationModal" %}

@@ -43,15 +43,26 @@ var searchDocsManager = {
     process_list: function(data) {
         if(data.count > 0) {
             $.each(data.results, function(iter, item) {
-                if(item.date != null){
-                    var title = item.title + ' (' + item.date + ')'
-                }
-                else{
-                    var title = item.title
-                }
-            
-                var link;
+                if (item.description == null) {
+                    var description = "";
+                } else {
+                    var description = item.description.replace(/(\r\n|\n|\r)/gm, "<br>");
+                };
+
+                if (item.source_title == null) {
+                    var source_title = "???";
+                } else {
+                    var source_title = item.source_title;
+                };
+
                 var year;
+                if (item.month != null) {
+                    year = item.month + '/' + item.year
+                } else {
+                    year = item.year
+                };
+
+                var link;
                 if (item.is_image == true) {
                     link = '<a class="dropbox-link" target="_blank" href="' + item.dropbox_path + 
                     '"><img src="' + item.dropbox_thumb + '"/></a>'
@@ -60,20 +71,9 @@ var searchDocsManager = {
                     '">Нет превью</a>'
                 };
 
-                if (item.month != null) {
-                    year = item.month + '/' + item.year
-                } else {
-                    year = item.year
-                };
-
-                if (item.description == null) {
-                    var description = "";
-                } else {
-                    var description = item.description.replace(/(\r\n|\n|\r)/gm, "<br>");
-                };
-
                 $('#documents-table tbody').append('<tr class="document-row">' + 
                     '<td>' + item.title + '</td>' +
+                    '<td>' + source_title + '</td>' +
                     '<td>' + description + '</td>' +
                     '<td>' + year + '</td>' +
                     '<td>' + link + '</td>' +

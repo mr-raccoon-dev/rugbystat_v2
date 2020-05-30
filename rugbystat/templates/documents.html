@@ -70,35 +70,9 @@
 </div>
 <div id="results">
   <div class="documents-div">
-    <table class="table table-striped table-hover" id="documents-table">
-      <thead>
-        <tr>
-          <th>Заголовок</th>
-          <th>Описание</th>
-          <th>Месяц/Год</th>
-          <th>Ссылка</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for doc in qs %}
-        <tr class="document-row">
-          <td>{{ doc.title }}</td>
-          <td>{{ doc.description | linebreaksbr | default_if_none:"" }}</td>
-          <td>
-            {% if doc.month %}{{doc.month}}/{% endif %}{{doc.year | default_if_none:""}}
-          </td>
-          <td>
-            {% if doc.is_image %}
-            <a class="dropbox-link" target="_blank" href="{{doc.dropbox_path}}">
-              <img src="{{doc.dropbox_thumb}}"/></a>
-            {% else %}
-              <a href="{{doc.dropbox_path}}">Нет превью</a>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+
+    {% include '_documents.html' with queryset=qs.with_source_title %}
+
   </div>
 </div>
 

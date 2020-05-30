@@ -22,13 +22,16 @@ class DocumentSubSerializer(ModelSerializer):
 
 class DocumentSerializer(ModelSerializer):
     versions = DocumentSubSerializer(many=True)
-    # versions = RecursiveField(many=True)
+    source_title = SerializerMethodField()
+
     class Meta:
         model = Document
         fields = ('id', 'title', 'description', 'dropbox_path', 'kind',
                   'dropbox_thumb', 'year', 'month', 'date', 'is_image',
-                  'versions',
-                  )
+                  'versions', 'source_title')
+
+    def get_source_title(self, instance):
+        return getattr(instance, "source_title", "")
 
 
 class SourceObjectSerializer(ModelSerializer):

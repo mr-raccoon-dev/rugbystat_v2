@@ -6,6 +6,7 @@ from datetime import date
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
+from django.db.models import F
 from django.utils.deconstruct import deconstructible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -150,6 +151,9 @@ class DocumentQuerySet(models.QuerySet):
 
     def not_deleted(self):
         return self.filter(is_deleted=False)
+
+    def with_source_title(self):
+        return self.annotate(source_title=F("source__title"))
 
 
 class Document(TitleDescriptionModel, TimeStampedModel):
