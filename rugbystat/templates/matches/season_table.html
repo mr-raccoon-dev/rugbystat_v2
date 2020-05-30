@@ -1,4 +1,5 @@
 {% load widget_tweaks %}
+{% load table %}
 
 <h3>{{ object.name }}</h3>
 
@@ -51,12 +52,12 @@
          {{ team.name }}
       </a>
     </td>
-    <td>{{ team.played|default:"-" }}</td>
-    <td>{{ team.wins|default:"-" }}</td>
-    <td>{{ team.draws|default:"-" }}</td>
-    <td>{{ team.losses|default:"-" }}</td>
-    <td>{{ team.score|default:"-" }}</td>
-    <td>{{ team.points|default:"-" }}</td>
+    <td>{{ team.played|table }}</td>
+    <td>{{ team.wins|table }}</td>
+    <td>{{ team.draws|table }}</td>
+    <td>{{ team.losses|table }}</td>
+    <td>{{ team.score|table }}</td>
+    <td>{{ team.points|table }}</td>
   </tr>
   {% endfor %}
 </tbody></table>
