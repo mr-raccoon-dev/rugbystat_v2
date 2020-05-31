@@ -303,9 +303,9 @@ class TeamSeason(TableRowFields):
         ).filter(tourn_season=self.season)
 
     def get_position(self) -> str:
-        total = self.season.participants
-        if total and self.has_position:
-            pos = self.place or "???"
+        total = self.season.participants or "???"
+        pos = self.place or "???"
+        if self.has_position:
             return f"{pos} из {total}"
         return "-"
 
