@@ -245,9 +245,6 @@ class TeamSeason(TableRowFields):
         verbose_name=_('Год'), blank=True, null=True,
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
     )
-    participants = models.PositiveSmallIntegerField(
-        verbose_name=_('Число участников'), blank=True, null=True,
-    )
     # both `name` and `year` serves only for simpler repr and sql query
     team = models.ForeignKey(
         Team, verbose_name=_('Команда'), related_name='seasons',
@@ -298,9 +295,10 @@ class TeamSeason(TableRowFields):
         ).filter(tourn_season=self.season)
 
     def get_position(self) -> str:
-        if self.participants:
+        total = self.season.participants
+        if total:
             pos = self.place or "???"
-            return f"{pos} из {self.participants}"
+            return f"{pos} из {total}"
         return "-"
 
 

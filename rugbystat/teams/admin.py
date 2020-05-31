@@ -85,8 +85,9 @@ class TeamSeasonAdmin(admin.ModelAdmin):
         (
             None,
             {
-                'fields': ('participants', 'place',
-                    'played', 'wins', 'draws', 'losses', 'points', 'score')
+                'fields': (
+                    'place', 'played', 'wins', 'draws', 'losses', 'points', 'score'
+                )
             }
         ),
         (

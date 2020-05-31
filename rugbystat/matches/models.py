@@ -58,6 +58,10 @@ class Season(TagObject):
     date_start = models.DateField(verbose_name=_("Дата начала"))
     date_end = models.DateField(verbose_name=_("Дата окончания"))
 
+    participants = models.PositiveSmallIntegerField(
+        verbose_name=_('Число участников'), blank=True, null=True,
+    )
+
     class Meta:
         ordering = ("tourn", "date_start")
 
