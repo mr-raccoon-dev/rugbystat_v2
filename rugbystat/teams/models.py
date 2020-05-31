@@ -245,6 +245,9 @@ class TeamSeason(TableRowFields):
         verbose_name=_('Год'), blank=True, null=True,
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
     )
+    participants = models.PositiveSmallIntegerField(
+        verbose_name=_('Число участников'), blank=True, null=True,
+    )
     # both `name` and `year` serves only for simpler repr and sql query
     team = models.ForeignKey(
         Team, verbose_name=_('Команда'), related_name='seasons',
@@ -266,7 +269,8 @@ class TeamSeason(TableRowFields):
         if not self.year:
             self.year = self.season.date_end.year
         if not self.name:
-            self.name = self.team.get_name_for(self.year)
+            team = self.team.get_name_for(self.year)
+            self.name = f"{team}: {self.season}"
         super(TeamSeason, self).save(**kwargs)
 
     def get_absolute_url(self):
@@ -292,6 +296,12 @@ class TeamSeason(TableRowFields):
         return Match.objects.filter(
             models.Q(home=self.team) | models.Q(away=self.team)
         ).filter(tourn_season=self.season)
+
+    def get_position(self) -> str:
+        if self.participants:
+            pos = self.place or "???"
+            return f"{pos} из {self.participants}"
+        return "-"
 
 
 class Person(TagObject):
