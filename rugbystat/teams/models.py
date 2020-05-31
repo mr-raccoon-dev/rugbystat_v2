@@ -239,8 +239,12 @@ class GroupSeason(TableRowFields):
 class TeamSeason(TableRowFields):
     """Representation of each tournament a team played"""
 
-    name = models.CharField(verbose_name=_('Название команды в турнире'),
-                            max_length=127, blank=True)
+    name = models.CharField(
+        verbose_name=_('Название команды в турнире'), max_length=127, blank=True
+    )
+    display_name = models.CharField(
+        verbose_name=_('Полное наименование сезона'), max_length=127, blank=True,
+    )
     year = models.PositiveSmallIntegerField(
         verbose_name=_('Год'), blank=True, null=True,
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
@@ -263,14 +267,15 @@ class TeamSeason(TableRowFields):
         unique_together = (('team', 'year', 'season'),)
 
     def __str__(self):
-        return self.name
+        return self.display_name
 
     def save(self, **kwargs):
         if not self.year:
             self.year = self.season.date_end.year
         if not self.name:
             team = self.team.get_name_for(self.year)
-            self.name = f"{team}: {self.season}"
+            self.name = team
+            self.display_name = f"{team}: {self.season}"
         super(TeamSeason, self).save(**kwargs)
 
     def get_absolute_url(self):
@@ -312,7 +317,7 @@ class Person(TagObject):
         max_length=127, verbose_name=_('Отчество'), blank=True, )
     year_birth = models.PositiveSmallIntegerField(
         verbose_name=_('Год рождения'), blank=True, null=True,
-        validators=(MinValueValidator(1900), MaxValueValidator(2100)),
+        validators=(MinValueValidator(1800), MaxValueValidator(2100)),
     )
     dob = models.DateField(
         verbose_name=_('Дата рождения'), blank=True, null=True,)

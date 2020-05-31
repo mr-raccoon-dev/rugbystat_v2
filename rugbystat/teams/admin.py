@@ -73,7 +73,7 @@ class TeamSeasonAdmin(admin.ModelAdmin):
         (
             None,
             {
-                'fields': ('name', 'year', )
+                'fields': ('name', 'year', 'display_name')
             }
         ),
         (
