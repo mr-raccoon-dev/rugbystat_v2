@@ -246,6 +246,7 @@ class TeamSeason(TableRowFields):
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
     )
     # both `name` and `year` serves only for simpler repr and sql query
+    story = models.TextField(verbose_name=_('История'), blank=True, )
     team = models.ForeignKey(
         Team, verbose_name=_('Команда'), related_name='seasons',
     )
@@ -253,7 +254,9 @@ class TeamSeason(TableRowFields):
         'matches.Season', verbose_name=_('Турнир'),
         related_name='standings'
     )
-    story = models.TextField(verbose_name=_('История'), blank=True, )
+    has_position = models.BooleanField(
+        verbose_name=_('Есть позиция в таблице'), default=True,
+    )
 
     class Meta:
         ordering = ('-year', 'team', 'order')
@@ -296,7 +299,7 @@ class TeamSeason(TableRowFields):
 
     def get_position(self) -> str:
         total = self.season.participants
-        if total:
+        if total and self.has_position:
             pos = self.place or "???"
             return f"{pos} из {total}"
         return "-"

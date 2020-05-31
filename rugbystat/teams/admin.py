@@ -79,7 +79,7 @@ class TeamSeasonAdmin(admin.ModelAdmin):
         (
             None,
             {
-                'fields': ('team', 'season', )
+                'fields': ('team', 'season', 'has_position')
             }
         ),
         (
