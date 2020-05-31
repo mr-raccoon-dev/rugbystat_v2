@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.views.generic.edit import FormMixin
 
+from matches.models import Match
 from .forms import (ImportForm, PersonForm, PersonSeasonForm, TeamForm, TeamSeasonForm,
                     PersonRosterForm, ImportRosterForm)
 from .models import Person, PersonSeason, Team, TeamSeason, TagObject, City
@@ -178,6 +179,27 @@ class TeamSeasonView(FormMixin, DetailView):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
+
+
+class TeamAllYearView(DetailView):
+    """List of all matches of a specific Team in a year"""
+    model = Team
+    template_name = 'teams/team_year.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object, **kwargs)
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        year = int(ctx["year"])
+        ctx['team_name'] = self.object.get_name_for(year)
+
+        matches = Match.objects.for_team(self.object.pk).filter(date__year=year)
+        matches = matches.select_related('tourn_season').order_by('date')
+        ctx['matches'] = matches
+        return ctx
 
 
 class PersonCreateView(CreateView):

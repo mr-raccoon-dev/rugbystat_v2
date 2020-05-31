@@ -8,6 +8,10 @@
 
 {% block content %}
 
+<div class="pull-right">
+  <h4 id="all"><a href="{% url 'team_year_all' object.team_id object.year %}">Все матчи {{ object.name }} в {{ object.year }}</a></h4>
+</div>
+  
 <h2 id="name"><a href="{{ object.team.get_absolute_url }}">{{ object.team }}</a></h2>
 
 <div><a href="{{ object.season.get_absolute_url }}">{{ object.season }}</a></div>

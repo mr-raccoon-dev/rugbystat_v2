@@ -166,6 +166,11 @@ class Group(models.Model):
         return qs.order_by('date', 'pk')
 
 
+class MatchQuerySet(models.QuerySet):
+    def for_team(self, team_pk):
+        return self.filter(models.Q(home_id=team_pk) | models.Q(away_id=team_pk))
+
+
 class Match(TagObject):
 
     _delimiter = '—'
@@ -200,6 +205,8 @@ class Match(TagObject):
     technical = models.BooleanField(verbose_name=_("Технический результат"), default=False)
     tech_home_loss = models.BooleanField(verbose_name=_("Поражение хозяевам"), default=False)
     tech_away_loss = models.BooleanField(verbose_name=_("Поражение гостям"), default=False)
+
+    objects = MatchQuerySet.as_manager()
 
     def __str__(self):
         return self.name
