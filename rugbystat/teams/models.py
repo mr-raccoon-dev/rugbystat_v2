@@ -3,6 +3,7 @@ import datetime as dt
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import Q
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from markdownx.models import MarkdownxField
@@ -135,7 +136,9 @@ class Team(TagObject):
         """Return name which team born in a given year."""
         default = self.short_name
         from_db = self.names.reverse().filter(
-            from_day__lte=dt.date(year, month, day)
+            from_day__lte=dt.date(year, month, day),
+        ).filter(
+            Q(to_day__lte=dt.date(year, month, day)) | Q(to_day__isnull=True)
         ).values_list('name', flat=True).first()
         return from_db or default
 
@@ -308,6 +311,20 @@ class TeamSeason(TableRowFields):
         if self.has_position:
             return f"{pos} из {total}"
         return "-"
+
+    def translate_to_group(self, group):
+        """When final table is the only group in the season.
+
+        >>> ss = Season.objects.get(pk=427)
+        >>> group = ss.groups.get()
+        >>> for ts in ss.standings.all():
+            ts.translate_to_group(group)
+        """
+        gs = GroupSeason(group=group)
+        for attr in ('team_id', 'name', 'year', 'place', 'played', 'wins', 'draws',
+                     'losses', 'points', 'score', 'order'):
+            setattr(gs, attr, getattr(self, attr))
+            gs.save()
 
 
 class Person(TagObject):
