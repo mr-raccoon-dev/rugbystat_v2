@@ -138,7 +138,7 @@ class Team(TagObject):
         from_db = self.names.reverse().filter(
             from_day__lte=dt.date(year, month, day),
         ).filter(
-            Q(to_day__lte=dt.date(year, month, day)) | Q(to_day__isnull=True)
+            Q(to_day__gte=dt.date(year, month, day)) | Q(to_day__isnull=True)
         ).values_list('name', flat=True).first()
         return from_db or default
 
