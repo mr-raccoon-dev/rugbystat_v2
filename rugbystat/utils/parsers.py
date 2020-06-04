@@ -12,7 +12,7 @@ from django.db import connection
 from django.db.models import Q
 from fuzzywuzzy import fuzz
 
-from matches.models import Season, Tournament
+from matches.models import Season, Tournament, Match as MatchModel
 from teams.models import City, Person, PersonSeason, Team, TeamSeason, GroupSeason
 
 logger = logging.getLogger("django.request")
@@ -379,7 +379,7 @@ def find_dates(txt, year):
 
 
 def parse_table(data, season, group):
-    parser = SimpleTable.build(data).find_teams(season.date_start.year).find_matches()
+    parser = SimpleTable.build(data).find_teams(season).find_matches()
     print(vars(parser))
     team_seasons = parser.build_teams(season.pk, group.pk)
     return team_seasons, parser.matches
@@ -398,7 +398,7 @@ class TableRow:
 
     def __repr__(self):
         return f"TableRow(place={self.place}, name={self.name}, team_id={self.team_id})"
-    
+
     def __str__(self):
         return f"{self.place}. {self.name} ({self.team_id})"
 
@@ -414,13 +414,16 @@ class TableRow:
 
 
 class Match:
+
+    model = MatchModel
+
     def __init__(self, *args, **kwargs):
         self.home_id = kwargs.get('home_id')
         self.away_id = kwargs.get('away_id')
         self.home_score = kwargs.get('home_score')
         self.away_score = kwargs.get('away_score')
         self.tourn_season_id = kwargs.get('tourn_season_id')
-    
+
     def __repr__(self):
         return (
             f"Match(home_id={self.home_id}, "
@@ -429,7 +432,7 @@ class Match:
             + f"away_score={self.away_score}, "
             + f"tourn_season_id={self.tourn_season_id})"
         )
-    
+
     def __str__(self):
         return f"{self.away_id} v {self.away_id} - {self.home_score}:{self.away_score}"
 
@@ -459,6 +462,14 @@ class Match:
             away_score=away_score,
         )
 
+    def save(self):
+        if self.tourn_season_id:
+            instance = self.model(**{
+                key: getattr(self, key)
+                for key in ("home_id", "away_id", "home_score", "away_score", "tourn_season_id")
+            })
+            return instance.save()
+
 
 EDGE = "xxxxx"
 EDGE_RU = "ххххх"
@@ -479,12 +490,14 @@ class SimpleTable:
 
     """
 
-    def __init__(self, lines):
+    def __init__(self, lines, legs=1):
         self._lines = lines
         self._teams = []
         self._matches = {}
         self._column_marks = []
         self._column_parts = []
+        self._season_id = None
+        self.legs = legs
 
     @classmethod
     def build(cls, txt):
@@ -530,7 +543,9 @@ class SimpleTable:
             next(end)
             return [line[i:j].strip() for i, j in it.zip_longest(start, end)]
 
-    def find_teams(self, year=None):
+    def find_teams(self, season=None):
+        year = season.date_start.year if season else None
+        self._season_id = season.id
         for line, marks in zip(self._lines, self._column_marks):
             if marks:
                 line = line[:marks[0]]
@@ -554,6 +569,7 @@ class SimpleTable:
         return self
 
     def _parse_matches(self, num_teams, match_parts, team_idx):
+        # TODO: parse two_legged tables
         for match_idx in range(team_idx, num_teams):
             match_str = match_parts[match_idx]
             if match_str and match_str not in {EDGE, EDGE_RU}:
@@ -562,6 +578,7 @@ class SimpleTable:
                     self._teams[match_idx],
                     match_str,
                 )
+                match.tourn_season_id = self._season_id
                 self._matches[(team_idx, match_idx)] = match
 
     def _parse_standings(self, match_parts, start_idx, team_idx):
@@ -581,6 +598,9 @@ class SimpleTable:
             team.losses = to_parse[2]
             to_parse = to_parse[3:]
 
+        if len(to_parse) == 2:
+            team.score = to_parse[0]
+            team.points = to_parse[1]
         if len(to_parse) == 1:
             team.points = to_parse[0]
 
@@ -589,17 +609,17 @@ class SimpleTable:
 
     @property
     def matches(self):
-        two_legged = True
-        to_return = []
-        for (i, j), match in self._matches.items():
-            if j > i:
-                if match == self._matches.get((j, i)):
-                    two_legged = False
-                to_return.append(match)
-            if two_legged:
-                if i > j:
-                    to_return.append(match)
-        return to_return
+        # two_legged = True
+        # to_return = []
+        # for (i, j), match in self._matches.items():
+        #     if j > i:
+        #         if match == self._matches.get((j, i)):
+        #             two_legged = False
+        #         to_return.append(match)
+        #     if two_legged:
+        #         if i > j:
+        #             to_return.append(match)
+        return self._matches.values()
 
 
 def find_team_name_match(search_name, year=None):

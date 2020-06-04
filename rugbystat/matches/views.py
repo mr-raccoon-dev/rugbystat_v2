@@ -8,9 +8,9 @@ from django.shortcuts import redirect, render
 from django.views.generic import (CreateView, ListView, DetailView,
                                   YearArchiveView)
 
-from matches.forms import TableImportForm, GroupImportForm
+from matches.forms import TableImportForm, GroupImportForm, ImportForm, SeasonForm, MatchForm
+from teams.models import TeamSeason
 
-from .forms import ImportForm, SeasonForm, MatchForm
 from .models import Tournament, Season, Match
 
 logger = logging.getLogger('rugbystat')
@@ -81,17 +81,24 @@ def import_table(request):
         if form.is_valid():
             print('OK')
             seasons, matches = form.table_data
+            save_matches = False
             for season in seasons:
+                if isinstance(season, TeamSeason):
+                    season.name = None
+                else:
+                    save_matches = True
+
                 try:
                     season.save()
                 except IntegrityError:
                     logger.error(f'Cant save {vars(season)}')
 
-            for match in matches:
-                try:
-                    match.save()
-                except IntegrityError:
-                    logger.error(f'Cant save {vars(match)}')
+            if save_matches:
+                for match in matches:
+                    try:
+                        match.save()
+                    except IntegrityError:
+                        logger.error(f'Cant save {vars(match)}')
 
             return redirect(form.season)
         else:

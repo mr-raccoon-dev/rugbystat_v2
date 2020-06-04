@@ -236,7 +236,9 @@ class GroupSeason(TableRowFields):
 
     def get_absolute_url(self):
         if self.team_id:
-            return self.group.teams.filter(team_id=self.team_id).first().get_absolute_url()
+            team_in_m2m = self.group.teams.filter(team_id=self.team_id).first()
+            if team_in_m2m:
+                return team_in_m2m.get_absolute_url()
 
 
 class TeamSeason(TableRowFields):
