@@ -468,6 +468,22 @@ class Match:
                 key: getattr(self, key)
                 for key in ("home_id", "away_id", "home_score", "away_score", "tourn_season_id")
             })
+            if instance.home_score == "-":
+                instance.technical = True
+                instance.home_score = None
+                instance.tech_home_loss = True
+            if instance.home_score == "+":
+                instance.technical = True
+                instance.home_score = None
+                instance.tech_away_loss = True
+            if instance.away_score == "-":
+                instance.technical = True
+                instance.away_score = None
+                instance.tech_away_loss = True
+            if instance.away_score == "+":
+                instance.technical = True
+                instance.away_score = None
+                instance.tech_home_loss = True
             return instance.save()
 
 

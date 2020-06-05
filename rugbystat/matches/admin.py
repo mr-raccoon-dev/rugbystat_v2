@@ -1,5 +1,5 @@
 from adminsortable2.admin import SortableAdminMixin
-from django.contrib import admin
+from django.contrib import admin, messages
 from markdownx.admin import MarkdownxModelAdmin
 
 from main.admin import CrossLinkMixin
@@ -94,7 +94,10 @@ class GroupAdmin(admin.ModelAdmin):
 @admin.register(Match)
 class MatchAdmin(MarkdownxModelAdmin):
     change_form_template = 'admin/matches/match_changeform.html'
+
     form = MatchForm
+    actions = ['swap_sides']
+
     list_display = ('__str__', 'date', 'date_unknown', 'tourn_season')
     list_select_related = ('tourn_season', )
     list_filter = (('tourn_season__name', DropdownFilter), DateListFilter,)
@@ -113,3 +116,9 @@ class MatchAdmin(MarkdownxModelAdmin):
         if 'update-name' in request.POST:
             obj.update_match_name().save()
         return super().response_change(request, obj)
+
+    def swap_sides(self, request, queryset):
+        for match in queryset:
+            match.swap()
+        messages.success(request, 'Swapped')
+    swap_sides.short_description = u'Swap sides'

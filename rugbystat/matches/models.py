@@ -307,3 +307,11 @@ class Match(TagObject):
         else:
             date = format_date(self.date, format='long', locale='ru').replace(' г.', '.')
         return date
+
+    def swap(self):
+        """Swap home<>away"""
+        self.home, self.away = self.away, self.home
+        self.home_score, self.away_score = self.away_score, self.home_score
+        self.home_halfscore, self.away_halfscore = self.away_halfscore, self.home_halfscore
+        self.tech_home_loss, self.tech_away_loss = self.tech_away_loss, self.tech_home_loss
+        self.save()
