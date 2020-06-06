@@ -266,6 +266,9 @@ class TeamSeason(TableRowFields):
     has_position = models.BooleanField(
         verbose_name=_('Есть позиция в таблице'), default=True,
     )
+    show_group = models.BooleanField(
+        verbose_name=_('Брать название из группы'), default=False,
+    )
 
     class Meta:
         ordering = ('-year', 'team', 'order')
@@ -312,6 +315,9 @@ class TeamSeason(TableRowFields):
         pos = self.place or "???"
         if self.has_position:
             return f"{pos} из {total}"
+
+        if self.show_group:
+            return self.place or self.groups.first().name
         return "-"
 
     def translate_to_group(self, group):

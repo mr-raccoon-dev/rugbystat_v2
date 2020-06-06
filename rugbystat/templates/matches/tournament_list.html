@@ -28,6 +28,9 @@
             href="{% url 'seasons_year' date|date:"Y" %}">
             {{ date|date:"Y" }}
          </a>
+    {% if date.year == 1949 %}
+    <hr>
+    {% endif %}
     </li>
   {% endfor %}
 </ul>
