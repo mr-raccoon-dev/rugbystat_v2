@@ -7,11 +7,8 @@ ALLOWED_HOSTS = ['rugbystat.pythonanywhere.com']
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rugbystat$staging_db',
-        'USER': 'rugbystat',
-        'PASSWORD': '1111@staging',
-        'HOST': 'rugbystat.mysql.pythonanywhere-services.com',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR , 'rugbystat.sqlite.db'),
     }
 }
 
