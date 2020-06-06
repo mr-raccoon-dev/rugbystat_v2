@@ -44,6 +44,8 @@ class GroupInline(admin.TabularInline):
 
 @admin.register(Season)
 class SeasonAdmin(CrossLinkMixin, admin.ModelAdmin):
+    change_form_template = 'admin/matches/season_changeform.html'
+
     list_display = ('name', 'date_start', 'date_end', 'story')
     list_filter = (
         ('tourn__name', DropdownFilter),
@@ -56,6 +58,14 @@ class SeasonAdmin(CrossLinkMixin, admin.ModelAdmin):
         GroupInline,
         TeamSeasonInline,
     ]
+
+    def response_change(self, request, obj):
+        """Check for custom button request."""
+        if 'translate-to group' in request.POST:
+            group = obj.groups.first()
+            for teamseason in obj.standings.all():
+                teamseason.translate_to_group(group)
+        return super().response_change(request, obj)
 
     def add_view(self, request, form_url='', extra_context=None):
         self.inlines = (TeamSeasonInline, )

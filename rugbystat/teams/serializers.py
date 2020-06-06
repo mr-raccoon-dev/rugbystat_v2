@@ -43,7 +43,7 @@ class TeamSeasonSerializer(serializers.HyperlinkedModelSerializer):
 class PersonSeasonSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonSeason
-        fields = ('id', '__str__', 'person', 'team',
+        fields = ('id', '__str__', 'person', 'team', 'season',
                   'year', 'story', 'role')
 
     def validate(self, attrs):
