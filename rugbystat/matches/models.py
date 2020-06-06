@@ -216,7 +216,8 @@ class Match(TagObject):
         return self.name
 
     def save(self, **kwargs):
-        self.update_match_name()
+        if not self.display_name:
+            self.update_match_name()
         super(Match, self).save(**kwargs)
 
     def _get_names_for_date(self):
