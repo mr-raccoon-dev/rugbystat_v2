@@ -587,6 +587,10 @@ class SimpleTable:
         for team_idx in range(0, total):
             start_idx = 0
             parts = self._column_parts[team_idx]
+            if not parts:
+                logger.info(f"no parts in table: {self}")
+                break
+
             if parts[team_idx] in {EDGE, EDGE_RU}:
                 self._parse_matches(total, parts, team_idx)
                 start_idx = total

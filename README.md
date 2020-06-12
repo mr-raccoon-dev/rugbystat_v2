@@ -94,3 +94,10 @@ source /var/lib/mysql/rugbystat.sql
 - ...or Group.teams to display knockout matches
 - add match...
 
+when import:
+
+- import final table (creates TeamSeasons)
+- check teams names
+- add seasons for those, who didn't advance to final
+- import groups
+
