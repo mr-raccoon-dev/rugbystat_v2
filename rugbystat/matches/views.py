@@ -1,6 +1,7 @@
 import logging
 
 from dal import autocomplete
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse_lazy
 from django.db import IntegrityError
 from django.db.models import Q
@@ -79,7 +80,6 @@ def import_table(request):
             cls = TableImportForm
         form = cls(request.POST, request=request)
         if form.is_valid():
-            print('OK')
             seasons, matches = form.table_data
             save_matches = False
             for season in seasons:
@@ -90,13 +90,15 @@ def import_table(request):
 
                 try:
                     season.save()
-                except IntegrityError:
-                    logger.error(f'Cant save {vars(season)}')
+                except (IntegrityError, ObjectDoesNotExist, ValueError) as exc:
+                    logger.error(f'Cant save {vars(season)}. {exc}')
 
             if save_matches:
+                default_date = season.group.date_start
+                display_date = default_date.strftime('%Y-%m-xx')
                 for match in matches:
                     try:
-                        match.save()
+                        match.build(date=default_date, date_unknown=display_date).save()
                     except IntegrityError:
                         logger.error(f'Cant save {vars(match)}')
 

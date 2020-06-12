@@ -462,12 +462,10 @@ class Match:
             away_score=away_score,
         )
 
-    def save(self):
+    def build(self, **kwargs):
+        kwargs.update(**vars(self))
         if self.tourn_season_id:
-            instance = self.model(**{
-                key: getattr(self, key)
-                for key in ("home_id", "away_id", "home_score", "away_score", "tourn_season_id")
-            })
+            instance = self.model(**kwargs)
             if instance.home_score == "-":
                 instance.technical = True
                 instance.home_score = None
@@ -484,7 +482,10 @@ class Match:
                 instance.technical = True
                 instance.away_score = None
                 instance.tech_home_loss = True
-            return instance.save()
+            return instance
+
+    def save(self):
+        return self.build().save()
 
 
 EDGE = "xxxxx"
@@ -618,7 +619,10 @@ class SimpleTable:
             team.score = to_parse[0]
             team.points = to_parse[1]
         if len(to_parse) == 1:
-            team.points = to_parse[0]
+            if "-" in to_parse[0] or ":" in to_parse[0]:
+                team.score = to_parse[0]
+            else:
+                team.points = to_parse[0]
 
     def build_teams(self, season=None, group=None):
         return [t.build(season, group) for t in self._teams]
@@ -644,7 +648,7 @@ def find_team_name_match(search_name, year=None):
     """
     condition = ""
     if year:
-        condition += f" AND year <= {year} AND disband_year >= {year}"
+        condition += f" AND tt.year <= {year} AND (tt.disband_year >= {year} OR tt.disband_year IS NULL)"
 
     base_name = """SELECT tt.tagobject_ptr_id as team_id, t.name as team_name, c.name as city, tt.year, tt.disband_year
   FROM teams_team tt
@@ -659,11 +663,11 @@ def find_team_name_match(search_name, year=None):
             extract_years = sqlite_ver
 
         given_names = (
-            f"SELECT team_id, teams_teamname.name as team_name, c.name as city, {extract_years}" + """
-  FROM teams_teamname
- INNER JOIN teams_team tt ON tt.tagobject_ptr_id=teams_teamname.team_id
+            f"SELECT team_id, tn.name as team_name, c.name as city, {extract_years}" + """
+  FROM teams_teamname tn
+ INNER JOIN teams_team tt ON tt.tagobject_ptr_id=tn.team_id
  INNER JOIN teams_city c ON c.id = tt.city_id
- WHERE teams_teamname.name LIKE '{name}%'{condition}""")
+ WHERE tn.name LIKE '{name}%'{condition}""")
 
         sql = f"""SELECT * FROM (
  {base_name}
