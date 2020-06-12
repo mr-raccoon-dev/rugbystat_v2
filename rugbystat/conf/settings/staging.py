@@ -1,12 +1,23 @@
+import os
 import redislite
 
 from .common import *
 from .logging import *
 
+password = os.getenv('DBPASS')
+
+
 ALLOWED_HOSTS = ['rugbystat.pythonanywhere.com']
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'rugbystat$staging_db',
+        'USER': 'rugbystat',
+        'PASSWORD': password,
+        'HOST': 'rugbystat.mysql.pythonanywhere-services.com',
+    },
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR , 'rugbystat.sqlite.db'),
     }
