@@ -561,14 +561,23 @@ class SimpleTable:
             return [line[i:j].strip() for i, j in it.zip_longest(start, end)]
 
     def find_teams(self, season=None):
+        # if TeamSeason-s exist, try them first to get a team name
         year = season.date_start.year if season else None
         self._season_id = season.id
+        names = dict(season.standings.values_list('team_id', 'name'))
+
         for line, marks in zip(self._lines, self._column_marks):
             if marks:
                 line = line[:marks[0]]
             place, team = line.split(".", 1)
             team = team.strip().replace('"', '')
-            team_id = find_team_name_match(team.strip(), year)
+
+            ratios = {fuzz.token_set_ratio(team, sn): team_id for team_id, sn in names.items()}
+            if ratios:
+                team_id = ratios[max(ratios)]
+                team = names[team_id]
+            else:
+                team_id = find_team_name_match(team.strip(), year)
             row = TableRow(place=place.strip(), name=team, team_id=team_id)
             self._teams.append(row)
         return self

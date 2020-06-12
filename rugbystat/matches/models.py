@@ -1,3 +1,4 @@
+import typing as t
 from babel.dates import format_date
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -247,9 +248,12 @@ class Match(TagObject):
             home_score, away_score = "н", "н"
         return home_score, away_score
 
-    def _get_name_from_score(self):
+    def _get_name_from_score(self, teams: t.Optional[t.Tuple[str, str]] = None):
         home_score, away_score = self._get_score()
-        teams_names = self._get_names_for_date()
+        if teams:
+            teams_names = teams
+        else:
+            teams_names = self._get_names_for_date()
         teams_names = f" {self._delimiter} ".join(teams_names)
         name = "{} {} {}:{}".format(teams_names, self._delimiter, home_score, away_score)
 

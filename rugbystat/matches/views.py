@@ -82,6 +82,7 @@ def import_table(request):
         if form.is_valid():
             seasons, matches = form.table_data
             save_matches = False
+            names = {s.team_id: s.name for s in seasons}
             for season in seasons:
                 if isinstance(season, TeamSeason):
                     season.name = None
@@ -98,7 +99,11 @@ def import_table(request):
                 display_date = default_date.strftime('%Y-%m-xx')
                 for match in matches:
                     try:
-                        match.build(date=default_date, date_unknown=display_date).save()
+                        instance = match.build(date=default_date, date_unknown=display_date)
+                        teams = (names[match.home_id], names[match.away_id])
+                        instance.display_name = instance._get_name_from_score(teams)
+                        instance.name = "{} {}".format(display_date, instance.display_name)
+                        instance.save()
                     except IntegrityError:
                         logger.error(f'Cant save {vars(match)}')
 
