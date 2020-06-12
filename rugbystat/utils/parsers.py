@@ -60,6 +60,7 @@ MONTHS_MAP = {
 }
 
 TEAM_NAME = re.compile("[а-я]+\s+", re.I)
+TEAM_SIMILAR_THRESHOLD = 60
 
 
 def parse_rosters(request, data):
@@ -573,7 +574,7 @@ class SimpleTable:
             team = team.strip().replace('"', '')
 
             ratios = {fuzz.token_set_ratio(team, sn): team_id for team_id, sn in names.items()}
-            if ratios:
+            if ratios and max(ratios) > TEAM_SIMILAR_THRESHOLD:
                 team_id = ratios[max(ratios)]
                 team = names[team_id]
             else:
@@ -696,7 +697,7 @@ def find_team_name_match(search_name, year=None):
         for obj in res
     ]
 
-    if ratios and max(ratios) > 60:
+    if ratios and max(ratios) > TEAM_SIMILAR_THRESHOLD:
         found = res[ratios.index(max(ratios))][0]
     else:
         found = None

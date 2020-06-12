@@ -88,8 +88,19 @@ def import_table(request):
                     season.name = None
                 else:
                     save_matches = True
-
+                    ts = season.group.season.standings.filter(team_id=season.team_id).first()
+                    if not ts:
+                        ts = TeamSeason(
+                            team_id=season.team_id,
+                            name=season.name,
+                            display_name=f"{season.name}, {season.group.season}",
+                            season=season.group.season,
+                            has_position=False,
+                            show_group=True
+                        )
+                        ts.save()
                 try:
+                    season.group.teams.add(ts)
                     season.save()
                 except (IntegrityError, ObjectDoesNotExist, ValueError) as exc:
                     logger.error(f'Cant save {vars(season)}. {exc}')

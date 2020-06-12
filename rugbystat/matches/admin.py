@@ -61,10 +61,11 @@ class SeasonAdmin(CrossLinkMixin, admin.ModelAdmin):
 
     def response_change(self, request, obj):
         """Check for custom button request."""
-        if 'translate-to group' in request.POST:
+        if 'translate-to-group' in request.POST:
             group = obj.groups.first()
             for teamseason in obj.standings.all():
-                teamseason.translate_to_group(group)
+                if not teamseason.show_group:
+                    teamseason.translate_to_group(group)
         return super().response_change(request, obj)
 
     def add_view(self, request, form_url='', extra_context=None):
