@@ -81,7 +81,7 @@ class GroupImportForm(ImportForm):
         group_id = self.request.POST['group']
         group = Group.objects.get(pk=group_id)
         self.season = group.season
-        if '<div class="match">' in data['raw']:
+        if '<div class="match">' in data['raw'] or "<div class='match'>" in data['raw']:
             self.table_data = parse_matches(data['raw'], self.season, group)
         else:
             self.table_data = parse_table(data['raw'], self.season, group)
