@@ -733,6 +733,7 @@ class CalendarParser:
     def find_matches(self, group, season):
         match = None
         date = None
+        default_date = group.date_start
         is_unknown = False
         match_line = -1
 
@@ -740,12 +741,13 @@ class CalendarParser:
             # emtpy line = new day
             if not line.strip():
                 date = None
+                default_date = default_date + dt.timedelta(days=1)
                 continue
-            if date is None:
+            if date is None and not is_unknown:
                 parsed, is_unknown = self.parse_date(line, group.date_start.year)
                 if parsed:
                     date = parsed
-                continue
+                    continue
 
             if "match" in line:
                 match = FullMatch()
@@ -756,7 +758,7 @@ class CalendarParser:
                 match.tourn_season_id = season.id
             if "</div>" in line and match:
                 instance = match.build()
-                instance.date = date
+                instance.date = date or default_date
                 if is_unknown:
                     instance.date_unknown = instance.date.strftime('%Y-%m-xx')
                 if num > match_line:
@@ -826,7 +828,7 @@ class CalendarParser:
                 m.away_halfscore = int(away)
 
             if match.groupdict()['scorers']:
-                m.story = match.groupdict()['scorers'].replace('<br>', '\n\n')
+                m.story = match.groupdict()['scorers'].replace('<br>', '\n\n').replace('</div>', '\n\n')
             return m
 
 
