@@ -101,8 +101,9 @@ def import_table(request):
                             show_group=True
                         )
                         ts.save()
-                try:
                     season.group.teams.add(ts)
+
+                try:
                     season.save()
                 except (IntegrityError, ObjectDoesNotExist, ValueError) as exc:
                     logger.error(f'Cant save {vars(season)}. {exc}')
