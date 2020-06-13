@@ -2,7 +2,7 @@ from collections import namedtuple
 
 from django import forms
 
-from utils.parsers import parse_season, parse_table
+from utils.parsers import parse_season, parse_table, parse_matches
 from utils.widgets import ModelSelect2Bootstrap, ModelSelect2MultiBootstrap
 from .models import Season, Group, Match
 
@@ -21,7 +21,7 @@ class SeasonForm(forms.ModelForm):
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
-        fields = ['name', 'comment', 'season', 'round_type', 'date_start', 
+        fields = ['name', 'comment', 'season', 'round_type', 'date_start',
                   'date_end', 'city', 'teams']
         widgets = {
             'city': ModelSelect2Bootstrap(url='autocomplete-cities'),
@@ -81,4 +81,7 @@ class GroupImportForm(ImportForm):
         group_id = self.request.POST['group']
         group = Group.objects.get(pk=group_id)
         self.season = group.season
-        self.table_data = parse_table(data['raw'], self.season, group)
+        if '<div class="match">' in data['raw']:
+            self.table_data = parse_matches(data['raw'], self.season, group)
+        else:
+            self.table_data = parse_table(data['raw'], self.season, group)

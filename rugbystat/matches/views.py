@@ -9,10 +9,10 @@ from django.shortcuts import redirect, render
 from django.views.generic import (CreateView, ListView, DetailView,
                                   YearArchiveView)
 
-from matches.forms import TableImportForm, GroupImportForm, ImportForm, SeasonForm, MatchForm
 from teams.models import TeamSeason
 
-from .models import Tournament, Season, Match
+from .forms import TableImportForm, GroupImportForm, ImportForm, SeasonForm, MatchForm
+from .models import Tournament, Season, Group, Match
 
 logger = logging.getLogger('rugbystat')
 
@@ -82,7 +82,9 @@ def import_table(request):
         if form.is_valid():
             seasons, matches = form.table_data
             save_matches = False
-            names = {s.team_id: s.name for s in seasons}
+            if not seasons and matches:
+                save_matches = True
+
             for season in seasons:
                 if isinstance(season, TeamSeason):
                     season.name = None
@@ -106,17 +108,28 @@ def import_table(request):
                     logger.error(f'Cant save {vars(season)}. {exc}')
 
             if save_matches:
-                default_date = season.group.date_start
-                display_date = default_date.strftime('%Y-%m-xx')
+                if not seasons:
+                    seasons = Group.objects.get(pk=form.data['group']).standings.all()
+
+                names = {s.team_id: s.name for s in seasons}
                 for match in matches:
                     try:
-                        instance = match.build(date=default_date, date_unknown=display_date)
+                        if not isinstance(match, Match):
+                            default_date = season.group.date_start
+                            display_date = default_date.strftime('%Y-%m-xx')
+
+                            instance = match.build(date=default_date, date_unknown=display_date)
+                        else:
+                            instance = match
+                            display_date = instance.date_unknown if instance.date_unknown else instance.date.strftime('%Y-%m-%d')
+
                         teams = (names[match.home_id], names[match.away_id])
                         instance.display_name = instance._get_name_from_score(teams)
                         instance.name = "{} {}".format(display_date, instance.display_name)
                         instance.save()
-                    except IntegrityError:
+                    except IntegrityError as exc:
                         logger.error(f'Cant save {vars(match)}')
+                        logger.error(str(exc))
 
             return redirect(form.season)
         else:

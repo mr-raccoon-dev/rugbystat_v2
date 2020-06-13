@@ -221,6 +221,24 @@ class Match(TagObject):
             self.update_match_name()
         super(Match, self).save(**kwargs)
 
+    def set_tech_score(self):
+        if self.home_score == "-":
+            self.technical = True
+            self.home_score = None
+            self.tech_home_loss = True
+        if self.home_score == "+":
+            self.technical = True
+            self.home_score = None
+            self.tech_away_loss = True
+        if self.away_score == "-":
+            self.technical = True
+            self.away_score = None
+            self.tech_away_loss = True
+        if self.away_score == "+":
+            self.technical = True
+            self.away_score = None
+            self.tech_home_loss = True
+
     def _get_names_for_date(self):
         """Return teams names for a match date"""
         if self.date:

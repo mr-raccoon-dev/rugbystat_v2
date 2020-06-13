@@ -1,16 +1,17 @@
-import datetime
+import datetime as dt
 import functools as ft
 import itertools as it
 import logging
 import operator
 import re
+import typing as t
 from difflib import SequenceMatcher as SM
 
 from django.contrib.messages import success
 from django.contrib import messages
 from django.db import connection
 from django.db.models import Q
-from fuzzywuzzy import fuzz
+from fuzzywuzzy import fuzz, process
 
 from matches.models import Season, Tournament, Match as MatchModel
 from teams.models import City, Person, PersonSeason, Team, TeamSeason, GroupSeason
@@ -59,7 +60,7 @@ MONTHS_MAP = {
     "декабр": "12",
 }
 
-TEAM_NAME = re.compile("[а-я]+\s+", re.I)
+TEAM_NAME = re.compile(r"[а-я]+\s+", re.I)
 TEAM_SIMILAR_THRESHOLD = 60
 
 
@@ -203,7 +204,7 @@ class LineImporter:
         return qs.first()
 
 
-def reduce_qs(qs, search_term): 
+def reduce_qs(qs, search_term):
     queries = [
         Q(**{lookup: search_term})
         for lookup in (
@@ -324,8 +325,8 @@ def parse_season(data, request):
                 season.date_end = date_end
                 break
         else:
-            season.date_start = datetime.date(season.year, 1, 1)
-            season.date_end = datetime.date(season.year, 12, 31)
+            season.date_start = dt.date(season.year, 1, 1)
+            season.date_end = dt.date(season.year, 12, 31)
 
     season.story = "\n".join(rest)
     return season
@@ -347,11 +348,11 @@ def find_dates(txt, year):
         try:
             date_start, date_end = dates[0]
             day, month = date_start
-            date_start = datetime.datetime.strptime(
+            date_start = dt.datetime.strptime(
                 "{}/{}/{}".format(day, MONTHS_MAP[month], year), "%d/%m/%Y"
             )
             day, month = date_end
-            date_end = datetime.datetime.strptime(
+            date_end = dt.datetime.strptime(
                 "{}/{}/{}".format(day, MONTHS_MAP[month], year), "%d/%m/%Y"
             )
         except (IndexError, ValueError):
@@ -359,19 +360,19 @@ def find_dates(txt, year):
             try:
                 days, month = dates[1][0]
                 day_start, day_end = days.split("-")
-                date_start = datetime.datetime.strptime(
+                date_start = dt.datetime.strptime(
                     "{}/{}/{}".format(day_start, MONTHS_MAP[month], year), "%d/%m/%Y"
                 )
-                date_end = datetime.datetime.strptime(
+                date_end = dt.datetime.strptime(
                     "{}/{}/{}".format(day_end, MONTHS_MAP[month], year), "%d/%m/%Y"
                 )
             except (IndexError, ValueError):
                 # 'октябр'
                 month = dates[2][0]
-                date_start = datetime.datetime.strptime(
+                date_start = dt.datetime.strptime(
                     "{}/{}/{}".format("05", MONTHS_MAP[month], year), "%d/%m/%Y"
                 )
-                date_end = datetime.datetime.strptime(
+                date_end = dt.datetime.strptime(
                     "{}/{}/{}".format("25", MONTHS_MAP[month], year), "%d/%m/%Y"
                 )
         return date_start, date_end
@@ -446,7 +447,7 @@ class Match:
         )
 
     @classmethod
-    def from_string(cls, home, away, string):
+    def from_string(cls, home_id, away_id, string):
         home_score, away_score = None, None
         if ':' in string:
             home_score, away_score = string.split(':')
@@ -457,8 +458,8 @@ class Match:
         if string in {'нич', 'ничья'}:
             home_score, away_score = 1, 1
         return cls(
-            home_id=home.team_id,
-            away_id=away.team_id,
+            home_id=home_id,
+            away_id=away_id,
             home_score=home_score,
             away_score=away_score,
         )
@@ -467,26 +468,24 @@ class Match:
         kwargs.update(**vars(self))
         if self.tourn_season_id:
             instance = self.model(**kwargs)
-            if instance.home_score == "-":
-                instance.technical = True
-                instance.home_score = None
-                instance.tech_home_loss = True
-            if instance.home_score == "+":
-                instance.technical = True
-                instance.home_score = None
-                instance.tech_away_loss = True
-            if instance.away_score == "-":
-                instance.technical = True
-                instance.away_score = None
-                instance.tech_away_loss = True
-            if instance.away_score == "+":
-                instance.technical = True
-                instance.away_score = None
-                instance.tech_home_loss = True
+            instance.set_tech_score()
             return instance
 
     def save(self):
         return self.build().save()
+
+
+class FullMatch(Match):
+    """With halftime scores and story."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.home_halfscore = kwargs.get('home_halfscore')
+        self.away_halfscore = kwargs.get('away_halfscore')
+        self.story = kwargs.get('story', '')
+        self.technical = kwargs.get('technical', False)
+        self.tech_home_loss = kwargs.get('tech_home_loss', False)
+        self.tech_away_loss = kwargs.get('tech_away_loss', False)
 
 
 EDGE = "xxxxx"
@@ -498,7 +497,7 @@ class SimpleTable:
     line may be any representation in table:
 
     1. Динамо                     xxxxx  22:6    поб   13:3   20:0    поб
-    5. "Спартак" Ленинград      6:18   0:6    0:3    0:8   xxxxx  20:8   1 0 4  26-43  2    
+    5. "Спартак" Ленинград      6:18   0:6    0:3    0:8   xxxxx  20:8   1 0 4  26-43  2
     1. "СТАКЛЕС" Каунас            6  0  2  164:72   12 *
     1. Крылья Советов Москва
     . Скра
@@ -557,7 +556,7 @@ class SimpleTable:
     @staticmethod
     def _split_line(line, marks):
         if marks:
-            start, end = it.tee(marks)  
+            start, end = it.tee(marks)
             next(end)
             return [line[i:j].strip() for i, j in it.zip_longest(start, end)]
 
@@ -605,8 +604,8 @@ class SimpleTable:
             match_str = match_parts[match_idx]
             if match_str and match_str not in {EDGE, EDGE_RU}:
                 match = Match.from_string(
-                    self._teams[team_idx],
-                    self._teams[match_idx],
+                    self._teams[team_idx]._team_id,
+                    self._teams[match_idx]._team_id,
                     match_str,
                 )
                 match.tourn_season_id = self._season_id
@@ -702,3 +701,142 @@ def find_team_name_match(search_name, year=None):
     else:
         found = None
     return found
+
+
+DAY_RE = re.compile(r'((?P<day>\d{1,2})|(?P<unknown>\?+)) (?P<month>[а-я]+)')
+MATCH_RE = re.compile(r"(?P<home>[А-Я ]+) - (?P<away>[А-Я ]+) - (?P<outcome>[А-Я ]+|(?P<full_score>\d+:\d+)(?P<half_score> \(\d+:\d+\))?(?P<scorers> - .+)?)", re.MULTILINE | re.IGNORECASE)
+SCORE_RE = re.compile(r'(\d+):(\d+)')
+
+
+class CalendarParser:
+
+    def __init__(self, lines: t.List[str], teams: t.Dict[str, int]):
+        self._lines = lines
+        self._matches: t.List[FullMatch] = []
+        self._team_names = teams
+
+    def __repr__(self):
+        return f"Calendar: matches={self._matches}, teams={self._team_names}"
+
+    def __iter__(self):
+        return iter(self._lines)
+
+    @property
+    def matches(self):
+        return self._matches
+
+    @classmethod
+    def build(cls, text, group):
+        teams = dict(group.standings.values_list('name', 'team_id'))
+        return cls(text.split('\n'), teams)
+
+    def find_matches(self, group, season):
+        match = None
+        date = None
+        is_unknown = False
+        match_line = -1
+
+        for num, line in enumerate(self):
+            # emtpy line = new day
+            if not line.strip():
+                date = None
+                continue
+            if date is None:
+                parsed, is_unknown = self.parse_date(line, group.date_start.year)
+                if parsed:
+                    date = parsed
+                continue
+
+            if "match" in line:
+                match = FullMatch()
+                continue  # next line will contain teams
+            if match == FullMatch():
+                match_line = num
+                match = self.parse_match(line.strip())
+                match.tourn_season_id = season.id
+            if "</div>" in line and match:
+                instance = match.build()
+                instance.date = date
+                if is_unknown:
+                    instance.date_unknown = instance.date.strftime('%Y-%m-xx')
+                if num > match_line:
+                    instance.story = add_to_story(instance.story, line)
+                self._matches.append(instance)
+                match = None
+
+        return self
+
+    def parse_date(self, line: str, year: int) -> t.Tuple[t.Optional[dt.date], bool]:
+        is_unknown = False
+        for match in DAY_RE.finditer(line):
+            key, _ = process.extractOne(match.groupdict()['month'], set(MONTHS_MAP))
+            m = int(MONTHS_MAP[key])
+            if match.groupdict()['unknown']:
+                d = 1
+                is_unknown = True
+            else:
+                d = int(match.groupdict()['day'])
+            return dt.date(year, m, d), is_unknown
+        return None, True
+
+    def parse_match(self, txt) -> dict:
+        """Find parts of a match.
+
+        >>> txt = (
+                "Маяк - Спартак Нч - 14:12 (6:6) - п: 6:0, ... / п: А.Смойлов (6:6)...\n"
+                "ВВА - Маяк - 47:0\n"
+                "Зенит - Маяк - победа Зенита"
+            )
+        >>> for i, match in enumerate(MATCH_RE.finditer(txt), start=1):
+                print ("Match {} was found".format(i))
+                print(match.groupdict())
+        # Match 1 was found
+        # {'home': 'Маяк', 'away': 'Спартак Нч', 'outcome': '14:12 (6:6) - п: 6:0, ... / п: А.Смойлов (6:6)...', 'full_score': '14:12', 'half_score': ' (6:6)', 'scorers': ' - п: 6:0, ... / п: А.Смойлов (6:6)...'}
+        # Match 2 was found
+        # {'home': 'ВВА', 'away': 'Маяк', 'outcome': '47:0', 'full_score': '47:0', 'half_score': None, 'scorers': None}
+        # Match 3 was found
+        # {'home': 'Зенит', 'away': 'Маяк', 'outcome': 'победа Зенита', 'full_score': None, 'half_score': None, 'scorers': None}
+        """
+        m = None
+        for match in MATCH_RE.finditer(txt):
+            name, _ = process.extractOne(match.groupdict()['home'], set(self._team_names))
+            home_id = self._team_names[name]
+            name, _ = process.extractOne(match.groupdict()['away'], set(self._team_names))
+            away_id = self._team_names[name]
+
+            if match.groupdict()['full_score']:
+                m = FullMatch.from_string(home_id, away_id, match.groupdict()['full_score'])
+            else:
+                out = match.groupdict()['outcome']
+                m = FullMatch(home_id=home_id, away_id=away_id)
+                if out == "ничья":
+                    m.home_score = 1
+                    m.away_score = 1
+                else:
+                    choices = [match.groupdict()['home'], match.groupdict()['away']]
+                    winner, _ = process.extractOne(out, choices)
+                    if winner == match.groupdict()['home']:
+                        m.tech_away_loss = True
+                    else:
+                        m.tech_home_loss = True
+
+            if match.groupdict()['half_score']:
+                home, away = SCORE_RE.findall(match.groupdict()['half_score'])[0]
+                m.home_halfscore = int(home)
+                m.away_halfscore = int(away)
+
+            if match.groupdict()['scorers']:
+                m.story = match.groupdict()['scorers'].replace('<br>', '\n\n')
+            return m
+
+
+def parse_matches(data, season, group):
+    parser = CalendarParser.build(data, group).find_matches(group, season)
+    print(vars(parser))
+    return [], parser.matches
+
+
+def add_to_story(story, line):
+    story = story.replace('<br>', '\n\n') if story else ''
+    line = line.strip().replace('</div>', '')
+    return story + line
