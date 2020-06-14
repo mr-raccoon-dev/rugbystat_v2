@@ -85,9 +85,12 @@ def import_table(request):
             if not seasons and matches:
                 save_matches = True
 
+            order = 0
             for season in seasons:
+                order += 1
                 if isinstance(season, TeamSeason):
                     season.name = None
+                    season.order = order
                 else:
                     save_matches = True
                     ts = season.group.season.standings.filter(team_id=season.team_id).first()
@@ -98,7 +101,8 @@ def import_table(request):
                             display_name=f"{season.name}, {season.group.season}",
                             season=season.group.season,
                             has_position=False,
-                            show_group=True
+                            show_group=True,
+                            order=order,
                         )
                         ts.save()
                     season.group.teams.add(ts)

@@ -577,7 +577,8 @@ class SimpleTable:
                 team_id = ratios[max(ratios)]
                 team = names[team_id]
             else:
-                team_id = find_team_name_match(team.strip(), year)
+                team = team.replace('.', '').strip()
+                team_id = find_team_name_match(team, year)
             row = TableRow(place=place.strip(), name=team, team_id=team_id)
             self._teams.append(row)
         return self
@@ -594,8 +595,12 @@ class SimpleTable:
             if parts[team_idx] in {EDGE, EDGE_RU}:
                 self._parse_matches(total, parts, team_idx)
                 start_idx = total
-            # parse games part: ['12 1 1', 'xxx-xx', '25']
-            self._parse_standings(parts, start_idx, team_idx)
+            try:
+                # parse games part: ['12 1 1', 'xxx-xx', '25']
+                self._parse_standings(parts, start_idx, team_idx)
+            except IndexError as exc:
+                logger.warning(f"No stadings in the table. {exc}")
+                logger.warning(f"parts={parts}, start_idx={start_idx}")
         return self
 
     def _parse_matches(self, num_teams, match_parts, team_idx):
@@ -604,8 +609,8 @@ class SimpleTable:
             match_str = match_parts[match_idx]
             if match_str and match_str not in {EDGE, EDGE_RU}:
                 match = Match.from_string(
-                    self._teams[team_idx]._team_id,
-                    self._teams[match_idx]._team_id,
+                    self._teams[team_idx].team_id,
+                    self._teams[match_idx].team_id,
                     match_str,
                 )
                 match.tourn_season_id = self._season_id
