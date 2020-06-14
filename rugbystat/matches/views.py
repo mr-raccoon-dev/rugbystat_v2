@@ -109,8 +109,8 @@ def import_table(request):
                     logger.error(f'Cant save {vars(season)}. {exc}')
 
             if save_matches:
-                if not seasons:
-                    seasons = Group.objects.get(pk=form.data['group']).standings.all()
+                if not seasons:  # if no GroupSeason passed, let's look for TeamSeason
+                    seasons = Group.objects.get(pk=form.data['group']).season.standings.all()
 
                 names = {s.team_id: s.name for s in seasons}
                 for match in matches:

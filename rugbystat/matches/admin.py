@@ -1,6 +1,9 @@
 from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin, messages
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from markdownx.admin import MarkdownxModelAdmin
+from urllib.parse import urlencode
 
 from main.admin import CrossLinkMixin
 from main.filters import DropdownFilter, DateEndListFilter, DateListFilter
@@ -53,7 +56,7 @@ class SeasonAdmin(CrossLinkMixin, admin.ModelAdmin):
     )
     list_select_related = ('tourn', )
     search_fields = ('name', )
-    readonly_fields = ('groups_links', 'teams_links')
+    readonly_fields = ('groups_links', 'teams_links', 'matches_links')
     inlines = [
         GroupInline,
         TeamSeasonInline,
@@ -79,6 +82,13 @@ class SeasonAdmin(CrossLinkMixin, admin.ModelAdmin):
     def teams_links(self, obj):
         return self._get_admin_links(obj.standings.all())
     teams_links.short_description = 'Teams'
+
+    def matches_links(self, obj):
+        url = reverse('admin:{0}_{1}_changelist'.format("matches", "match"))
+        query = urlencode({"tourn_season__name": obj.name})
+        display_text = f'<li><a href={url}?{query}>{obj.name}</a></li>'
+        return mark_safe(f'<ul>{display_text}</ul>')  # nosec
+    matches_links.short_description = 'Matches'
 
 
 @admin.register(Group)
@@ -117,7 +127,7 @@ class MatchAdmin(MarkdownxModelAdmin):
         (None, {'fields': (('tourn_season', 'date', 'date_unknown'), )}),
         (None, {'fields': ('home', 'away', )}),
         (None, {'fields': (('home_score', 'away_score',),
-                           ('home_halfscore', 'away_halfscore',), 
+                           ('home_halfscore', 'away_halfscore',),
                            ('tech_away_loss', 'tech_home_loss', 'technical'), )}),
         (None, {'fields': ('story', )}),
     )

@@ -140,13 +140,13 @@ class LineImporter:
     def restart(self):
         self.p = Person()
         self.m2m = []
-    
+
     def run(self, inpt):
         for line in inpt:
             self.process_line(line)
             PersonSeason.objects.bulk_create(self.m2m)
             self.restart()
-    
+
     def process_line(self, line):
         matches = self.pattern.findall(line)
         name, year, teams, last, last_name, seasons, last_season, occupation = matches[0]
@@ -165,10 +165,10 @@ class LineImporter:
 
         if year:
             self.p.year_birth = year[1:5]
-        
+
         if occupation:
             self.p.story = occupation
-        
+
         self.p.save()
 
     def parse_seasons(self, teams, last, last_name, last_seasons, last_season):
@@ -704,7 +704,7 @@ def find_team_name_match(search_name, year=None):
 
 
 DAY_RE = re.compile(r'((?P<day>\d{1,2})|(?P<unknown>\?+)) (?P<month>[а-я]+)')
-MATCH_RE = re.compile(r"(?P<home>[А-Я ]+) - (?P<away>[А-Я ]+) - (?P<outcome>[А-Я ]+|(?P<full_score>\d+:\d+)(?P<half_score> \(\d+:\d+\))?(?P<scorers> - .+)?)", re.MULTILINE | re.IGNORECASE)
+MATCH_RE = re.compile(r"(?P<home>[А-Я -]+) - (?P<away>[А-Я -]+) - (?P<outcome>[А-Я ]+|(?P<full_score>\d+:\d+)(?P<half_score> \(\d+:\d+\))?(?P<scorers> - .+)?)?", re.MULTILINE | re.IGNORECASE)
 SCORE_RE = re.compile(r'(\d+):(\d+)')
 
 
@@ -714,20 +714,28 @@ class CalendarParser:
         self._lines = lines
         self._matches: t.List[FullMatch] = []
         self._team_names = teams
+        self._current_line = -1
 
     def __repr__(self):
         return f"Calendar: matches={self._matches}, teams={self._team_names}"
 
     def __iter__(self):
-        return iter(self._lines)
+        return self
+
+    def __next__(self):
+        self._current_line += 1
+        try:
+            return self._lines[self._current_line]
+        except IndexError:
+            raise StopIteration
 
     @property
     def matches(self):
         return self._matches
 
     @classmethod
-    def build(cls, text, group):
-        teams = dict(group.standings.values_list('name', 'team_id'))
+    def build(cls, text, season):
+        teams = dict(season.standings.values_list('name', 'team_id'))
         return cls(text.split('\n'), teams)
 
     def find_matches(self, group, season):
@@ -740,8 +748,11 @@ class CalendarParser:
         for num, line in enumerate(self):
             # emtpy line = new day
             if not line.strip():
+                if date:
+                    default_date = date + dt.timedelta(days=1)
+                else:
+                    default_date = default_date + dt.timedelta(days=1)
                 date = None
-                default_date = default_date + dt.timedelta(days=1)
                 continue
             if date is None and not is_unknown:
                 parsed, is_unknown = self.parse_date(line, group.date_start.year)
@@ -752,7 +763,7 @@ class CalendarParser:
             if "match" in line:
                 match = FullMatch()
                 continue  # next line will contain teams
-            if match == FullMatch():
+            if match and match == FullMatch():  # for comments lines match is already built
                 match_line = num
                 match = self.parse_match(line.strip())
                 match.tourn_season_id = season.id
@@ -765,7 +776,14 @@ class CalendarParser:
                     instance.story = add_to_story(instance.story, line)
                 self._matches.append(instance)
                 match = None
-
+                is_unknown = False
+            if "<div class='txt'>" in line or '<div class="txt">' in line:
+                # comment to the last appended match
+                match = self._matches[-1]
+                while "/div" not in line:
+                    line = next(self)
+                    match.story = add_to_story(match.story, line)
+                match = None
         return self
 
     def parse_date(self, line: str, year: int) -> t.Tuple[t.Optional[dt.date], bool]:
@@ -787,7 +805,9 @@ class CalendarParser:
         >>> txt = (
                 "Маяк - Спартак Нч - 14:12 (6:6) - п: 6:0, ... / п: А.Смойлов (6:6)...\n"
                 "ВВА - Маяк - 47:0\n"
-                "Зенит - Маяк - победа Зенита"
+                "Зенит - Маяк - победа Зенита\n"
+                "ВВА - СМИ - </div>\n"
+                "Енисей-СТМ - Луч-СМИ - 16:0"
             )
         >>> for i, match in enumerate(MATCH_RE.finditer(txt), start=1):
                 print ("Match {} was found".format(i))
@@ -798,6 +818,10 @@ class CalendarParser:
         # {'home': 'ВВА', 'away': 'Маяк', 'outcome': '47:0', 'full_score': '47:0', 'half_score': None, 'scorers': None}
         # Match 3 was found
         # {'home': 'Зенит', 'away': 'Маяк', 'outcome': 'победа Зенита', 'full_score': None, 'half_score': None, 'scorers': None}
+        # Match 4 was found
+        # {'home': 'ВВА', 'away': 'СМИ', 'outcome': None, 'full_score': None, 'half_score': None, 'scorers': None}
+        # Match 5 was found
+        # {'home': 'Енисей-СТМ', 'away': 'Луч-СМИ', 'outcome': '16:0', 'full_score': '16:0', 'half_score': None, 'scorers': None}
         """
         m = None
         for match in MATCH_RE.finditer(txt):
@@ -811,6 +835,8 @@ class CalendarParser:
             else:
                 out = match.groupdict()['outcome']
                 m = FullMatch(home_id=home_id, away_id=away_id)
+                if not out:
+                    return m
                 if out == "ничья":
                     m.home_score = 1
                     m.away_score = 1
@@ -833,12 +859,12 @@ class CalendarParser:
 
 
 def parse_matches(data, season, group):
-    parser = CalendarParser.build(data, group).find_matches(group, season)
+    parser = CalendarParser.build(data, season).find_matches(group, season)
     print(vars(parser))
     return [], parser.matches
 
 
 def add_to_story(story, line):
     story = story.replace('<br>', '\n\n') if story else ''
-    line = line.strip().replace('</div>', '')
+    line = line.strip().replace('<br>', '\n\n').replace('</div>', '')
     return story + line
