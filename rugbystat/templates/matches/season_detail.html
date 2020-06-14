@@ -62,8 +62,6 @@
 
 {% for group in object.groups.all %}
 
-<article>{{ group.story | markdown }}</article>
-
 {% include 'matches/season_table.html' with object=group %}
 {% empty %}
 {% include 'matches/match_list.html' with matches=object.matches.all %}

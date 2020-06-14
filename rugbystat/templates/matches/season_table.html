@@ -1,6 +1,9 @@
+{% load markdownx %}
 {% load widget_tweaks %}
 
 <h3>{{ object.name }}</h3>
+
+<article>{{ group.comment | markdown }}</article>
 
 {% if user.is_authenticated %}
 <form role="form" id="parseGroupTable-{{object.pk}}" class="addForm"
