@@ -308,7 +308,7 @@ class TeamSeason(TableRowFields):
         from matches.models import Match
         return Match.objects.filter(
             models.Q(home=self.team) | models.Q(away=self.team)
-        ).filter(tourn_season=self.season)
+        ).filter(tourn_season=self.season).order_by('date')
 
     def get_position(self) -> str:
         total = self.season.participants or "???"
