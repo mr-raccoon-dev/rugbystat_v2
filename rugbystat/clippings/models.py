@@ -291,9 +291,9 @@ class Document(TitleDescriptionModel, TimeStampedModel):
             else:
                 # return the latest entry path
                 result = meta.entries[0].path_lower
-        except Exception as e:
+        except ApiError as e:
             msg = "Caught an exception trying to get thumb path from Dropbox"
-            logger.error(msg)
+            logger.error(f"{msg}: {thumb_path}")
             logger.exception(e)
             result = self.create_dropbox_thumb()
         return result

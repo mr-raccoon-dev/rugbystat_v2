@@ -4,7 +4,6 @@ from hashlib import sha256
 from django.conf import settings
 from django.core.cache import cache
 
-import redis
 from dropbox import Dropbox
 from dropbox.files import FolderMetadata, DeletedMetadata
 
@@ -87,10 +86,9 @@ def process_folder(metadata, dbx):
 
 def process_user(uid):
     """Call endpoint for every folder and look for any changes."""
-
     token = cache.get(uid) or settings.DROPBOX_ACCESS_TOKEN
     dbx = Dropbox(token)
-    logger.debug("Dropbox instance: " + repr(dbx))
+    logger.info("Dropbox instance: " + repr(dbx))
 
     result = dbx.files_list_folder(path='')
     for metadata in result.entries:
