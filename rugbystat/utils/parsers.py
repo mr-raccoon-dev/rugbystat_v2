@@ -533,7 +533,7 @@ class SimpleTable:
             self._column_marks.append(marks)
             lens.append(len(marks))
 
-        longest_marks = self._column_marks[lens.index(max(lens))]
+        longest_marks = sorted(set(it.chain.from_iterable(self._column_marks)))
         for line in self._lines:
             self._column_parts.append(self._split_line(line, longest_marks))
         return self
