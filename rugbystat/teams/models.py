@@ -317,7 +317,7 @@ class TeamSeason(TableRowFields):
             return f"{pos} из {total}"
 
         if self.show_group:
-            return self.place or self.groups.first().name
+            return self.place or self.groups.last().name
         return "-"
 
     def translate_to_group(self, group):
