@@ -153,6 +153,15 @@ class TeamSeasonView(FormMixin, DetailView):
     def get_context_data(self, **kwargs):
         kwargs = super(TeamSeasonView, self).get_context_data(**kwargs)
         kwargs['person_form'] = PersonRosterForm(initial=self.get_initial())
+        kwargs['roster'] = self.object.get_players()
+        kwargs['same_year_players'] = PersonSeason.objects.filter(
+            team_id=self.object.team_id, year=self.object.year
+        ).exclude(
+            season_id=self.object.season_id
+        ).select_related(
+            'person__tagobject_ptr'
+        ).order_by('role', 'person__name')
+
         return kwargs
 
     def get_initial(self):

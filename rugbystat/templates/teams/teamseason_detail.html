@@ -19,17 +19,33 @@
 
 {% include 'matches/match_list.html' with matches=object.get_matches %}
 
-<h3>Состав</h3>
-<ul>
-{% for player in object.get_players %}
-  <li>
-    <a href="{{ player.person.get_absolute_url }}">
-      {{ player.person.full_name }}
-    </a> {{ player.get_role_display }}
-  </li>
-  {{ player.story | markdown }}
-{% endfor %}
-</ul>
+{% if roster %}
+  <h3>Состав</h3>
+  <ul>
+  {% for player in roster %}
+    <li>
+      <a href="{{ player.person.get_absolute_url }}">
+        {{ player.person.full_name }}
+      </a> {{ player.get_role_display }}
+    </li>
+    {{ player.story | markdown }}
+  {% endfor %}
+  </ul>
+{% endif %}
+
+{% if same_year_players %}
+  <h3>Были в команде в {{ object.year }} году:</h3>
+  <ul>
+  {% for player in same_year_players %}
+    <li>
+      <a href="{{ player.person.get_absolute_url }}">
+        {{ player.person.full_name }}
+      </a> {{ player.get_role_display }}
+    </li>
+    {{ player.story | markdown }}
+  {% endfor %}
+  </ul>
+{% endif %}
 
 {% if messages %}
 <ul class="messages">
