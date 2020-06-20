@@ -2,7 +2,7 @@ import datetime as dt
 
 from django.core.urlresolvers import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -333,6 +333,28 @@ class TeamSeason(TableRowFields):
                      'losses', 'points', 'score', 'order'):
             setattr(gs, attr, getattr(self, attr))
             gs.save()
+
+    @transaction.atomic()
+    def change_team(self, team: Team):
+        """Replace links to team in all entities of the season: groups, matches, tags."""
+        from clippings.models import Document
+
+        old_team_id = self.team_id
+        new_team_id = team.id
+        old_tag = TagObject.objects.get(team=old_team_id)
+        new_tag = TagObject.objects.get(team=new_team_id)
+
+        GroupSeason.objects.filter(team=self.team, group__season=self.season).update(team=team)
+        self.season.matches.filter(home=self.team).update(home=team)
+        self.season.matches.filter(away=self.team).update(away=team)
+
+        for doc in Document.objects.filter(tag__season=self.season_id).filter(tag__team=old_team_id):
+            doc.tag.remove(old_tag)
+            doc.tag.add(new_tag)
+
+        self.team = team
+        self.save()
+        return self
 
 
 class Person(TagObject):
