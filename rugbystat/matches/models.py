@@ -1,4 +1,6 @@
+import logging
 import typing as t
+
 from babel.dates import format_date
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -7,6 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from teams.models import TagObject, Team, TeamSeason
 # from teams.models import Stadium, Person
+
+logger = logging.getLogger("rugbystat")
 
 
 class Tournament(TagObject):
@@ -114,7 +118,7 @@ class Season(TagObject):
 
 
 class Group(models.Model):
-    """Stage of a Season: preliminary round, group A/group B, etc."""
+    """Stage of a Season: preliminary round, group A/gmroup B, etc."""
 
     ROUND = 'round-robin'
     KNOCKOUT = 'knockout'
@@ -170,6 +174,13 @@ class Group(models.Model):
         qs = qs.exclude(date__gt=self.date_end)
         return qs.order_by('date', 'pk')
 
+    def fill_blanks(self):
+        for gs in self.standings.all():
+            try:
+                gs.build().save()
+            except ValueError as exc:
+                logger.warning(f"{gs} matches: {exc}")
+
 
 class MatchQuerySet(models.QuerySet):
     def for_team(self, team_pk):
@@ -220,6 +231,61 @@ class Match(TagObject):
         if not self.display_name:
             self.update_match_name()
         super(Match, self).save(**kwargs)
+
+    @property
+    def is_unknown_outcome(self):
+        return "??:??" in self.name
+
+    @property
+    def is_only_outcome(self):
+        return any([self.tech_away_loss, self.tech_home_loss])
+
+    @property
+    def is_unknown_score(self):
+        if self.is_unknown_outcome:
+            return True
+
+        for unkn in ("в:п", "п:в", "н:н"):
+            if unkn in self.name:
+                return True
+        return False
+
+    @property
+    def is_home_win(self):
+        if self.is_only_outcome:
+            return self.tech_away_loss
+        if not self.is_unknown_outcome:
+            return self.home_score > self.away_score
+
+    @property
+    def is_away_win(self):
+        if self.is_only_outcome:
+            return self.tech_home_loss
+        if not self.is_unknown_outcome:
+            return self.home_score < self.away_score
+
+    @property
+    def is_draw(self):
+        if not self.is_unknown_outcome:
+            return not self.is_only_outcome and self.home_score == self.away_score
+
+    def is_team_win(self, team_id):
+        if team_id == self.home_id:
+            return self.is_home_win
+        if team_id == self.away_id:
+            return self.is_away_win
+
+    def is_team_loss(self, team_id):
+        if team_id == self.home_id:
+            return self.is_away_win
+        if team_id == self.away_id:
+            return self.is_home_win
+
+    def team_score(self, team_id):
+        if team_id == self.home_id:
+            return self.home_score, self.away_score
+        if team_id == self.away_id:
+            return self.away_score, self.home_score
 
     def set_tech_score(self):
         if self.home_score == "-":

@@ -240,6 +240,42 @@ class GroupSeason(TableRowFields):
             if team_in_m2m:
                 return team_in_m2m.get_absolute_url()
 
+    def build(self):
+        played, unknown_score = 0, 0
+        wins, drws, loss = 0, 0, 0
+        score_for, score_aga = 0, 0
+        for match in self.group.matches():
+            if self.team_id in (match.home_id, match.away_id):
+                played += 1
+                if match.is_unknown_outcome:
+                    continue
+
+                if match.is_team_win(self.team_id):
+                    wins += 1
+                if match.is_team_loss(self.team_id):
+                    loss += 1
+                if match.is_draw:
+                    drws += 1
+                
+                if match.is_unknown_score:
+                    unknown_score += 1
+                else:
+                    for_, aga_ = match.team_score(self.team_id)
+                    score_for += for_
+                    score_aga += aga_
+
+        if wins + drws + loss != played:
+            raise ValueError(f"{wins} + {drws} + {loss} != {played}")
+
+        self.played = played
+        self.wins = wins
+        self.draws = drws
+        self.losses = loss
+
+        if not unknown_score:
+            self.score = f"{score_for}-{score_aga}"
+        return self
+
 
 class TeamSeason(TableRowFields):
     """Representation of each tournament a team played"""
