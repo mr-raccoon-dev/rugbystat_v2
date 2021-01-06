@@ -1,4 +1,5 @@
 from django.contrib import admin, messages
+from django.utils.safestring import mark_safe
 
 from main.admin import CrossLinkMixin
 from main.filters import DropdownFilter
@@ -82,9 +83,8 @@ class DocumentAdmin(CrossLinkMixin, admin.ModelAdmin):
 
     def preview(self, obj):
         if obj.is_image:
-            return '<img src="{}"/>'.format(obj.dropbox_thumb)
+            return mark_safe('<img src="{}"/>'.format(obj.dropbox_thumb))
         return '-'
-    preview.allow_tags = True
 
     def tag_links(self, obj):
         return self._get_admin_links(obj.tag.all())

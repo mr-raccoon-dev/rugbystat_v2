@@ -4,7 +4,7 @@ import typing as t
 from babel.dates import format_date
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from teams.models import TagObject, Team, TeamSeason
@@ -58,7 +58,7 @@ class Season(TagObject):
     """Each specific drawing of a Tournament"""
 
     tourn = models.ForeignKey(
-        Tournament, verbose_name=_("Турнир"), related_name="seasons"
+        Tournament, on_delete=models.CASCADE, verbose_name=_("Турнир"), related_name="seasons"
     )
     date_start = models.DateField(verbose_name=_("Дата начала"))
     date_end = models.DateField(verbose_name=_("Дата окончания"))
@@ -131,7 +131,7 @@ class Group(models.Model):
 
     name = models.CharField(verbose_name=_("Название"), max_length=127, blank=True)
     season = models.ForeignKey(
-        Season, verbose_name=_("Розыгрыш"), related_name="groups",
+        Season, on_delete=models.CASCADE, verbose_name=_("Розыгрыш"), related_name="groups",
     )
     round_type = models.CharField(
         verbose_name=_("Тип игр"), max_length=127, choices=TYPES, default=ROUND,
@@ -139,7 +139,7 @@ class Group(models.Model):
     date_start = models.DateField(verbose_name=_("Дата начала"))
     date_end = models.DateField(verbose_name=_("Дата окончания"))
     city = models.ForeignKey(
-        "teams.City",
+        "teams.City", on_delete=models.CASCADE, 
         verbose_name=_("Город"),
         related_name="groups",
         blank=True,
@@ -198,12 +198,14 @@ class Match(TagObject):
     )
     display_name = models.CharField(verbose_name="Отображение", max_length=255, blank=True)
     tourn_season = models.ForeignKey(
-        Season, verbose_name=_("Турнир"), related_name="matches", blank=True, null=True
-    )
+        Season, on_delete=models.SET_NULL,
+        verbose_name=_("Турнир"), related_name="matches", blank=True, null=True
+    ) 
     home = models.ForeignKey(
-        Team, verbose_name=_("Хозяева"), related_name="home_matches"
+        Team, on_delete=models.CASCADE,
+        verbose_name=_("Хозяева"), related_name="home_matches"
     )
-    away = models.ForeignKey(Team, verbose_name=_("Гости"), related_name="away_matches")
+    away = models.ForeignKey(Team, on_delete=models.CASCADE, verbose_name=_("Гости"), related_name="away_matches")
     home_score = models.PositiveSmallIntegerField(
         verbose_name=_("Счёт хозяев"), blank=True, null=True
     )

@@ -16,11 +16,10 @@ DATABASES = {
         'USER': 'rugbystat',
         'PASSWORD': password,
         'HOST': 'rugbystat.mysql.pythonanywhere-services.com',
+        'OPTIONS': {
+            'sql_mode': 'traditional',
+        }
     },
-    'sqlite': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR , 'rugbystat.sqlite.db'),
-    }
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

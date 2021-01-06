@@ -16,7 +16,7 @@ from dropbox.exceptions import ApiError
 from dropbox.files import ThumbnailSize
 
 from storages.backends.dropbox import DropBoxStorage, DropBoxStorageException
-from teams.models import TagObject, TagThrough
+from teams.models import TagObject 
 
 
 logger = logging.getLogger('django.server')
@@ -72,7 +72,7 @@ class SourceObjectManager(models.Manager):
 
 
 class SourceObject(models.Model):
-    source = models.ForeignKey(Source, related_name='instances')
+    source = models.ForeignKey(Source, on_delete=models.CASCADE, related_name='instances')
     edition = models.CharField(
         verbose_name=_('Название'), max_length=127, blank=True)
     year = models.PositiveSmallIntegerField(
@@ -163,10 +163,10 @@ class Document(TitleDescriptionModel, TimeStampedModel):
     title = models.CharField(
         verbose_name=_('Заголовок'), max_length=127, default='Archive')
     source = models.ForeignKey(
-        Source, verbose_name=_('Источник'), related_name='scans',
+        Source, on_delete=models.SET_NULL, verbose_name=_('Источник'), related_name='scans',
         blank=True, null=True)
     source_issue = models.ForeignKey(
-        SourceObject, verbose_name=_('Выпуск'), related_name='scans',
+        SourceObject, on_delete=models.SET_NULL, verbose_name=_('Выпуск'), related_name='scans',
         blank=True, null=True)
     kind = models.CharField(
         verbose_name=_('Тип'), max_length=127, choices=Source.TYPE_CHOICES,
@@ -212,7 +212,7 @@ class Document(TitleDescriptionModel, TimeStampedModel):
 
     def _as_dict(self):
         return dict([(f.name, getattr(self, f.name))
-                     for f in self._meta.local_fields if not f.rel])
+                     for f in self._meta.local_fields if not f.is_relation])
 
     @cached_property
     def filename(self):

@@ -2,7 +2,7 @@ import logging
 
 from dal import autocomplete
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import redirect, render

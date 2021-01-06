@@ -873,3 +873,34 @@ def add_to_story(story, line):
     story = story.replace('<br>', '\n\n') if story else ''
     line = line.strip().replace('<br>', '\n\n').replace('</div>', '')
     return story + line
+
+
+# Nalchik
+import string
+YEAR_RE = re.compile(r"(?P<year>(\d{4}-)?\d{4}) год")
+LINE_RE = re.compile(r"(?P<name>[А-Я]{3,100}( [А-Я]+)?( [А-Я]+)?).(?P<year>\(\d{4}\))?(?P<text>.+)")
+
+"""
+    create = []
+    for ll in lines.split('\n'):
+        last_name, first_name, middle_name = "", "", ""
+        matched = LINE_RE.search(ll).groupdict()
+        name = string.capwords(matched['name'])
+        if len(name.split()) == 3:
+            last_name, first_name, middle_name = name.split()
+        elif len(name.split()) == 2:
+            last_name, first_name = name.split()
+        else:
+            last_name = name
+        p = Person(name=last_name, first_name=first_name, middle_name=middle_name)
+        p.year_birth = matched['year'][1:-1]
+        years = YEAR_RE.search(matched['text']).groupdict().get("year")
+        seasons = []
+        if "-" in years:
+            start, end = years.split("-")
+            for yy in range(int(start), int(end) + 1):
+                seasons.append(PersonSeason(person=p, role=PersonSeason.PLAYER, year=yy, team=team))
+        else:
+            seasons.append(PersonSeason(person=p, role=PersonSeason.PLAYER, year=years, team=team))
+        create.append({"player": p, "seasons": seasons})
+"""

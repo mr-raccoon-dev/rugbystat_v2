@@ -39,9 +39,8 @@ class GroupInline(admin.TabularInline):
             db_field, request, **kwargs
         )
         # get only teams from THAT season
-        field.queryset = field.queryset.filter(
-            season=request.resolver_match.args[0]
-        )
+        season_pk = request.resolver_match.kwargs['object_id']
+        field.queryset = field.queryset.filter(season=season_pk)
         return field
 
 

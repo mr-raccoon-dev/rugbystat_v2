@@ -1,50 +1,46 @@
-# Django
-Django==1.11.27
-django-extensions==1.7.5
-
-# For the persistence stores
-# psycopg2==2.6.2
-dj-database-url==0.4.1
-mysqlclient
-
-# Models
-django-model-utils==3.2.0
-django-admin-sortable2==0.6.13
-django-autocomplete-light==3.2.9
-
-# Rest apis
-djangorestframework==3.9.1
-django-filter==1.1
-
-django-allauth==0.34.0
-django-markdownx==2.0.21
-Markdown==2.6.7
-
-# Templates
-django-widget-tweaks==1.4.1
-
-# Static and Media Storage
-django-storages==1.6.5
-# Static files
-whitenoise==3.2.2
-
-# Media files
-Pillow<6.0
-boto==2.45.0
+babel==2.9.0
+certifi==2020.12.5
+cffi==1.14.4
+chardet==4.0.0
+cryptography==3.3.1
+defusedxml==0.6.0
+diskcache==5.1.0
+dj-database-url==0.5.0
+django==2.2.17
+django-admin-sortable2==0.7.7
+django-allauth==0.44.0
+django-autocomplete-light==3.8.1
+-e git+https://github.com/andres-torres-marroquin/django-dropbox/@1c602e58d6abfa4af329bf4e64d541ec5e0c17d6#egg=django-dropbox
+django-extensions==3.1.0
+django-filter==2.4.0
+django-markdownx==3.0.1
+django-model-utils==4.1.1
+django-storages==1.11.1
+django-versatileimagefield==2.0
+django-widget-tweaks==1.4.8
+djangorestframework==3.12.2
 dropbox==8.0.0
-git+https://github.com/andres-torres-marroquin/django-dropbox/
-
-# Image manipulation
-django-versatileimagefield==1.10
-
-# For asynchronous queuing
-# django-rq==2.1.0
-redislite==3.0.296
-diskcache==2.3.0
-
-# Time zones support
-pytz==2016.10
-babel==2.8.0
-
-# Other libs
-fuzzywuzzy[speedup] == 0.17.0
+fuzzywuzzy==0.18.0
+idna==2.10
+importlib-metadata==3.3.0; python_version < "3.8"
+markdown==3.3.3
+mysqlclient==2.0.3
+oauthlib==3.1.0
+pillow==5.4.1
+psutil==5.8.0
+pycparser==2.20
+pyjwt==2.0.0
+python-levenshtein==0.12.0
+python-magic==0.4.18
+python3-openid==3.2.0
+pytz==2020.5
+redis==3.5.3
+redislite==5.0.165407
+requests==2.25.1
+requests-oauthlib==1.3.0
+six==1.15.0
+sqlparse==0.4.1
+typing-extensions==3.7.4.3; python_version < "3.8"
+urllib3==1.26.2
+whitenoise==5.2.0
+zipp==3.4.0; python_version < "3.8"

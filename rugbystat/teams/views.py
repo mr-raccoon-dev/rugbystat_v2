@@ -2,7 +2,7 @@ import operator
 from functools import reduce
 
 from dal import autocomplete
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.db.models import Q
 from django.forms.formsets import formset_factory
 from django.http import HttpResponse

@@ -146,9 +146,11 @@ class GroupSeasonInline(SortableInlineAdminMixin, admin.TabularInline):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
        field = super().formfield_for_foreignkey(db_field, request, **kwargs)
-       if db_field.name == 'team':
+
+       pk = request.resolver_match.kwargs.get( 'object_id' )
+       if db_field.name == 'team' and pk:
            # get only teams from THAT season
-           group = Group.objects.get(pk__in=request.resolver_match.args)
+           group = Group.objects.get(pk=pk)
            teams_in_season = group.teams.values_list('team_id', flat=True)
            field.queryset = Team.objects.filter(pk__in=teams_in_season)
        return field

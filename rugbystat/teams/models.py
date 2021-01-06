@@ -1,6 +1,6 @@
 import datetime as dt
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models, transaction
 from django.db.models import Q
@@ -42,11 +42,6 @@ class TagObject(models.Model):
         return self.tagobject_ptr.document_set.all()
 
 
-class TagThrough(models.Model):
-    document = models.ForeignKey('clippings.Document')
-    tag = models.ForeignKey('TagObject')
-
-
 class City(models.Model):
     name = models.CharField(max_length=127, verbose_name=_('Базовое название'))
     short_name = models.CharField(
@@ -63,7 +58,7 @@ class City(models.Model):
 
 
 class Stadium(models.Model):
-    city = models.ForeignKey(City, verbose_name=_('Город'))
+    city = models.ForeignKey(City, on_delete=models.CASCADE, verbose_name=_('Город'))
     name = models.CharField(max_length=127, verbose_name=_('Базовое название'))
     # TODO add historic names
 
@@ -88,7 +83,7 @@ class Team(TagObject):
     short_name = models.CharField(
         max_length=32, verbose_name=_('Короткое название'), blank=True)
     city = models.ForeignKey(
-        City, verbose_name=_('Город'), related_name='teams')
+        City, on_delete=models.CASCADE, verbose_name=_('Город'), related_name='teams')
     year = models.PositiveSmallIntegerField(
         verbose_name=_('Год создания'), blank=True, null=True,
         validators=(MinValueValidator(1900), MaxValueValidator(2100)),
@@ -104,7 +99,7 @@ class Team(TagObject):
         max_length=64, verbose_name=_('Префикс к году распада'),
         blank=True, null=True,)
     parent = models.ForeignKey(
-        'self', verbose_name=_('Команда-родитель'),
+        'self', on_delete=models.SET_NULL, verbose_name=_('Команда-родитель'),
         related_name='ancestors', blank=True, null=True)
 
     class Meta:
@@ -147,7 +142,7 @@ class TeamName(models.Model):
     """Representation of a separate name a team beared."""
 
     name = models.CharField(verbose_name=_('Базовое название'), max_length=127)
-    team = models.ForeignKey(Team, verbose_name=_('Команда'), related_name='names')
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, verbose_name=_('Команда'), related_name='names')
     from_day = models.DateField(verbose_name=_('Дата начала'))
     to_day = models.DateField(verbose_name=_('Дата окончания'), blank=True, null=True)
     is_known = models.BooleanField(verbose_name=_('Подтверждено'), default=True)
@@ -212,10 +207,10 @@ class GroupSeason(TableRowFields):
     )
     # both `name` and `year` serves only for simpler repr and sql query
     team = models.ForeignKey(
-        Team, verbose_name=_('Команда'), related_name='groups',
+        Team, on_delete=models.CASCADE, verbose_name=_('Команда'), related_name='groups',
     )
     group = models.ForeignKey(
-        'matches.Group', verbose_name=_('Группа'),
+        'matches.Group', on_delete=models.CASCADE, verbose_name=_('Группа'),
         related_name='standings'
     )
     story = models.TextField(verbose_name=_('История'), blank=True, )
@@ -293,10 +288,10 @@ class TeamSeason(TableRowFields):
     # both `name` and `year` serves only for simpler repr and sql query
     story = models.TextField(verbose_name=_('История'), blank=True, )
     team = models.ForeignKey(
-        Team, verbose_name=_('Команда'), related_name='seasons',
+        Team, on_delete=models.CASCADE, verbose_name=_('Команда'), related_name='seasons',
     )
     season = models.ForeignKey(
-        'matches.Season', verbose_name=_('Турнир'),
+        'matches.Season', on_delete=models.CASCADE, verbose_name=_('Турнир'),
         related_name='standings'
     )
     has_position = models.BooleanField(
@@ -481,7 +476,7 @@ class PersonSeason(models.Model):
     )
 
     person = models.ForeignKey(
-        Person, verbose_name=_('Персона'), related_name='seasons',
+        Person, on_delete=models.CASCADE, verbose_name=_('Персона'), related_name='seasons',
     )
     year = models.PositiveSmallIntegerField(
         verbose_name=_('Год'),
@@ -492,11 +487,11 @@ class PersonSeason(models.Model):
         choices=ROLE_CHOICES, default=PLAYER
     )
     team = models.ForeignKey(
-        Team, verbose_name=_('Команда'), related_name='_person_seasons',
+        Team, on_delete=models.SET_NULL, verbose_name=_('Команда'), related_name='_person_seasons',
         blank=True, null=True
     )
     season = models.ForeignKey(
-        'matches.Season', verbose_name=_('Розыгрыш турнира'),
+        'matches.Season', on_delete=models.SET_NULL, verbose_name=_('Розыгрыш турнира'),
         related_name='_person_seasons', blank=True, null=True
     )
     story = models.TextField(verbose_name=_('Комментарий'), blank=True, )
