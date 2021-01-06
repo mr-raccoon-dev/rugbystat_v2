@@ -22,6 +22,7 @@ local/
 .idea/
 .vscode/
 .mysql/
+.env
 
 *.log
 pip-log.txt

@@ -24,9 +24,6 @@ TeamEditForm - add modal with success/errors messages
 TeamSeasonEditForm
 PersonEditForm - ajax save
 
-All forms appear and sent only via logged in users
-If user is unauthenticated - show him popup with login button
-
 ImportForm for batch adding PersonSeason for a team roster
 
 DocumentEditForm?

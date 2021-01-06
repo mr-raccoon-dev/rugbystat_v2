@@ -3,7 +3,8 @@ from django.contrib import admin
 from markdownx.admin import MarkdownxModelAdmin
 
 from main.filters import DropdownFilter
-# from .forms import TeamSeasonForm
+from matches.models import Group
+from .forms import PersonSeasonForm
 from .models import (
     Person, PersonSeason, Team, TeamName, TeamSeason, GroupSeason,
     Stadium, City, TagObject,
@@ -143,20 +144,20 @@ class GroupSeasonInline(SortableInlineAdminMixin, admin.TabularInline):
     model = GroupSeason
     extra = 1
 
-    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
-    #     field = super().formfield_for_foreignkey(db_field, request, **kwargs)
-    #     if db_field.name == 'team':
-    #         # get only teams from THAT season
-    #         field.queryset = field.queryset.filter(
-    #             groups__group_id__in=[request.resolver_match.args[0]]
-    #         )
-    #     return field
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+       field = super().formfield_for_foreignkey(db_field, request, **kwargs)
+       if db_field.name == 'team':
+           # get only teams from THAT season
+           group = Group.objects.get(pk__in=request.resolver_match.args)
+           teams_in_season = group.teams.values_list('team_id', flat=True)
+           field.queryset = Team.objects.filter(pk__in=teams_in_season)
+       return field
 
 
 class PersonSeasonInline(admin.TabularInline):
     model = PersonSeason
+    form = PersonSeasonForm
     extra = 1
-    raw_id_fields = ('team', )
 
 
 @admin.register(Person)
@@ -206,4 +207,6 @@ class PersonSeasonAdmin(admin.ModelAdmin):
         ('team__name', DropdownFilter),
         ('season__name', DropdownFilter),
     )
-    raw_id_fields = ('team', 'person', 'season')
+    raw_id_fields = ('person', )
+    form = PersonSeasonForm
+
