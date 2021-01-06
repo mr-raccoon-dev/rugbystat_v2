@@ -4,8 +4,6 @@
 # Debugging
 django-debug-toolbar==2.0
 ipdb
-pudb
-pdbpp
 
 # Docs
 mkdocs==0.16.1

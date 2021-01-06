@@ -22,7 +22,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.facebook',
     'rest_framework',
     'rest_framework.authtoken',  # token authentication
-    'django_rq',                 # asynchronous queuing
+    #  'django_rq',                 # asynchronous queuing
     'versatileimagefield',       # image manipulation
     'django_dropbox',
     'django_extensions',

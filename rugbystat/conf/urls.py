@@ -47,7 +47,7 @@ urlpatterns = [
     url(r'^accounts/',include('allauth.urls')),
     url(r'^api/v1/', include(router.urls)),
     url(r'^api/v1/', include('authentication.urls')),
-    url(r'^django-rq/', include('django_rq.urls')),
+    #  url(r'^django-rq/', include('django_rq.urls')),
     url(r'^markdownx/', include('markdownx.urls')),
     url(r'^import-teams/', import_teams),
     url(r'^import-seasons/', import_seasons, name='import_seasons'),
