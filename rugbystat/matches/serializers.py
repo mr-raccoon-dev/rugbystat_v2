@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Match
+from .models import Match, Season
 
 
 class MatchSerializer(serializers.ModelSerializer):
@@ -19,3 +19,10 @@ class MatchSerializer(serializers.ModelSerializer):
         if data['story'] is None:
             data['story'] = ''
         return flag, data
+
+
+class SeasonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Season
+        fields = '__all__'
+

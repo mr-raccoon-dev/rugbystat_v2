@@ -27,7 +27,7 @@ from teams.views import (import_teams,
                          PersonSeasonAutocomplete,
                          TeamBySeasonAutocomplete, PersonBySeasonAutocomplete)
 from teams.viewsets import TeamViewSet, TeamSeasonViewSet, PersonViewSet, PersonSeasonViewSet
-from matches.viewsets import MatchViewSet
+from matches.viewsets import MatchViewSet, SeasonViewSet
 from users.viewsets import UserViewSet
 
 router = DefaultRouter()
@@ -40,6 +40,7 @@ router.register(r'teams/(?P<team_id>\d+)/documents', DocumentViewSet)
 router.register(r'documents', DocumentViewSet)
 router.register(r'sources', SourceViewSet)
 router.register(r'issues', SourceObjectViewSet)
+router.register(r'seasons', SeasonViewSet)
 router.register(r'matches', MatchViewSet)
 
 urlpatterns = [
