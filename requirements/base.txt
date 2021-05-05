@@ -13,7 +13,7 @@ django-admin-sortable2==0.6.13
 django-autocomplete-light==3.2.9
 
 # Rest apis
-djangorestframework==3.9.1
+djangorestframework==3.11.2
 django-filter==1.1
 
 django-allauth==0.34.0
