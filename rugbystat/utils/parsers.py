@@ -23,8 +23,11 @@ POSITIONS = {
     "10": PersonSeason.FH,
     "9": PersonSeason.SH,
     "6-8": PersonSeason.BACKROW,
+    "8-6": PersonSeason.BACKROW,
     "4-5": PersonSeason.LOCK,
+    "5-4": PersonSeason.LOCK,
     "1-3": PersonSeason.FIRST_ROW,
+    "3-1": PersonSeason.FIRST_ROW,
     "14": PersonSeason.WINGER,
     "13": PersonSeason.CENTER,
     "12": PersonSeason.CENTER,
@@ -44,6 +47,7 @@ POSITIONS = {
     "1-8": PersonSeason.FORWARD,
     "15-9": PersonSeason.BACK,
 }
+
 MONTHS_MAP = {
     "январ": "01",
     "феврал": "02",
@@ -64,7 +68,13 @@ TEAM_NAME = re.compile(r"[а-я]+\s+", re.I)
 TEAM_SIMILAR_THRESHOLD = 60
 
 
-def parse_rosters(request, data):
+def parse_rosters(_, data):
+    for player in players_from_input(data):
+        # find person
+        find_or_create_in_db(player, data)
+
+
+def players_from_input(data) -> t.Generator:
     input_ = data["input"].replace("\r\n", " ").replace(" / ", ";")
     positions = input_.strip().split(";")
     for position in positions:
@@ -73,42 +83,45 @@ def parse_rosters(request, data):
         try:
             print("Checking {}".format(position))
             number, players = re.findall(esc, position)[0]
+            print(number)
         except ValueError:
             msg = "Couldn't import data: {}".format(position)
             print(msg)
-            logger.warning(msg)
         else:
             role = POSITIONS.get(number, PersonSeason.PLAYER)
             for player in players.split(","):
-                # find person
-                try:
-                    first_name, name = player.split()
-                except ValueError:
-                    msg = "Couldn't split: {}".format(player)
-                    print(msg)
-                    logger.warning(msg)
+                yield role, player 
 
-                    name = player
 
-                persons = Person.objects.filter(name=name)
-                # what if there're multiple?
-                print("Finding best match from {}".format(persons))
+def find_or_create_in_db(player: str, data):
+    try:
+        first_name, name = player.split()
+    except ValueError:
+        msg = "Couldn't split: {}".format(player)
+        print(msg)
+        logger.warning(msg)
 
-                person = find_best_match(persons, name, first_name)
-                print("Found {}".format(person))
+        name = player
 
-                # get_or_create PersonSeason for number
-                obj, created = PersonSeason.objects.get_or_create(
-                    role=role,
-                    person=person,
-                    season_id=data["season"],
-                    team_id=data["team"],
-                    year=data["year"],
-                )
-                if created:
-                    success(request, "Created {}".format(obj))
-                else:
-                    success(request, "Found {}".format(obj))
+    persons = Person.objects.filter(name=name)
+    # what if there're multiple?
+    print("Finding best match from {}".format(persons))
+
+    person = find_best_match(persons, name, first_name)
+    print("Found {}".format(person))
+
+    # get_or_create PersonSeason for number
+    obj, created = PersonSeason.objects.get_or_create(
+        role=role,
+        person=person,
+        season_id=data["season"],
+        team_id=data["team"],
+        year=data["year"],
+    )
+    if created:
+        logger.info("Created {}".format(obj))
+    else:
+        logger.info("Found {}".format(obj))
 
 
 def parse_alphabet(request, data):
@@ -215,6 +228,46 @@ def reduce_qs(qs, search_term):
         )
     ]
     return qs.filter(ft.reduce(operator.or_, queries))
+
+
+class Zaal:
+    def __init__(self, role, full_name):
+        self.role=role
+        self.first_name=full_name.strip().split()[0]
+        self.last_name=full_name.strip().split()[1]
+        self.django=None
+    def __repr__(self):
+        return f"{self.first_name} {self.last_name}, {self.role}"
+
+rr = re.compile(r'(?P<first_name>[А-Я][а-я]+)\s+(?P<last_name>[А-Я][а-я]+)\s+.*?(?P<year>\d{4})')
+
+"""
+
+>>> def find_in_db(p):
+...         persons = Person.objects.filter(name=p.last_name)
+...         p.django=find_best_match(persons, p.last_name, p.first_name)
+... 
+>>> def step1(ss):
+...     players=[Parsed(p) for p in rr.findall(ss)]
+...     for p in players:
+...         find_in_db(p)
+...         print(p.django, p.django.year_birth)
+...     return players
+... 
+"""
+
+
+def zaal1(ss):
+    res = []
+    for p in players_from_input({'input': ss}):
+        inst = Zaal(*p)
+        find_in_db(inst)
+        if inst.django:
+            print(inst.django, inst.django.year_birth)
+        else:
+            print('not found')
+        res.append(inst)
+    return res
 
 
 def find_best_match(queryset, name, first_name, all=False):
