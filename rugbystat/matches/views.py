@@ -73,6 +73,7 @@ def import_seasons(request):
 
 
 def import_table(request):
+    form = TableImportForm(request.POST, request=request)
     if request.method == 'POST':
         if 'group' in request.POST:
             cls = GroupImportForm
