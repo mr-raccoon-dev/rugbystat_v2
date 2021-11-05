@@ -586,9 +586,8 @@ class SimpleTable:
             self._column_marks.append(marks)
             lens.append(len(marks))
 
-        longest_marks = sorted(set(it.chain.from_iterable(self._column_marks)))
-        for line in self._lines:
-            self._column_parts.append(self._split_line(line, longest_marks))
+        for line, marks in zip(self._lines, self._column_marks):
+            self._column_parts.append(self._split_line(line, marks))
         return self
 
     @staticmethod
@@ -637,8 +636,23 @@ class SimpleTable:
         return self
 
     def find_matches(self):
+        place1, place2, place3 = self._column_parts[:3]
+        if len(place1) > len(place2) > len(place3):
+            return self._find_in_oneleg_table()
+        return self._find_in_full_table()
+
+    def _find_in_full_table(self):
+        """Find matches in fully filled table.
+
+        The table must be filled with both sides:
+
+            xxxxx  13:14  22:5
+            14:13  xxxxx  16:6
+             5:22   6:16  xxxxx
+
+        """
         total = len(self._teams)
-        for team_idx in range(0, total):
+        for team_idx in range(total):
             start_idx = 0
             parts = self._column_parts[team_idx]
             if not parts:
@@ -654,6 +668,22 @@ class SimpleTable:
             except IndexError as exc:
                 logger.warning(f"No stadings in the table. {exc}")
                 logger.warning(f"parts={parts}, start_idx={start_idx}")
+        return self
+
+    def _find_in_oneleg_table(self):
+        total = len(self._teams)
+        for position, table_row in enumerate(self._column_parts):
+            if not table_row:
+                logger.warning(f"no table_row in table: {self}")
+                break
+            if table_row[0] in {EDGE, EDGE_RU}:
+                self._parse_matches(total, [""] * position + table_row, position)
+            try:
+                # parse games part: ['12 1 1', 'xxx-xx', '25']
+                self._parse_standings(table_row, total - position, position)
+            except IndexError as exc:
+                logger.warning(f"No stadings in the table. {exc}")
+                logger.warning(f"parts={table_row}, start_idx={total - position}")
         return self
 
     def _parse_matches(self, num_teams, match_parts, team_idx):
