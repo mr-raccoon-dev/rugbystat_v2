@@ -21,10 +21,6 @@ LOGGING = {
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
-        'rq_console': {
-            'format': '%(asctime)s %(message)s',
-            'datefmt': '%H:%M:%S',
-        },
     },
     'filters': {
         'require_debug_true': {
@@ -42,12 +38,6 @@ LOGGING = {
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
-        },
-        'rq_console': {
-            'level': 'DEBUG',
-            'class': 'rq.utils.ColorizingStreamHandler',
-            'formatter': 'rq_console',
-            'exclude': ['%(asctime)s'],
         },
         "applogfile": {
             "level": "DEBUG",
@@ -81,9 +71,5 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'rq.worker': {
-            'handlers': ['rq_console'],
-            'level': 'DEBUG'
-        }
     }
 }
