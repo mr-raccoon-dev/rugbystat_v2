@@ -1,5 +1,4 @@
 import os
-import redislite
 
 from .common import *
 from .logging import *

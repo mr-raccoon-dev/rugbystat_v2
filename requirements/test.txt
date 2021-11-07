@@ -8,8 +8,7 @@ mock==2.0.0
 factory-boy==2.8.1
 
 # Test Runner
-django-nose==1.4.4
-nose-progressive==1.5.1
+pytest
 
 # Code Coverage
 coverage==4.3.1
