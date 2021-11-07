@@ -34,5 +34,6 @@ site
 
 bower_components/
 static_root/
+node_modules/
 
 rugbystat*.sql

@@ -13,6 +13,10 @@ def main_view(request):
     return render(request, "base.html")
 
 
+def contacts_view(request):
+    return render(request, "contacts.html")
+
+
 def teams_view(request):
     return render(request, "teams.html")
 
