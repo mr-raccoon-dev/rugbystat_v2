@@ -137,5 +137,6 @@ class ImportRosterForm(forms.Form):
 
     def clean(self):
         data = super(ImportRosterForm, self).clean()
-        parse_rosters(self.request, data)
+        if data.get("input"):
+            parse_rosters(self.request, data)
         # parse_alphabet(self.request, data)
