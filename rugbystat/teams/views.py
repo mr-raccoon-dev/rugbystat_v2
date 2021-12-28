@@ -145,6 +145,25 @@ class TeamUpdateView(UpdateView):
         return kwargs
 
 
+def get_same_year_players(for_season: TeamSeason, roster: PersonSeason.objects):
+    qs = PersonSeason.objects.filter(
+        team_id=for_season.team_id, year=for_season.year
+    ).exclude(
+        season_id=for_season.season_id
+    ).exclude(
+        person_id__in=[p.person_id for p in roster]
+    ).select_related(
+        'person__tagobject_ptr'
+    ).order_by('role', 'person__name')
+    distinct = []
+    added = set()
+    for season in qs:
+        if season.person_id not in added:
+            distinct.append(season)
+            added.add(season.person_id)
+    return distinct
+
+
 class TeamSeasonView(FormMixin, DetailView):
     """List of all matches of a specific Team in a Season"""
     model = TeamSeason
@@ -152,16 +171,10 @@ class TeamSeasonView(FormMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         kwargs = super(TeamSeasonView, self).get_context_data(**kwargs)
+        team_season = self.object
         kwargs['person_form'] = PersonRosterForm(initial=self.get_initial())
-        kwargs['roster'] = self.object.get_players()
-        kwargs['same_year_players'] = PersonSeason.objects.filter(
-            team_id=self.object.team_id, year=self.object.year
-        ).exclude(
-            season_id=self.object.season_id
-        ).select_related(
-            'person__tagobject_ptr'
-        ).order_by('role', 'person__name')
-
+        kwargs['roster'] = team_season.get_players()
+        kwargs['same_year_players'] = get_same_year_players(team_season, kwargs['roster'])
         return kwargs
 
     def get_initial(self):
