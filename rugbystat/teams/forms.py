@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from django.forms import inlineformset_factory, formset_factory
+from django.forms import inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from clippings.models import Document
@@ -56,6 +56,7 @@ class TeamSeasonForm(forms.ModelForm):
 TeamSeasonFormSet = inlineformset_factory(Season, TeamSeason,
                                           form=TeamSeasonForm, extra=1)
 
+
 class PersonForm(forms.ModelForm):
     """Edit Person attributes"""
     name = forms.CharField(max_length=32, label=_('Фамилия'))
@@ -92,6 +93,16 @@ class PersonSeasonForm(forms.ModelForm):
             'team': ModelSelect2Bootstrap(url='autocomplete-teams',
                                           forward=['year'])
         }
+
+
+class PersonSeasonInRosterForm(PersonSeasonForm):
+    """To create PersonSeason from TeamSeasonUpdate."""
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        self.fields["team"].disabled = True
+        self.fields["season"].disabled = True
+        self.fields["year"].disabled = True
 
 
 class PersonRosterForm(PersonSeasonForm):
@@ -133,7 +144,7 @@ class ImportRosterForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
-        super(ImportRosterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self):
         data = super(ImportRosterForm, self).clean()
