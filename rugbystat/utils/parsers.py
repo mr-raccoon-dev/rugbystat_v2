@@ -7,7 +7,6 @@ import re
 import typing as t
 from difflib import SequenceMatcher as SM
 
-from django.contrib.messages import success
 from django.contrib import messages
 from django.db import connection
 from django.db.models import Q
@@ -17,6 +16,7 @@ from matches.models import Season, Tournament, Match as MatchModel
 from teams.models import City, Person, PersonSeason, Team, TeamSeason, GroupSeason
 
 logger = logging.getLogger("django.request")
+
 POSITIONS = {
     "15": PersonSeason.FB,
     "14-11": PersonSeason.BACK,
@@ -385,6 +385,10 @@ def parse_season(data, request):
     return season
 
 
+def dt_from_str(day, month, year) -> dt.datetime:
+    return dt.datetime.strptime("{}/{}/{}".format(day, MONTHS_MAP[month], year), "%d/%m/%Y")
+
+
 def find_dates(txt, year):
     """
     Parse "с 5 февраля по 10 мая" to datetime objects
@@ -401,33 +405,21 @@ def find_dates(txt, year):
         try:
             date_start, date_end = dates[0]
             day, month = date_start
-            date_start = dt.datetime.strptime(
-                "{}/{}/{}".format(day, MONTHS_MAP[month], year), "%d/%m/%Y"
-            )
+            date_start = dt_from_str(day, month, year)
             day, month = date_end
-            date_end = dt.datetime.strptime(
-                "{}/{}/{}".format(day, MONTHS_MAP[month], year), "%d/%m/%Y"
-            )
+            date_end = dt_from_str(day, month, year)
         except (IndexError, ValueError):
             # either ('12-15', 'мая') or 'октябр'
             try:
                 days, month = dates[1][0]
                 day_start, day_end = days.split("-")
-                date_start = dt.datetime.strptime(
-                    "{}/{}/{}".format(day_start, MONTHS_MAP[month], year), "%d/%m/%Y"
-                )
-                date_end = dt.datetime.strptime(
-                    "{}/{}/{}".format(day_end, MONTHS_MAP[month], year), "%d/%m/%Y"
-                )
+                date_start = dt_from_str(day_start, month, year)
+                date_end = dt_from_str(day_end, month, year)
             except (IndexError, ValueError):
                 # 'октябр'
                 month = dates[2][0]
-                date_start = dt.datetime.strptime(
-                    "{}/{}/{}".format("05", MONTHS_MAP[month], year), "%d/%m/%Y"
-                )
-                date_end = dt.datetime.strptime(
-                    "{}/{}/{}".format("25", MONTHS_MAP[month], year), "%d/%m/%Y"
-                )
+                date_start = dt_from_str("05", month, year)
+                date_end = dt_from_str("25", month, year)
         return date_start, date_end
     else:
         return None, None
@@ -858,6 +850,9 @@ class CalendarParser:
             if match and match == FullMatch():  # for comments lines match is already built
                 match_line = num
                 match = self.parse_match(line.strip())
+                if not match:
+                    print("can't parse", line)
+                    continue
                 match.tourn_season_id = season.id
             if "</div>" in line and match:
                 instance = match.build()
