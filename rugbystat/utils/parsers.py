@@ -788,7 +788,7 @@ def find_team_name_match(search_name, year=None):
 
 
 DAY_RE = re.compile(r'((?P<day>\d{1,2})|(?P<unknown>\?+)) (?P<month>[а-я]+)')
-MATCH_RE = re.compile(r"(?P<home>[А-Я -]+) - (?P<away>[А-Я -]+) - (?P<outcome>[А-Я ]+|(?P<full_score>\d+:\d+)(?P<half_score> \(\d+:\d+\))?(?P<scorers> - .+)?)?", re.MULTILINE | re.IGNORECASE)
+MATCH_RE = re.compile(r"(?P<home>[А-Я() -]+) - (?P<away>[А-Я() -]+) - (?P<outcome>[А-Я ]+|(?P<full_score>\d+:\d+)(?P<half_score> \(\d+:\d+\))?(?P<scorers> - .+)?)?", re.MULTILINE | re.IGNORECASE)
 SCORE_RE = re.compile(r'(\d+):(\d+)')
 
 
