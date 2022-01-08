@@ -571,11 +571,12 @@ class SimpleTable:
 
     @classmethod
     def build(cls, txt):
-        _list = []
-        for line in txt.split("\n"):
-            if line.startswith("-") or not line.strip():
-                continue
-            _list.append(line.strip())
+        _list = [
+            line.strip()
+            for line in txt.split("\n")
+            if not line.startswith("-") and line.strip()
+        ]
+
         return cls(_list).find_columns()
 
     def find_columns(self):
@@ -636,6 +637,9 @@ class SimpleTable:
         return self
 
     def find_matches(self):
+        if not self._column_marks[0]:
+            # no columns - no matches. it's only a team name
+            return self
         place1, place2, place3 = self._column_parts[:3]
         if len(place1) > len(place2) > len(place3):
             return self._find_in_oneleg_table()
