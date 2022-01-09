@@ -71,15 +71,15 @@ TEAM_SIMILAR_THRESHOLD = 60
 def parse_rosters(_, data):
     for role, player in players_from_input(data):
         # find person
-        find_or_create_in_db(role, player, data)
+        find_or_create_in_db(role, player, data["input"])
 
 
-def players_from_input(data) -> t.Generator:
-    input_ = data["input"].replace("\r\n", " ").replace(" / ", ";")
+def players_from_input(raw_text: str) -> t.Generator:
+    input_ = raw_text.replace("\r\n", " ").replace(" / ", ";")
     positions = input_.strip().split(";")
+    esc = r"(\d{1,2}-*\d{0,2}).(.*)"
     for position in positions:
         # split number from names
-        esc = r"(\d{1,2}-*\d{0,2}).(.*)"
         try:
             print("Checking {}".format(position))
             number, players = re.findall(esc, position)[0]
@@ -93,18 +93,23 @@ def players_from_input(data) -> t.Generator:
                 yield role, player
 
 
-def find_or_create_in_db(role: str, player: str, data):
+def split_name(player: str) -> t.Tuple[str, str]:
+    if '.' in player:
+        return player.split('.')  # TODO: what if patronymic?
+
     try:
-        first_name, name = player.split()
+        return player.split()
     except ValueError:
         msg = "Couldn't split: {}".format(player)
         print(msg)
         logger.warning(msg)
+        return "", player
 
-        name = player
 
+def find_or_create_in_db(role: str, player: str, data):
+    first_name, name = split_name(player)
     persons = Person.objects.filter(name=name)
-    # what if there're multiple?
+    # what if there're multiple? or mistake in last_name?
     print("Finding best match from {}".format(persons))
 
     person = find_best_match(persons, name, first_name)
