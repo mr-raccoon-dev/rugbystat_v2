@@ -69,9 +69,10 @@ TEAM_SIMILAR_THRESHOLD = 60
 
 
 def parse_rosters(_, data):
-    for role, player in players_from_input(data):
+    text = data["input"]
+    for role, player in players_from_input(text):
         # find person
-        find_or_create_in_db(role, player, data["input"])
+        find_or_create_in_db(role, player, text)
 
 
 def players_from_input(raw_text: str) -> t.Generator:
