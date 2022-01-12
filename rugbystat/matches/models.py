@@ -200,7 +200,7 @@ class Match(TagObject):
     tourn_season = models.ForeignKey(
         Season, on_delete=models.SET_NULL,
         verbose_name=_("Турнир"), related_name="matches", blank=True, null=True
-    ) 
+    )
     home = models.ForeignKey(
         Team, on_delete=models.CASCADE,
         verbose_name=_("Хозяева"), related_name="home_matches"
@@ -307,14 +307,20 @@ class Match(TagObject):
             self.away_score = None
             self.tech_home_loss = True
 
+    def _get_name_for_tournament(self, team_id) -> t.Optional[str]:
+        team_season = self.tourn_season.standings.filter(team_id=team_id).first()
+        if team_season:
+            return team_season.name
+        return ''
+
     def _get_names_for_date(self):
         """Return teams names for a match date"""
-        if self.date:
+        home = self._get_name_for_tournament(self.home_id)
+        away = self._get_name_for_tournament(self.away_id)
+        undefined = not home or not away
+        if undefined and self.date:
             home = self.home.get_name_for(self.date.year, self.date.month, self.date.day)
             away = self.away.get_name_for(self.date.year, self.date.month, self.date.day)
-        else:
-            home = self.home.short_name
-            away = self.away.short_name
         return home, away
 
     def _get_score(self):
@@ -336,10 +342,7 @@ class Match(TagObject):
 
     def _get_name_from_score(self, teams: t.Optional[t.Tuple[str, str]] = None):
         home_score, away_score = self._get_score()
-        if teams:
-            teams_names = teams
-        else:
-            teams_names = self._get_names_for_date()
+        teams_names = teams or self._get_names_for_date()
         teams_names = f" {self._delimiter} ".join(teams_names)
         name = "{} {} {}:{}".format(teams_names, self._delimiter, home_score, away_score)
 
