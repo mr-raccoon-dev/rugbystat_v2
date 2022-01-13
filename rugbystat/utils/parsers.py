@@ -843,7 +843,10 @@ class CalendarParser:
                     default_date = default_date + dt.timedelta(days=1)
                 date = None
                 continue
-            if date is None and not is_unknown:
+
+            is_new_date = DAY_RE.search(line)
+            is_new_tour = date is None and not is_unknown
+            if is_new_date or is_new_tour:
                 parsed, is_unknown = self.parse_date(line, group.date_start.year)
                 if parsed:
                     date = parsed
