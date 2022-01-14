@@ -7,6 +7,7 @@ import re
 import typing as t
 from difflib import SequenceMatcher as SM
 
+import dateparse
 from django.contrib import messages
 from django.db import connection
 from django.db.models import Q
@@ -844,7 +845,7 @@ class CalendarParser:
                 date = None
                 continue
 
-            is_new_date = DAY_RE.search(line)
+            is_new_date = DAY_RE.match(line) and dateparse.parse(line)
             is_new_tour = date is None and not is_unknown
             if is_new_date or is_new_tour:
                 parsed, is_unknown = self.parse_date(line, group.date_start.year)
