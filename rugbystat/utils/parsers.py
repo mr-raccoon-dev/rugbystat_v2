@@ -283,25 +283,20 @@ def zaal1(ss):
     return res
 
 
-def find_best_match(queryset, name, first_name, ratio_threshold=0.6, all=False):
+def find_best_match(queryset, name, first_name, ratio_threshold=0.6):
     """
     Find the most suitable instance by SequenceMatcher from queryset.
 
-    If None found, try to look for all objects.
-    If again None found - create one.
+    If None found - create one.
     """
     ratios = [
         SM(None, str(obj), "{} {}".format(first_name, name)).ratio() for obj in queryset
     ]
 
     if ratios and max(ratios) > ratio_threshold:
-        found = queryset[ratios.index(max(ratios))]
-    elif all:
-        found = Person.objects.create(name=name, first_name=first_name)
+        return queryset[ratios.index(max(ratios))]
     else:
-        queryset = Person.objects.all()
-        found = find_best_match(queryset, name, first_name, all=True)
-    return found
+        return Person.objects.create(name=name, first_name=first_name)
 
 
 def parse_teams(data):
