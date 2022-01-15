@@ -9,7 +9,7 @@ from difflib import SequenceMatcher as SM
 
 import dateparser
 from django.contrib import messages
-from django.db import connection
+from django.db import IntegrityError, connection
 from django.db.models import Q
 from fuzzywuzzy import fuzz, process
 
@@ -113,21 +113,28 @@ def find_or_create_in_db(role: str, player: str, data):
     # what if there're multiple? or mistake in last_name?
     print("Finding best match from {}".format(persons))
 
-    person = find_best_match(persons, name, first_name)
+    person = find_best_match(persons, name, first_name, ratio_threshold=0.85)
     print("Found {}".format(person))
+    create_season_for_person(person, role, data)
 
+
+def create_season_for_person(person, role, data):
     # get_or_create PersonSeason for number
-    obj, created = PersonSeason.objects.get_or_create(
-        role=role,
-        person=person,
-        season_id=data["season"],
-        team_id=data["team"],
-        year=data["year"],
-    )
-    if created:
-        logger.info("Created {}".format(obj))
+    try:
+        obj, created = PersonSeason.objects.get_or_create(
+            role=role,
+            person=person,
+            season_id=data["season"],
+            team_id=data["team"],
+            year=data["year"],
+        )
+    except IntegrityError:
+        logger.error("Can't create season for {}".format(person))
     else:
-        logger.info("Found {}".format(obj))
+        if created:
+            logger.info("Created {}".format(obj))
+        else:
+            logger.info("Found {}".format(obj))
 
 
 def parse_alphabet(request, data):
@@ -276,7 +283,7 @@ def zaal1(ss):
     return res
 
 
-def find_best_match(queryset, name, first_name, all=False):
+def find_best_match(queryset, name, first_name, ratio_threshold=0.6, all=False):
     """
     Find the most suitable instance by SequenceMatcher from queryset.
 
@@ -287,7 +294,7 @@ def find_best_match(queryset, name, first_name, all=False):
         SM(None, str(obj), "{} {}".format(first_name, name)).ratio() for obj in queryset
     ]
 
-    if ratios and max(ratios) > 0.6:
+    if ratios and max(ratios) > ratio_threshold:
         found = queryset[ratios.index(max(ratios))]
     elif all:
         found = Person.objects.create(name=name, first_name=first_name)
