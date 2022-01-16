@@ -96,15 +96,17 @@ def players_from_input(raw_text: str) -> t.Generator:
 
 def split_name(player: str) -> t.Tuple[str, str]:
     if '.' in player:
-        return player.split('.')  # TODO: what if patronymic?
+        first, last = player.split('.')  # TODO: what if patronymic?
+        return first.strip(), last.strip()
 
     try:
-        return player.split()
+        first, last = player.split()
     except ValueError:
         msg = "Couldn't split: {}".format(player)
         print(msg)
         logger.warning(msg)
-        return "", player
+        first, last = "", player
+    return first.strip(), last.strip()
 
 
 def find_or_create_in_db(role: str, player: str, data):
