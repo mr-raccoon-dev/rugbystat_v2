@@ -285,15 +285,24 @@ def zaal1(ss):
     return res
 
 
+def _get_ratios_for_person(queryset, first_name, name):
+    stop_first = None if len(first_name) > 1 else 1
+    return [
+        SM(
+            None,
+            "{} {}".format(obj.first_name[:stop_first], obj.name),
+            "{} {}".format(first_name, name),
+        ).ratio()
+        for obj in queryset
+    ]
+
 def find_best_match(queryset, name, first_name, ratio_threshold=0.6):
     """
     Find the most suitable instance by SequenceMatcher from queryset.
 
     If None found - create one.
     """
-    ratios = [
-        SM(None, str(obj), "{} {}".format(first_name, name)).ratio() for obj in queryset
-    ]
+    ratios = _get_ratios_for_person(queryset, first_name, name)
 
     if ratios and max(ratios) > ratio_threshold:
         return queryset[ratios.index(max(ratios))]
