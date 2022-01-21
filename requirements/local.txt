@@ -3,7 +3,7 @@
 
 # Debugging
 ipdb==0.10.1
-ipython==4.2.0
+ipython==7.16.3
 
 # Docs
 mkdocs==0.16.1
