@@ -17,7 +17,7 @@ from dropbox.exceptions import ApiError
 from dropbox.files import ThumbnailSize
 
 from storages.backends.dropbox import DropBoxStorage, DropBoxStorageException
-from teams.models import TagObject 
+from teams.models import TagObject
 
 
 logger = logging.getLogger('django.server')
@@ -88,7 +88,7 @@ class SourceObject(models.Model):
         ordering = ('source', 'year', )
 
     def __str__(self):
-        if self.edition and not self.source.kind == Source.BOOK:
+        if self.edition and self.source.kind != Source.BOOK:
             return "{} {}, {}".format(
                 self.source.title, self.edition, self.year)
         return self.source.title
@@ -102,6 +102,20 @@ class SourceObject(models.Model):
 class MyDropbox(DropBoxStorage):
     def url(self, name):
         return name
+
+
+def get_year_from_meta(year: str, fname: str) -> int:
+    if len(year) < 4:
+        year = '19' + year
+
+    try:
+        year = int(year)
+        if year > 2100:
+            raise ValueError(f"Year can't be {year} for {fname}")
+    except (ValueError, TypeError):
+        year = None
+
+    return year
 
 
 class DocumentQuerySet(models.QuerySet):
@@ -131,14 +145,10 @@ class DocumentQuerySet(models.QuerySet):
                     name = day + name
                     day = ''
 
-                if len(year) < 4:
-                    year = '19' + year
+                year = get_year_from_meta(year, fname)
 
                 if month and day and int(day) > 0:
                     try:
-                        year = int(year)
-                        if year > 2100:
-                            raise ValueError(f"Year can't be {year} for {fname}")
                         doc_date = date(year, int(month), int(day))
                     except (ValueError, TypeError):
                         doc_date = None
