@@ -135,7 +135,10 @@ class DocumentQuerySet(models.QuerySet):
 
                 if month and day and int(day) > 0:
                     try:
-                        doc_date = date(int(year), int(month), int(day))
+                        year = int(year)
+                        if year > 2100:
+                            raise ValueError(f"Year can't be {year} for {fname}")
+                        doc_date = date(year, int(month), int(day))
                     except (ValueError, TypeError):
                         doc_date = None
                 else:
