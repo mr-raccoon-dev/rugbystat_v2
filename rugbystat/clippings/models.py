@@ -7,6 +7,7 @@ from datetime import date
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import F
+from django.db.utils import DataError
 from django.utils.deconstruct import deconstructible
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -149,7 +150,10 @@ class DocumentQuerySet(models.QuerySet):
                                       date=doc_date, year=year,
                                       month=month or None,)
 
-            document.save(force_insert=True)
+            try:
+                document.save(force_insert=True)
+            except DataError as exc:
+                logger.exception(f"Can't parse {fname}: {exc}")
         return document
 
     def not_deleted(self):
