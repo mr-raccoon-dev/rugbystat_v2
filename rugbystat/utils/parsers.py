@@ -701,6 +701,17 @@ class SimpleTable:
                 logger.warning(f"parts={table_row}, start_idx={total - position}")
         return self
 
+    def latvian_table(self):
+        """Parse table without matches - only standings."""
+        for position, table_row in enumerate(self._column_parts):
+            try:
+                # parse games part: ['12 1 1', 'xxx-xx', '25']
+                self._parse_standings(table_row, 0, position)
+            except IndexError as exc:
+                logger.warning(f"No stadings in the table. {exc}")
+                logger.warning(f"parts={table_row}, start_idx=0")
+        return self
+
     def _parse_matches(self, num_teams, match_parts, team_idx):
         # TODO: parse two_legged tables
         for match_idx in range(team_idx, num_teams):
