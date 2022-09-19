@@ -38,7 +38,7 @@ class TeamNameInline(admin.TabularInline):
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('short_name', 'city', )
+    list_display = ('short_name', 'name', 'city', )
     list_select_related = ('city', )
     list_filter = (
         ('city__name', DropdownFilter),
