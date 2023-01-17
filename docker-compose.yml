@@ -5,24 +5,25 @@ services:
     image: mysql:5.6.27
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: "rugbystat"
-      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
-      - ./.mysql:/var/lib/mysql
+      - ./.mysql/:/var/lib/mysql
 
   web:
     build:
       context: .
-      dockerfile: ./docker/local/Dockerfile
+      dockerfile: .devcontainer/Dockerfile
     environment:
-      SOCIAL_AUTH_FACEBOOK_KEY: 178850782667092
-      SOCIAL_AUTH_FACEBOOK_SECRET: 7ad6ff12a238a07ca2473bf24e2fcb78
-    command: /start.sh
+      SOCIAL_AUTH_FACEBOOK_KEY: ${SOCIAL_AUTH_FACEBOOK_KEY}
+      SOCIAL_AUTH_FACEBOOK_SECRET: ${SOCIAL_AUTH_FACEBOOK_SECRET}
+      DJANGO_SETTINGS_MODULE: conf.settings.local
     volumes:
-      - ./rugbystat:/app
+      - ./rugbystat/:/workspace
     depends_on:
       - db
     ports:
       - "8000:8000"
+      - "1488:1488"
