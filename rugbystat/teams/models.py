@@ -182,7 +182,7 @@ class TableRowFields(models.Model):
     )
     points = models.PositiveSmallIntegerField(
         verbose_name=_('О'), null=True, blank=True,
-        validators=(MaxValueValidator(100),),
+        validators=(MaxValueValidator(200),),
     )
     score = models.CharField(
         verbose_name=_('Р/О'), max_length=10, blank=True
