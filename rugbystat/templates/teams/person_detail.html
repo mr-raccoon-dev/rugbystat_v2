@@ -2,6 +2,9 @@
 
 {% load staticfiles %}
 
+{% block title %}{{ block.super }} | {{ object.full_name }}{% endblock title %}
+
+11
 {% block css %}
 
 {{ block.super }}
