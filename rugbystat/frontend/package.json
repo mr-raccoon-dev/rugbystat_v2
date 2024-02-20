@@ -20,7 +20,10 @@
   "dependencies": {
     "@mantine/core": "^7.5.3",
     "@mantine/hooks": "^7.5.3",
-    "@tabler/icons-react": "^2.47.0"
+    "@tabler/icons-react": "^2.47.0",
+    "ky": "^1.2.0",
+    "react-query": "^3.39.3",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@testing-library/dom": "^9.3.4",
