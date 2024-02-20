@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "@mantine/core": "^7.5.3",
-    "@mantine/hooks": "^7.5.3"
+    "@mantine/hooks": "^7.5.3",
+    "@tabler/icons-react": "^2.47.0"
   },
   "devDependencies": {
     "@testing-library/dom": "^9.3.4",
