@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -10,4 +10,12 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './vitest.setup.mjs',
   },
-})
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://rugbystat.pythonanywhere.com',
+        changeOrigin: true,
+      },
+    },
+  },
+});

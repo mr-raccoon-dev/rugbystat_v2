@@ -31,6 +31,7 @@ const DocumentSchema: z.ZodType<Document> = BaseDocumentSchema.extend({
 });
 
 const BaseTeamSchema = z.object({
+  url: z.string().url(),
   id: z.number(),
   name: z.string(),
   short_name: z.string(),
