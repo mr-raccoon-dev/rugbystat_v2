@@ -8,27 +8,34 @@ const CitySchema = z.object({
 
 export type City = z.infer<typeof CitySchema>;
 
-const BaseDocumentSchema = z.object({
+const DocumentVersionSchema = z.object({
+  title: z.string(),
+  dropbox_path: z.string().nullable(),
+  dropbox_thumb: z.string().nullable(),
+  year: z.number().nullable(),
+  month: z.number().nullable(),
+  date: z.string().nullable(),
+  is_image: z.boolean(),
+});
+
+export type DocumentVersion = z.infer<typeof DocumentVersionSchema>;
+
+const DocumentSchema = z.object({
   id: z.number(),
   title: z.string(),
-  description: z.nullable(z.string()),
-  dropbox_path: z.nullable(z.string().url()),
+  description: z.string().nullable(),
+  dropbox_path: z.string().nullable(),
   kind: z.string(),
-  dropbox_thumb: z.nullable(z.string().url()),
-  year: z.nullable(z.number()),
-  month: z.nullable(z.number()),
-  date: z.nullable(z.string()),
+  dropbox_thumb: z.string().nullable(),
+  year: z.number().nullable(),
+  month: z.number().nullable(),
+  date: z.string().nullable(),
   is_image: z.boolean(),
   source_title: z.string(),
+  versions: DocumentVersionSchema.array(),
 });
 
-type Document = z.infer<typeof BaseDocumentSchema> & {
-  versions: Document[];
-};
-
-const DocumentSchema: z.ZodType<Document> = BaseDocumentSchema.extend({
-  versions: z.lazy(() => DocumentSchema.array()),
-});
+export type Document = z.infer<typeof DocumentSchema>;
 
 const BaseTeamSchema = z.object({
   url: z.string().url(),
@@ -37,8 +44,8 @@ const BaseTeamSchema = z.object({
   short_name: z.string(),
   story: z.string(),
   city: CitySchema,
-  year: z.nullable(z.number()),
-  disband_year: z.nullable(z.union([z.number(), z.string()])),
+  year: z.number().nullable(),
+  disband_year: z.union([z.number(), z.string()]).nullable(),
   operational_years: z.string(),
   documents: DocumentSchema.array(),
 });
@@ -48,5 +55,5 @@ type Team = z.infer<typeof BaseTeamSchema> & {
 };
 
 export const TeamSchema: z.ZodType<Team> = BaseTeamSchema.extend({
-  parent: z.nullable(z.lazy(() => TeamSchema)),
+  parent: z.lazy(() => TeamSchema).nullable(),
 });
