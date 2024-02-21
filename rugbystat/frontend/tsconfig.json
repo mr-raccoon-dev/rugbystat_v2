@@ -19,7 +19,9 @@
     "paths": {
       "@/*": ["./src/*"],
       "@test-utils": ["./test-utils"]
-    }
+    },
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true
   },
   "include": ["src", "test-utils"]
 }

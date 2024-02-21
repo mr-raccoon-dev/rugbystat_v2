@@ -20,6 +20,7 @@
   "dependencies": {
     "@mantine/core": "^7.5.3",
     "@mantine/hooks": "^7.5.3",
+    "@mobily/ts-belt": "^3.13.1",
     "@tabler/icons-react": "^2.47.0",
     "ky": "^1.2.0",
     "react-query": "^3.39.3",

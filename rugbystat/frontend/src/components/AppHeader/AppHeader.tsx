@@ -22,7 +22,7 @@ export function AppHeader(props: AppHeaderProps) {
 
   return (
     <>
-      <AppShell.Header>
+      <AppShell.Header zIndex={1001}>
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Group justify="space-between" style={{ flex: 1 }}>

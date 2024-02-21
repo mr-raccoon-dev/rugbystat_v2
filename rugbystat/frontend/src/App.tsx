@@ -28,7 +28,11 @@ function App() {
           padding="md"
         >
           <AppHeader opened={opened} toggle={toggle} />
-          <AppShell.Main bg="var(--mantine-color-gray-2)">
+          <AppShell.Main
+            bg="var(--mantine-color-gray-2)"
+            display="flex"
+            style={{ flexDirection: 'column' }}
+          >
             <TeamList />
           </AppShell.Main>
         </AppShell>
